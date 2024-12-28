@@ -1,95 +1,94 @@
 # GitHub Analytics Dashboard
 
-## Visão Geral
-GitHub Analytics Dashboard é uma aplicação open source projetada para fornecer insights e métricas detalhadas sobre repositórios, contribuidores e atividades no GitHub. A ferramenta é voltada para desenvolvedores, equipes e organizações que desejam monitorar e melhorar sua produtividade e colaboração.
+## Overview
+GitHub Analytics Dashboard is an open-source application designed to provide detailed insights and metrics about repositories, contributors, and activities on GitHub. The tool is aimed at developers, teams, and organizations who want to monitor and improve their productivity and collaboration.
 
 ---
 
-## Principais Features
+## Key Features
 
-### 1. Painel de Contribuições
-- Visualize as contribuições de cada membro em repositórios.
-- Métricas de commits, pull requests, issues criadas e revisões aprovadas.
-- Filtros por intervalo de tempo, repositório ou membro.
+### 1. Contribution Dashboard
+- Visualize each member's contributions across repositories.
+- Metrics for commits, pull requests, issues created, and approved reviews.
+- Filters by time range, repository, or member.
 
-### 2. Métricas de Repositórios
-- Monitoramento de popularidade do repositório (estrelas, forks, cliques em releases).
-- Atividade de desenvolvimento: commits por dia/semana/mês.
-- Principais contribuidores e análise de impacto.
+### 2. Repository Metrics
+- Monitor repository popularity (stars, forks, release clicks).
+- Development activity: commits by day/week/month.
+- Top contributors and impact analysis.
 
-### 3. Tendências e Visualizações
-- Gráficos interativos para commits, PRs, e crescimento de colaboradores.
-- Análise de palavras-chave em issues (ex.: bugs mais comuns).
-- Previsões de atividade futura com base em histórico.
+### 3. Trends and Visualizations
+- Interactive charts for commits, PRs, and contributor growth.
+- Keyword analysis in issues (e.g., most common bugs).
+- Activity forecasts based on historical data.
 
-### 4. Webhooks e Atualizações em Tempo Real
-- Configurações de webhooks para receber alertas sobre novos PRs ou issues.
-- Painel em tempo real mostrando eventos recentes.
+### 4. Webhooks and Real-Time Updates
+- Webhook configurations to receive alerts for new PRs or issues.
+- Real-time dashboard showing recent events.
 
-### 5. Integração com Times
-- Relatórios semanais ou mensais automáticos.
-- Exportação de dados em formatos como CSV e PDF.
-- Comparativo de performance entre equipes ou repositórios.
+### 5. Team Integration
+- Automatic weekly or monthly reports.
+- Data export in formats like CSV and PDF.
+- Performance comparison between teams or repositories.
 
-### 6. Exploração de Pull Requests
-- Resumo dos PRs abertos, mesclados e rejeitados.
-- Tempo médio para revisão e mesclagem.
-- Identificação de PRs que estão bloqueados ou precisam de atenção.
+### 6. Pull Request Exploration
+- Summary of open, merged, and rejected PRs.
+- Average time for review and merging.
+- Identification of PRs that are blocked or need attention.
 
-### 7. Ranking de Contribuidores
-- Classificação dos contribuidores por métricas como commits, linhas de código e aprovações de PR.
-- Destaque para novos contribuidores.
+### 7. Contributor Ranking
+- Ranking of contributors by metrics such as commits, lines of code, and PR approvals.
+- Highlighting new contributors.
 
-### 8. Autenticação e Personalização
-- Login via OAuth para acessar dados privados e repositórios pessoais.
-- Dashboards personalizáveis para exibir apenas as métricas de interesse.
+### 8. Authentication and Personalization
+- OAuth login to access private data and personal repositories.
+- Customizable dashboards to display only relevant metrics.
 
-### 9. Histórico de Atividade
-- Registro de eventos passados para análise de longo prazo.
-- Identificação de picos ou quedas de produtividade.
+### 9. Activity History
+- Record of past events for long-term analysis.
+- Identification of productivity spikes or dips.
 
-### 10. Busca Avançada
-- Busca por issues ou PRs com filtros como tags, status e responsáveis.
-- Identificação de gargalos no fluxo de trabalho.
+### 10. Advanced Search
+- Search for issues or PRs with filters like tags, status, and assignees.
+- Identification of bottlenecks in the workflow.
 
 ---
 
-## Tecnologias Utilizadas
+## Technologies Used
 
 ### Frontend
-- **Next.js**: Para criação de uma interface moderna e performática.
-- **Ant Design**: Componentes pré-definidos para um design elegante.
-- **Chart.js**: Visualizações gráficas interativas.
-- **TypeScript**: Tipagem estática para maior segurança no desenvolvimento.
+- **Next.js**: For building a modern and high-performance interface.
+- **Ant Design**: Pre-designed components for an elegant design.
+- **Chart.js**: Interactive graphical visualizations.
+- **TypeScript**: Static typing for greater security in development.
 
 ### Backend
-- **Node.js (NestJS)**: API eficiente e escalável.
-- **PostgreSQL**: Armazenamento de dados relacionais com suporte a queries analíticas.
-- **Redis**: Cache de dados frequentemente acessados.
+- **Node.js (NestJS)**: Efficient and scalable API.
+- **PostgreSQL**: Relational data storage with support for analytical queries.
+- **Redis**: Caching frequently accessed data.
 
-### Infraestrutura
-- **Docker**: Contêinerização para consistência entre ambientes.
-- **Vercel**: Deploy rápido e confiável para o frontend.
-- **GitHub Actions**: Automalização de CI/CD.
-
----
-
-## Como Contribuir
-- Fork o repositório e crie um branch para suas modificações.
-- Abra um pull request com descrição detalhada da sua contribuição.
-- Confira a documentação para orientações específicas de implementação.
+### Infrastructure
+- **Docker**: Containerization for consistency across environments.
+- **Vercel**: Fast and reliable deployment for the frontend.
+- **GitHub Actions**: CI/CD automation.
 
 ---
 
-## Próximos Passos
-- [ ] Implementar autenticação via OAuth.
-- [ ] Criar dashboards básicos com Chart.js.
-- [ ] Adicionar suporte a Webhooks.
-- [ ] Desenvolver exportação de relatórios.
-- [ ] Documentar o processo de setup e deploy.
+## How to Contribute
+- Fork the repository and create a branch for your modifications.
+- Open a pull request with a detailed description of your contribution.
+- Check the documentation for specific implementation guidelines.
 
 ---
 
-### Licença
-Este projeto é licenciado sob a [MIT License](LICENSE).
+## Next Steps
+- [ ] Implement OAuth authentication.
+- [ ] Create basic dashboards with Chart.js.
+- [ ] Add webhook support.
+- [ ] Develop report export functionality.
+- [ ] Document the setup and deployment process.
 
+---
+
+### License
+This project is licensed under the [MIT License](LICENSE).
