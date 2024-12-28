@@ -1,13 +1,16 @@
 import 'dotenv/config';
-import fastify from "fastify";
 import env from '../env';
+import { AuthController } from './api/AuthController';
+import { UserService } from './application/service/UserService';
+import { GithubGatewayHttp } from './infra/gateway/GithubGatewayHttp';
+import { FastifyAdapter } from './infra/http/FastifyAdapter';
 
+const port = env.PORT;
 
-const app = fastify();
- 
+const httpServer = new FastifyAdapter();
 
-app.listen({
-    port: env.PORT
-}).then(() => {
-    console.log(`Server running at ${env.PORT}`)
-});
+httpServer.listen(port);
+
+const githubGateway = new GithubGatewayHttp(env.GITHUB_ACCESS_TOKEN_URL, env.GITHUB_CLIENT_SECRET, env.GITHUB_CLIENT_ID);
+
+new AuthController(httpServer, new UserService(githubGateway));
