@@ -1,13 +1,13 @@
 import 'dotenv/config';
 import fastify from "fastify";
+import env from '../env';
 
 
 const app = fastify();
  
-const PORT = parseInt(process.env.PORT || '3333') 
 
 app.listen({
-    port: PORT
+    port: env.PORT
 }).then(() => {
-    console.log(`Server running at ${PORT}`)
+    console.log(`Server running at ${env.PORT}`)
 });
