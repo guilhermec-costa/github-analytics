@@ -13,4 +13,8 @@ export class UserService {
         this.logger.log("Acessing Github Gateway for user authentication with refresh token");
         return await this.githubGateway.refreshToken(token);
     }
+
+    async getUserInformation(token: string): Promise<any> {
+      return await this.githubGateway.getUserInformation(token);
+    }
 }

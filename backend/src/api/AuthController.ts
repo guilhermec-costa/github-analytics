@@ -35,5 +35,19 @@ export class AuthController {
         }
       };
     });
+
+    this.httpServer.register("get", "userInfo", async ({ headers }) => {
+      const schema = z.object({
+        authorization: z.string().nonempty()
+      })
+
+      const reqHeaders = schema.parse(headers)
+      const userData = await this.userService.getUserInformation(reqHeaders.authorization);
+
+      return {
+        status: 200,
+        data: { ...userData }
+      }
+    })
   }
 }

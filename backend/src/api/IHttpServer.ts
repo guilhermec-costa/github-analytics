@@ -15,5 +15,6 @@ export type ControllerResponse = {
 export type ControllerCallbackInput = {
     params: unknown,
     body: unknown,
-    token?: string
+    token?: string,
+    headers: unknown
 }

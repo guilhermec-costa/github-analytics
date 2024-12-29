@@ -37,6 +37,7 @@ export class FastifyAdapter implements IHttpServer {
                 const output = await callback({
                     params: req.params,
                     body: req.body,
+                    headers: req.headers
                 })
                 reply.status(output.status).send(output.data && output.data);
             }

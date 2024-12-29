@@ -4,31 +4,48 @@ import { BadRequest, InternalServerError, NotFound, Unauthorized } from "../../u
 
 export class GithubGatewayHttp implements IGithubGateway {
     private readonly GITHUB_BASE_URL = "https://github.com"
-    private readonly axiosInstance: AxiosInstance
+    private readonly GITHUB_API_URL = "https://api.github.com"
+
+    private readonly baseGithubAxiosInstance: AxiosInstance
+    private readonly githubApiAxiosInstance: AxiosInstance
 
     constructor(private readonly GITHUB_CLIENT_SECRET: string, private readonly GITHUB_CLIENT_ID: string) {
-        this.axiosInstance = axios.create({
+        this.baseGithubAxiosInstance= axios.create({
             baseURL: this.GITHUB_BASE_URL,
             headers: { Accept: "application/json" },
         });
 
-        this.axiosInstance.interceptors.response.use(
-            (response) => {
-                // isso é porque o pessoal do gh curte xp programming (faltou daily, review, retro)
-                if (response.data.error) {
-                    this.handleError(new AxiosError("", "", undefined, {}, { data: { message: response.data.error_description }, status: 400 } as any))
-                }
-                return response
-            },
-            (error) => {
-                return this.handleError(error)
-            }
+        this.githubApiAxiosInstance = axios.create({
+            baseURL: this.GITHUB_API_URL,
+            headers: { Accept: "application/json" },
+        });
+
+
+        this.baseGithubAxiosInstance.interceptors.response.use(
+            (response) => this.handleSucess(response),
+            (error) => this.handleError(error)
         );
+
+        this.githubApiAxiosInstance.interceptors.response.use(
+            (response) => this.handleSucess(response),
+            (error) => this.handleError(error)
+        )
+    }
+
+    async getUserInformation(userToken: string): Promise<any> {
+        const url = "/user";
+        const response = await this.githubApiAxiosInstance.get(url, {
+            headers: {
+                "Authorization": userToken
+            }
+        });
+
+        return response.data;
     }
 
     async auth(code: string): Promise<{ accessToken: string, refreshToken: string }> {
         const url = "/login/oauth/access_token";
-        const response = await this.axiosInstance.post(url, null, {
+        const response = await this.baseGithubAxiosInstance.post(url, null, {
             params: {
                 client_id: this.GITHUB_CLIENT_ID,
                 client_secret: this.GITHUB_CLIENT_SECRET,
@@ -42,7 +59,7 @@ export class GithubGatewayHttp implements IGithubGateway {
 
     async refreshToken(refreshToken: string): Promise<{ accessToken: string; refreshToken: string; }> {
         const url = "/login/oauth/access_token";
-        const response = await this.axiosInstance.post(url, null, {
+        const response = await this.baseGithubAxiosInstance.post(url, null, {
             params: {
                 client_id: this.GITHUB_CLIENT_ID,
                 client_secret: this.GITHUB_CLIENT_SECRET,
@@ -86,5 +103,13 @@ export class GithubGatewayHttp implements IGithubGateway {
             console.error(`[Unknown Error] ${String(error)}`);
             throw new InternalServerError(`Unknown error: ${String(error)}`);
         }
+    }
+
+    private handleSucess(response: any) {
+        // isso é porque o pessoal do gh curte xp programming (faltou daily, review, retro)
+        if (response.data.error) {
+            this.handleError(new AxiosError("", "", undefined, {}, { data: { message: response.data.error_description }, status: 400 } as any))
+        }
+        return response;
     }
 }
