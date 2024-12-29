@@ -21,9 +21,7 @@ export class FastifyAdapter implements IHttpServer {
     }
 
     listen(port: number): void {
-        this.app.listen({
-            port: port
-        }).then(() => {
+        this.app.listen({ port }).then(() => {
             this.logger.log(`Github Analytics server running at port ${port}`);
         });
     }

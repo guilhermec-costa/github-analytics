@@ -39,7 +39,7 @@ export class AuthController {
 
       return {
         status: HttpStatus.OK,
-        data: { ...userData }
+        data: userData
       }
     })
 
@@ -49,7 +49,7 @@ export class AuthController {
 
       return {
         status: HttpStatus.OK,
-        data: { ...userRepos }
+        data: userRepos
       }
     })
   }

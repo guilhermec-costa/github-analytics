@@ -1,5 +1,5 @@
 import { ILogger } from "../../infra/config/ILogger";
-import { GitHubUser } from "../../utils/types";
+import { GitHubRepository, GitHubUser, RecursivePartial } from "../../utils/types";
 import { IGithubGateway } from "../gateway/IGithubGateway";
 
 export class UserService {
@@ -20,8 +20,32 @@ export class UserService {
       return await this.githubGateway.getUserInformation(token);
     }
 
-    async getUserRepositories(token: string): Promise<any> {
+    async getUserRepositories(token: string): Promise<RecursivePartial<GitHubRepository>[]> {
       this.logger.log("Requesting Github Gateway for authorized user");
-      return await this.githubGateway.getUserRepositories(token);
+      const userRepos = await this.githubGateway.getUserRepositories(token);
+
+      return userRepos.map((repo) => ({
+        id: repo.id,
+        name: repo.name,
+        full_name: repo.full_name,
+        description: repo.description,
+        private: repo.private,
+        fork: repo.fork,
+        stargazers_count: repo.stargazers_count,
+        forks_count: repo.forks_count,
+        watchers_count: repo.watchers_count,
+        created_at: repo.created_at,
+        updated_at: repo.updated_at,
+        pushed_at: repo.pushed_at,
+        language: repo.language,
+        license: repo.license ? repo.license : null,
+        owner: repo.owner ? {
+          login: repo.owner.login,
+          avatar_url: repo.owner.avatar_url
+        }: {},
+        html_url: repo.html_url,
+        clone_url: repo.clone_url,
+        ssh_url: repo.ssh_url
+      }));
     }
 }
