@@ -9,24 +9,24 @@ export abstract class BaseException extends Error {
 
 export class BadRequest extends BaseException {
     constructor(message: string) {
-        super(message, 400);
+        super(message, HttpStatus.BAD_REQUEST);
     }
 }
 
 export class InternalServerError extends BaseException {
     constructor(message: string) {
-        super(message, 500)
+        super(message, HttpStatus.INTERNAL_SERVER_ERROR)
     };
 }
 
 export class Unauthorized extends BaseException {
     constructor(message: string) {
-        super(message, 401);
+        super(message, HttpStatus.UNAUTHORIZED);
     }
 }
 
 export class NotFound extends BaseException {
     constructor(message: string) {
-        super(message, 404);
+        super(message, HttpStatus.NOT_FOUND);
     }
 }

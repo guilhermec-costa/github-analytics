@@ -54,7 +54,6 @@ export class FastifyAdapter implements IHttpServer {
             const statusCode = error.statusCode ?? 500;
             const defaultMessage = error.message ?? 'An error happended!';
             reply.status(statusCode).send({
-                statusCode,
                 date: new Date().toISOString(),
                 path: req.originalUrl,
                 message: defaultMessage,
