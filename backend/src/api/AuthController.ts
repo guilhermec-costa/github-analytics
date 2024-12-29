@@ -9,7 +9,22 @@ export class AuthController {
                 code: z.string().nonempty()
             }) 
             const payload = schema.parse(body)
-            const {accessToken, refreshToken} = await userService.auth(payload.code)
+            const {accessToken, refreshToken} = await this.userService.auth(payload.code)
+            return {
+                status: 200, 
+                data: {
+                  accessToken, 
+                  refreshToken
+                }
+            }
+        })
+
+        this.httpServer.register('post', 'auth/refresh', async ({ body }) => {
+            const schema = z.object({
+                refreshToken: z.string().nonempty(),
+            }) 
+            const payload = schema.parse(body)
+            const {accessToken, refreshToken} = await this.userService.refresh(payload.refreshToken)
             return {
                 status: 200, 
                 data: {

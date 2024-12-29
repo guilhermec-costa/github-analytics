@@ -22,4 +22,22 @@ export class GithubGatewayHttp implements IGithubGateway {
         return { accessToken: access_token, refreshToken: refresh_token };
     }
 
+    async refreshToken(refreshToken: string): Promise<{ accessToken: string; refreshToken: string; }> {
+        const url = this.GITHUB_ACCESS_TOKEN_URL;
+        const response = await axios.post(url, null, {
+            params: {
+                client_id: this.GITHUB_CLIENT_ID,
+                client_secret: this.GITHUB_CLIENT_SECRET,
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken
+            },
+            headers: {
+                Accept: 'application/json',
+            },
+        });
+
+        const { access_token, refresh_token } = response.data;
+        return { accessToken: access_token, refreshToken: refresh_token };
+    }
+
 }
