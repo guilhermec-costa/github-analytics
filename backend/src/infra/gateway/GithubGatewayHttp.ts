@@ -1,20 +1,38 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import { IGithubGateway } from "../../application/gateway/IGithubGateway";
+import { BadRequest, InternalServerError, NotFound, Unauthorized } from "../../utils/Exceptions";
 
 export class GithubGatewayHttp implements IGithubGateway {
-    constructor(private readonly GITHUB_ACCESS_TOKEN_URL: string, private readonly GITHUB_CLIENT_SECRET: string, private readonly GITHUB_CLIENT_ID: string) {
+    private readonly GITHUB_BASE_URL = "https://github.com"
+    private readonly axiosInstance: AxiosInstance
+
+    constructor(private readonly GITHUB_CLIENT_SECRET: string, private readonly GITHUB_CLIENT_ID: string) {
+        this.axiosInstance = axios.create({
+            baseURL: this.GITHUB_BASE_URL,
+            headers: { Accept: "application/json" },
+        });
+
+        this.axiosInstance.interceptors.response.use(
+            (response) => {
+                // isso é porque o pessoal do gh curte xp programming (faltou daily, review, retro)
+                if (response.data.error) {
+                    this.handleError(new AxiosError("", "", undefined, {}, { data: { message: response.data.error_description }, status: 400 } as any))
+                }
+                return response
+            },
+            (error) => {
+                return this.handleError(error)
+            }
+        );
     }
 
     async auth(code: string): Promise<{ accessToken: string, refreshToken: string }> {
-        const url = this.GITHUB_ACCESS_TOKEN_URL;
-        const response = await axios.post(url, null, {
+        const url = "/login/oauth/access_token";
+        const response = await this.axiosInstance.post(url, null, {
             params: {
                 client_id: this.GITHUB_CLIENT_ID,
                 client_secret: this.GITHUB_CLIENT_SECRET,
                 code: code
-            },
-            headers: {
-                Accept: 'application/json',
             },
         });
        
@@ -23,16 +41,13 @@ export class GithubGatewayHttp implements IGithubGateway {
     }
 
     async refreshToken(refreshToken: string): Promise<{ accessToken: string; refreshToken: string; }> {
-        const url = this.GITHUB_ACCESS_TOKEN_URL;
-        const response = await axios.post(url, null, {
+        const url = "/login/oauth/access_token";
+        const response = await this.axiosInstance.post(url, null, {
             params: {
                 client_id: this.GITHUB_CLIENT_ID,
                 client_secret: this.GITHUB_CLIENT_SECRET,
                 grant_type: 'refresh_token',
                 refresh_token: refreshToken
-            },
-            headers: {
-                Accept: 'application/json',
             },
         });
 
@@ -40,4 +55,36 @@ export class GithubGatewayHttp implements IGithubGateway {
         return { accessToken: access_token, refreshToken: refresh_token };
     }
 
+    private handleError(error: unknown): void {
+        if (axios.isAxiosError(error)) {
+            if (error.response) {
+                const status = error.response.status;
+                const data = error.response.data;
+
+                console.error(`[HTTP Error] Status: ${status}, Data: ${JSON.stringify(data)}`);
+
+                switch (status) {
+                    case 422:
+                    case 400:
+                        throw new BadRequest(data?.message || "Bad Request");
+                    case 401:
+                        throw new Unauthorized(data?.message || "Unauthorized");
+                    case 404:
+                        throw new NotFound(data?.message || "Not Found");
+                    case 500:
+                    default:
+                        throw new InternalServerError(data?.message || "Internal Server Error");
+                }
+            } else if (error.request) {
+                console.error(`[Network Error] No response received: ${error.message}`);
+                throw new InternalServerError("Network error: No response received");
+            } else {
+                console.error(`[Axios Error] ${error.message}`);
+                throw new InternalServerError(`Request setup error: ${error.message}`);
+            }
+        } else {
+            console.error(`[Unknown Error] ${String(error)}`);
+            throw new InternalServerError(`Unknown error: ${String(error)}`);
+        }
+    }
 }

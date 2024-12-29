@@ -1,6 +1,6 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, HTTPMethods } from "fastify";
 import { ControllerCallbackInput, ControllerResponse, IHttpServer } from "../../api/IHttpServer";
-import { ILogger } from "../config/ILogger";
+import { BaseException } from "../../utils/Exceptions";
 
 export class FastifyAdapter implements IHttpServer {
     private app: FastifyInstance
@@ -9,6 +9,7 @@ export class FastifyAdapter implements IHttpServer {
     constructor() {
         this.app = fastify();
         this.routePrefix = "";
+        this.setErrorMiddleware();
     }
 
     listen(port: number): void {
@@ -36,5 +37,18 @@ export class FastifyAdapter implements IHttpServer {
                 reply.status(output.status).send(output.data && output.data);
             }
         });
+    }
+
+    private setErrorMiddleware() {
+        this.app.setErrorHandler((error: Error & Partial<BaseException>, req: FastifyRequest, reply: FastifyReply) => {
+            const statusCode = error.statusCode ?? 500;
+            const defaultMessage = error.message ?? 'An error happended!';
+            reply.status(statusCode).send({
+                statusCode,
+                date: new Date().toISOString(),
+                path: req.originalUrl,
+                message: defaultMessage,
+            })
+        })
     }
 }
