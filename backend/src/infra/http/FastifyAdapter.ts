@@ -2,10 +2,13 @@ import cors from '@fastify/cors';
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, HTTPMethods } from "fastify";
 import { ControllerCallbackInput, ControllerResponse, IHttpServer } from "../../api/IHttpServer";
 import { BaseException } from "../../utils/Exceptions";
+import { ILogger } from '../config/ILogger';
+import WinstonLogger from '../config/WinstonLogger';
 
 export class FastifyAdapter implements IHttpServer {
     private app: FastifyInstance
     private routePrefix: string;
+    private logger!: ILogger;
 
     constructor() {
         this.app = fastify();
@@ -14,13 +17,14 @@ export class FastifyAdapter implements IHttpServer {
         })
         this.routePrefix = "";
         this.setErrorMiddleware();
+        this.logger = new WinstonLogger();
     }
 
     listen(port: number): void {
         this.app.listen({
             port: port
         }).then(() => {
-            console.log(`Server running at ${port}`)
+            this.logger.log(`Github Analytics server running at port ${port}`);
         });
     }
 
@@ -42,6 +46,7 @@ export class FastifyAdapter implements IHttpServer {
                 reply.status(output.status).send(output.data && output.data);
             }
         });
+        this.logger.log(`[${method.toUpperCase()}] Route ${fullUrl} successfully registered`)
     }
 
     private setErrorMiddleware() {

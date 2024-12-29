@@ -49,5 +49,19 @@ export class AuthController {
         data: { ...userData }
       }
     })
+
+    this.httpServer.register("get", "userRepos", async({ headers }) => {
+      const schema = z.object({
+        authorization: z.string().nonempty()
+      });
+
+      const reqHeaders = schema.parse(headers);
+      const userRepos = await this.userService.getUserRepositories(reqHeaders.authorization);
+
+      return {
+        status: 200,
+        data: { ...userRepos }
+      }
+    })
   }
 }

@@ -32,6 +32,17 @@ export class GithubGatewayHttp implements IGithubGateway {
         )
     }
 
+    async getUserRepositories(userToken: string): Promise<any> {
+        const url = "/user/repos"
+        const response = await this.githubApiAxiosInstance.get(url, {
+            headers: {
+                "Authorization": userToken
+            }
+        })
+
+        return response.data;
+    }
+
     async getUserInformation(userToken: string): Promise<any> {
         const url = "/user";
         const response = await this.githubApiAxiosInstance.get(url, {
