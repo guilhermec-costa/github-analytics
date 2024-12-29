@@ -1,5 +1,6 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, HTTPMethods } from "fastify";
 import { ControllerCallbackInput, ControllerResponse, IHttpServer } from "../../api/IHttpServer";
+import { ILogger } from "../config/ILogger";
 
 export class FastifyAdapter implements IHttpServer {
     private app: FastifyInstance
@@ -9,7 +10,6 @@ export class FastifyAdapter implements IHttpServer {
         this.app = fastify();
         this.routePrefix = "";
     }
-
 
     listen(port: number): void {
         this.app.listen({

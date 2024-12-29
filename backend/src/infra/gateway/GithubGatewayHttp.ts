@@ -17,7 +17,7 @@ export class GithubGatewayHttp implements IGithubGateway {
                 Accept: 'application/json',
             },
         });
-
+       
         const { access_token, refresh_token } = response.data;
         return { accessToken: access_token, refreshToken: refresh_token };
     }

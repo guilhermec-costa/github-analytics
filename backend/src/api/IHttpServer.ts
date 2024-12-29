@@ -1,3 +1,4 @@
+import { ILogger } from "../infra/config/ILogger";
 
 export interface IHttpServer {
     listen(port: number): void;
