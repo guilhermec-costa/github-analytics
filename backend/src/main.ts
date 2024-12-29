@@ -1,25 +1,27 @@
 import 'dotenv/config';
 import env from '../env';
 import { AuthController } from './api/AuthController';
-import { FastifyAdapter } from './infra/http/FastifyAdapter';
-import WinstonLogger from './infra/config/WinstonLogger';
 import { UserService } from './application/service/UserService';
-import { GithubGatewayHttp } from './infra/gateway/GithubGatewayHttp';
+import WinstonLogger from './infra/config/WinstonLogger';
 import DIContainer from './infra/DI/DIContainer';
+import { GithubGatewayHttp } from './infra/gateway/GithubGatewayHttp';
+import { FastifyAdapter } from './infra/http/FastifyAdapter';
 
 const port = env.PORT;
 const httpServer = new FastifyAdapter();
 httpServer.addRoutePrefix("api/v1");
 
-const container = DIContainer.getInstance(); 
-
 const logger = new WinstonLogger();
-const userService = new UserService();
+
 const githubGateway = new GithubGatewayHttp(env.GITHUB_CLIENT_SECRET, env.GITHUB_CLIENT_ID);
 
-container.provide("Logger", logger);
-container.provide("UserService", userService);
-container.provide("GithubGateway", githubGateway);
+const container = DIContainer.getInstance(); 
+container.provide("logger", logger);
+container.provide("githubGateway", githubGateway);
+
+const userService = new UserService();
+container.provide("userService", userService)
+
 
 new AuthController(httpServer).setupRoutes();
 

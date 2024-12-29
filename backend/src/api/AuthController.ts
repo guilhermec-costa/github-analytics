@@ -1,12 +1,11 @@
 import { z } from "zod";
 import { UserService } from "../application/service/UserService";
-import { IHttpServer } from "./IHttpServer";
 import { inject } from "../infra/DI/DIContainer";
+import { IHttpServer } from "./IHttpServer";
 
 export class AuthController {
-
-  @inject("UserService")
-  private userService!: UserService;
+  @inject("userService")
+  private readonly userService!: UserService;
 
   constructor(private readonly httpServer: IHttpServer) { }
 

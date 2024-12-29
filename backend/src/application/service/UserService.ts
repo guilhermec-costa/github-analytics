@@ -3,10 +3,9 @@ import { inject } from "../../infra/DI/DIContainer";
 import { IGithubGateway } from "../gateway/IGithubGateway";
 
 export class UserService {
-    @inject("GithubGateway")
+    @inject("githubGateway")
     private readonly githubGateway!: IGithubGateway;
-
-    @inject("Logger")
+    @inject("logger")
     private readonly logger!: ILogger;
 
     constructor() { }
