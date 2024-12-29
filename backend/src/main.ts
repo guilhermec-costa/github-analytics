@@ -11,6 +11,6 @@ const httpServer = new FastifyAdapter();
 httpServer.addRoutePrefix("api/v1");
 httpServer.listen(port);
 
-const githubGateway = new GithubGatewayHttp(env.GITHUB_ACCESS_TOKEN_URL, env.GITHUB_CLIENT_SECRET, env.GITHUB_CLIENT_ID);
+const githubGateway = new GithubGatewayHttp(env.GITHUB_CLIENT_SECRET, env.GITHUB_CLIENT_ID);
 
 new AuthController(httpServer, new UserService(githubGateway));
