@@ -1,14 +1,8 @@
 import { ILogger } from "../../infra/config/ILogger";
-import { inject } from "../../infra/DI/DIContainer";
 import { IGithubGateway } from "../gateway/IGithubGateway";
 
 export class UserService {
-    @inject("githubGateway")
-    private readonly githubGateway!: IGithubGateway;
-    @inject("logger")
-    private readonly logger!: ILogger;
-
-    constructor() { }
+    constructor(private readonly logger: ILogger, private readonly githubGateway: IGithubGateway) { }
 
     async auth(code: string): Promise<{ accessToken: string, refreshToken: string }> {
         this.logger.log("Acessing Github Gateway for user authentication");

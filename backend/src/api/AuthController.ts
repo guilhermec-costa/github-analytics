@@ -1,13 +1,9 @@
 import { z } from "zod";
 import { UserService } from "../application/service/UserService";
-import { inject } from "../infra/DI/DIContainer";
 import { IHttpServer } from "./IHttpServer";
 
 export class AuthController {
-  @inject("userService")
-  private readonly userService!: UserService;
-
-  constructor(private readonly httpServer: IHttpServer) { }
+  constructor(private readonly httpServer: IHttpServer,  private readonly userService: UserService) { }
 
   public setupRoutes() {
     this.httpServer.register('post', 'auth', async ({ body }) => {
