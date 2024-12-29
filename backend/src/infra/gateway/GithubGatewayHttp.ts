@@ -1,6 +1,8 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { IGithubGateway } from "../../application/gateway/IGithubGateway";
 import { BadRequest, InternalServerError, NotFound, Unauthorized } from "../../utils/Exceptions";
+import { GitHubUser } from "../../utils/types";
+import { z } from "zod";
 
 export class GithubGatewayHttp implements IGithubGateway {
     private readonly GITHUB_BASE_URL = "https://github.com"
@@ -43,9 +45,9 @@ export class GithubGatewayHttp implements IGithubGateway {
         return response.data;
     }
 
-    async getUserInformation(userToken: string): Promise<any> {
+    async getUserInformation(userToken: string): Promise<GitHubUser> {
         const url = "/user";
-        const response = await this.githubApiAxiosInstance.get(url, {
+        const response = await this.githubApiAxiosInstance.get<GitHubUser>(url, {
             headers: {
                 "Authorization": userToken
             }

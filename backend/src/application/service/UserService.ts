@@ -1,4 +1,5 @@
 import { ILogger } from "../../infra/config/ILogger";
+import { GitHubUser } from "../../utils/types";
 import { IGithubGateway } from "../gateway/IGithubGateway";
 
 export class UserService {
@@ -14,7 +15,7 @@ export class UserService {
         return await this.githubGateway.refreshToken(token);
     }
 
-    async getUserInformation(token: string): Promise<any> {
+    async getUserInformation(token: string): Promise<GitHubUser> {
       this.logger.log("Requesting Github Gateway information about for authorized user");
       return await this.githubGateway.getUserInformation(token);
     }
