@@ -1,3 +1,4 @@
+import cors from '@fastify/cors';
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, HTTPMethods } from "fastify";
 import { ControllerCallbackInput, ControllerResponse, IHttpServer } from "../../api/IHttpServer";
 import { BaseException } from "../../utils/Exceptions";
@@ -8,6 +9,9 @@ export class FastifyAdapter implements IHttpServer {
 
     constructor() {
         this.app = fastify();
+        this.app.register(cors, {
+            origin: true
+        })
         this.routePrefix = "";
         this.setErrorMiddleware();
     }
