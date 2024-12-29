@@ -1,3 +1,3 @@
 export interface IGithubGateway {
-    auth(code: string): Promise<string>
+    auth(code: string): Promise<{ accessToken: string, refreshToken: string }>
 }

@@ -5,7 +5,7 @@ export class GithubGatewayHttp implements IGithubGateway {
     constructor(private readonly GITHUB_ACCESS_TOKEN_URL: string, private readonly GITHUB_CLIENT_SECRET: string, private readonly GITHUB_CLIENT_ID: string) {
     }
 
-    async auth(code: string): Promise<string> {
+    async auth(code: string): Promise<{ accessToken: string, refreshToken: string }> {
         const url = this.GITHUB_ACCESS_TOKEN_URL;
         const response = await axios.post(url, null, {
             params: {
@@ -18,8 +18,8 @@ export class GithubGatewayHttp implements IGithubGateway {
             },
         });
 
-        const token = response.data.access_token
-        return token
+        const { access_token, refresh_token } = response.data;
+        return { accessToken: access_token, refreshToken: refresh_token };
     }
 
 }

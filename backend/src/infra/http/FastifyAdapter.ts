@@ -3,11 +3,13 @@ import { ControllerCallbackInput, ControllerResponse, IHttpServer } from "../../
 
 export class FastifyAdapter implements IHttpServer {
     private app: FastifyInstance
-    private readonly API_VERSION = 1
+    private routePrefix: string;
 
     constructor() {
         this.app = fastify();
+        this.routePrefix = "";
     }
+
 
     listen(port: number): void {
         this.app.listen({
@@ -17,8 +19,12 @@ export class FastifyAdapter implements IHttpServer {
         });
     }
 
-    register(method: string, url: string, callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>, allowAnonymous?: boolean): void {
-        const fullUrl = `/api/v${this.API_VERSION}/${url}`;
+    addRoutePrefix(prefix: string): void {
+      this.routePrefix = prefix;
+    }
+
+    register(method: string, url: string, callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>): void {
+        const fullUrl = `/${this.routePrefix}/${url}`;
         this.app.route({
             method: method as HTTPMethods,
             url: fullUrl,

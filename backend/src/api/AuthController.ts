@@ -9,10 +9,13 @@ export class AuthController {
                 code: z.string().nonempty()
             }) 
             const payload = schema.parse(body)
-            const token = userService.auth(payload.code)
+            const {accessToken, refreshToken} = await userService.auth(payload.code)
             return {
                 status: 200, 
-                data: token
+                data: {
+                  accessToken, 
+                  refreshToken
+                }
             }
         })
     }   
