@@ -24,8 +24,6 @@ export default class DIContainer {
 
 export function inject<T>(name: string) {
     return function (target: any, propertyKey: string) {
-        console.log(target)
-        console.log(propertyKey)
         target[propertyKey] = new Proxy({}, {
             get(_,propertyKey) {
                 const dependency = DIContainer.getInstance().inject<T>(name)
