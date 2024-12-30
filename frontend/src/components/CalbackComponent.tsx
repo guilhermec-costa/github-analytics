@@ -29,5 +29,5 @@ export function CallbackComponent() {
     fetchAuth();
   }, [location.search, navigate]);
 
-  return <></>;
+  return <>Rota de callback</>;
 }

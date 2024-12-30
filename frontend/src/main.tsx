@@ -1,30 +1,16 @@
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { App } from "./App.tsx";
-import { CallbackComponent } from "./components/CalbackComponent.tsx";
-import { Login } from "./components/Login.tsx";
-import { PrivateComponent } from "./components/PrivateComponent.tsx";
 import "./index.css";
+import React from "react";
 
-const router = createBrowserRouter([
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/callback",
-    element: <CallbackComponent />,
-  },
-  {
-    path: "/",
-    element: (
-      <PrivateComponent>
-        <App />
-      </PrivateComponent>
-    ),
-  },
-]);
+const env = import.meta.env.VITE_ENVIRONMENT;
 
 createRoot(document.getElementById("root")!).render(
-  <RouterProvider router={router} />,
+  env == "DEVELOPMENT" || env == "HML" ? (
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  ) : (
+    <App />
+  ),
 );
