@@ -1,7 +1,9 @@
+import { HttpMethod } from "../utils/HttpMethod";
+
 export interface IHttpServer {
   listen(port: number): void;
   register(
-    method: string,
+    method: HttpMethod,
     url: string,
     callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
   ): void;
