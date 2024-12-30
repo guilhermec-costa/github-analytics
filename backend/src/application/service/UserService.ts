@@ -56,12 +56,10 @@ export class UserService {
       pushed_at: repo.pushed_at,
       language: repo.language,
       license: repo.license ? repo.license : null,
-      owner: repo.owner
-        ? {
-            login: repo.owner.login,
-            avatar_url: repo.owner.avatar_url,
-          }
-        : {},
+      owner: {
+        login: repo.owner.login,
+        avatar_url: repo.owner.avatar_url,
+      },
       html_url: repo.html_url,
       clone_url: repo.clone_url,
       ssh_url: repo.ssh_url,
