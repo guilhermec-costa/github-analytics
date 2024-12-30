@@ -13,12 +13,15 @@ export function CallbackComponent() {
 
       if (code) {
         try {
-            const response = await axios.post("http://localhost:3333/api/v1/auth", {code});
-            localStorage.setItem("accessToken", response.data.accessToken);
-            localStorage.setItem("refreshToken", response.data.refreshToken);
-            navigate("/");
+          const response = await axios.post(
+            "http://localhost:3333/api/v1/auth",
+            { code },
+          );
+          localStorage.setItem("accessToken", response.data.accessToken);
+          localStorage.setItem("refreshToken", response.data.refreshToken);
+          navigate("/");
         } catch {
-            navigate("/login");
+          navigate("/login");
         }
       }
     };
