@@ -74,7 +74,9 @@ export class FastifyAdapter implements IHttpServer {
         reply.status(statusCode).send({
           date: new Date().toISOString(),
           path: req.originalUrl,
-          message: defaultMessage,
+          message: error.postParseAsJson
+            ? JSON.parse(defaultMessage)
+            : defaultMessage,
         });
       },
     );

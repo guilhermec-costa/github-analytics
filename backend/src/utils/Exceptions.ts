@@ -1,15 +1,23 @@
+import { HttpStatus } from "./HttpStatus";
+
 export abstract class BaseException extends Error {
   readonly statusCode: number;
+  public readonly postParseAsJson: boolean;
 
-  constructor(message: string, statusCode: number) {
+  constructor(
+    message: string,
+    statusCode: number,
+    postParseAsJson: boolean = false,
+  ) {
     super(message);
     this.statusCode = statusCode;
+    this.postParseAsJson = postParseAsJson;
   }
 }
 
 export class BadRequest extends BaseException {
-  constructor(message: string) {
-    super(message, HttpStatus.BAD_REQUEST);
+  constructor(message: string, postParseAsJson: boolean = false) {
+    super(message, HttpStatus.BAD_REQUEST, postParseAsJson);
   }
 }
 

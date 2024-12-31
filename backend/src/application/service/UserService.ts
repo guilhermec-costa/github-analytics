@@ -65,4 +65,12 @@ export class UserService {
       ssh_url: repo.ssh_url,
     }));
   }
+
+  async getRepoBytes(repoOwner: string, repoName: string) {
+    const response = await this.githubGateway.getLanguageBytesPerRepo(
+      repoOwner,
+      repoName,
+    );
+    return response;
+  }
 }
