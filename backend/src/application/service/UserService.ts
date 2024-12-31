@@ -66,8 +66,9 @@ export class UserService {
     }));
   }
 
-  async getRepoBytes(repoOwner: string, repoName: string) {
-    const response = await this.githubGateway.getLanguageBytesPerRepo(
+  async getRepositoryBytesByLanguage(repoOwner: string, repoName: string) {
+    this.logger.log("Requesting Github Gateway for languages used by repo");
+    const response = await this.githubGateway.getRepositoryBytesByLanguage(
       repoOwner,
       repoName,
     );
