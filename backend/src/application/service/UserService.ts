@@ -66,13 +66,12 @@ export class UserService {
     }));
   }
 
-  async getRepositoryBytesByLanguage(
+  async getSingleRepositoryLanguages(
     repoOwner: string,
     repoName: string,
     token: string,
   ) {
-    this.logger.log("Requesting Github Gateway for languages used by repo");
-    const response = await this.githubGateway.getRepositoryBytesByLanguage(
+    const response = await this.githubGateway.getRepositoryLanguages(
       repoOwner,
       repoName,
       token,
@@ -81,19 +80,24 @@ export class UserService {
   }
 
   async getUserRepositoriesLanguages(token: string, repoOwner: string) {
+    this.logger.log(
+      "Requesting Github Gateway for languages from user repositories",
+    );
     const userRepos = await this.getUserRepositories(token);
+    const awaitableRequests: Promise<{ [language: string]: number }>[] = [];
     const parsedResponse = [];
 
     for (const repo of userRepos) {
-      const repoLanguages = await this.getRepositoryBytesByLanguage(
-        repoOwner,
-        repo.name!,
-        token,
+      awaitableRequests.push(
+        this.getSingleRepositoryLanguages(repoOwner, repo.name!, token),
       );
+    }
 
+    const resolvedRequests = await Promise.all(awaitableRequests);
+    for (const [idx, item] of resolvedRequests.entries()) {
       parsedResponse.push({
-        repoName: repo.name!,
-        languages: repoLanguages,
+        repoName: userRepos[idx].name,
+        languages: item,
       });
     }
 

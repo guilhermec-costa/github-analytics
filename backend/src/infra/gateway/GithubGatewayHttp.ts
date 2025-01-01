@@ -40,7 +40,7 @@ export class GithubGatewayHttp implements IGithubGateway {
     );
   }
 
-  async getRepositoryBytesByLanguage(
+  async getRepositoryLanguages(
     repoOwner: string,
     repoName: string,
     token: string,

@@ -98,7 +98,7 @@ export class AuthController {
 
     this.httpServer.register(
       HttpMethod.GET,
-      "repoBytes/owner/:repoOwner/name/:repoName",
+      "repoLanguages/owner/:repoOwner/name/:repoName",
       async ({ params, headers }) => {
         const { repoName, repoOwner } = ZodParserInterceptor.parseWithSchema(
           repoBytesSchema,
@@ -110,7 +110,7 @@ export class AuthController {
           headers,
         );
 
-        const userRepos = await this.userService.getRepositoryBytesByLanguage(
+        const userRepos = await this.userService.getSingleRepositoryLanguages(
           repoOwner,
           repoName,
           authorization,

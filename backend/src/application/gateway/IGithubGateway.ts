@@ -7,7 +7,7 @@ export interface IGithubGateway {
   ): Promise<{ accessToken: string; refreshToken: string }>;
   getUserInformation(userToken: string): Promise<GitHubUser>;
   getUserRepositories(userToken: string): Promise<GitHubRepository[]>;
-  getRepositoryBytesByLanguage(
+  getRepositoryLanguages(
     repoOwner: string,
     repoName: string,
     token: string,
