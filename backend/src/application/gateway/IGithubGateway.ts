@@ -10,5 +10,6 @@ export interface IGithubGateway {
   getRepositoryBytesByLanguage(
     repoOwner: string,
     repoName: string,
+    token: string,
   ): Promise<{ [language: string]: number }>;
 }

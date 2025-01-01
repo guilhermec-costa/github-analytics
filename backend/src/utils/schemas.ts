@@ -18,6 +18,10 @@ export const repoBytesSchema = z.object({
   repoOwner: z.string().nonempty(),
 });
 
+export const repoLanguageSchema = z.object({
+  repoOwner: z.string().nonempty(),
+});
+
 export class ZodParserInterceptor {
   static parseWithSchema<T extends ZodRawShape>(
     object: ZodObject<T>,

@@ -66,12 +66,39 @@ export class UserService {
     }));
   }
 
-  async getRepositoryBytesByLanguage(repoOwner: string, repoName: string) {
+  async getRepositoryBytesByLanguage(
+    repoOwner: string,
+    repoName: string,
+    token: string,
+  ) {
     this.logger.log("Requesting Github Gateway for languages used by repo");
     const response = await this.githubGateway.getRepositoryBytesByLanguage(
       repoOwner,
       repoName,
+      token,
     );
     return response;
+  }
+
+  async getUserRepositoriesLanguages(token: string, repoOwner: string) {
+    const userRepos = await this.getUserRepositories(token);
+    const mappedResponse = new Map<string, { [language: string]: number }>();
+
+    for (const repo of userRepos) {
+      const repoLanguages = await this.getRepositoryBytesByLanguage(
+        repoOwner,
+        repo.name!,
+        token,
+      );
+
+      mappedResponse.set(repo.name!, repoLanguages);
+    }
+
+    return Array.from(mappedResponse.entries()).map(
+      ([repoName, languages]) => ({
+        repoName,
+        languages,
+      }),
+    );
   }
 }

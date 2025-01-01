@@ -43,9 +43,14 @@ export class GithubGatewayHttp implements IGithubGateway {
   async getRepositoryBytesByLanguage(
     repoOwner: string,
     repoName: string,
+    token: string,
   ): Promise<{ [language: string]: number }> {
     const url = `/repos/${repoOwner}/${repoName}/languages`;
-    const response = await this.githubApiAxiosInstance.get(url);
+    const response = await this.githubApiAxiosInstance.get(url, {
+      headers: {
+        Authorization: token,
+      },
+    });
     return response.data;
   }
 

@@ -5,6 +5,7 @@ import {
   authorizeGithubUserSchema,
   refreshTokenSchema,
   repoBytesSchema,
+  repoLanguageSchema,
   ZodParserInterceptor,
 } from "../utils/schemas";
 import { HttpStatus } from "../utils/HttpStatus";
@@ -98,20 +99,53 @@ export class AuthController {
     this.httpServer.register(
       HttpMethod.GET,
       "repoBytes/owner/:repoOwner/name/:repoName",
-      async ({ params }) => {
+      async ({ params, headers }) => {
         const { repoName, repoOwner } = ZodParserInterceptor.parseWithSchema(
           repoBytesSchema,
           params,
         );
 
+        const { authorization } = ZodParserInterceptor.parseWithSchema(
+          authHeaderSchema,
+          headers,
+        );
+
         const userRepos = await this.userService.getRepositoryBytesByLanguage(
           repoOwner,
           repoName,
+          authorization,
         );
 
         return {
           status: HttpStatus.OK,
           data: userRepos,
+        };
+      },
+    );
+
+    this.httpServer.register(
+      HttpMethod.GET,
+      "repoLanguages/owner/:repoOwner",
+      async ({ params, headers }) => {
+        const { repoOwner } = ZodParserInterceptor.parseWithSchema(
+          repoLanguageSchema,
+          params,
+        );
+
+        const { authorization } = ZodParserInterceptor.parseWithSchema(
+          authHeaderSchema,
+          headers,
+        );
+
+        const repoLanguages =
+          await this.userService.getUserRepositoriesLanguages(
+            authorization,
+            repoOwner,
+          );
+
+        return {
+          status: HttpStatus.OK,
+          data: repoLanguages,
         };
       },
     );
