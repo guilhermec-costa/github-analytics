@@ -1,12 +1,12 @@
 import axios from "axios";
-import { useEffect } from "react";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export function CallbackComponent() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  React.useEffect(() => {
     const fetchAuth = async () => {
       const queryParams = new URLSearchParams(location.search);
       const code = queryParams.get("code");

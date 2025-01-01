@@ -82,7 +82,7 @@ export class UserService {
 
   async getUserRepositoriesLanguages(token: string, repoOwner: string) {
     const userRepos = await this.getUserRepositories(token);
-    const mappedResponse = new Map<string, { [language: string]: number }>();
+    const parsedResponse = [];
 
     for (const repo of userRepos) {
       const repoLanguages = await this.getRepositoryBytesByLanguage(
@@ -91,14 +91,12 @@ export class UserService {
         token,
       );
 
-      mappedResponse.set(repo.name!, repoLanguages);
+      parsedResponse.push({
+        repoName: repo.name!,
+        languages: repoLanguages,
+      });
     }
 
-    return Array.from(mappedResponse.entries()).map(
-      ([repoName, languages]) => ({
-        repoName,
-        languages,
-      }),
-    );
+    return parsedResponse;
   }
 }
