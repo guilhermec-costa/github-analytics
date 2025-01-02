@@ -18,13 +18,10 @@ export class AuthService {
     }
   }
 
-  static async getLoggedUserInformation(token: string) {
-    const response = await BackendHttpClient.get("userInfo", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  static isAuthorized() {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
 
-    return response.data;
+    return accessToken && refreshToken;
   }
 }
