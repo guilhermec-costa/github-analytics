@@ -5,9 +5,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "@/components/ui/card";
 
-export function Login() {
+export default function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-[350px]">

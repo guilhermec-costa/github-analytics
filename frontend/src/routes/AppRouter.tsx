@@ -1,23 +1,30 @@
-import { CallbackComponent } from "@/components/CalbackComponent";
-import { Login } from "@/components/Login";
 import { PrivateComponent } from "@/components/PrivateComponent";
-import Home from "@/pages/home";
 import { createBrowserRouter } from "react-router";
+import { lazy } from "react";
+
+// eslint-disable-next-line react-refresh/only-export-components
+const HomePage = lazy(() => import("@/pages/Home"));
+// eslint-disable-next-line react-refresh/only-export-components
+const LoginPage = lazy(() => import("@/pages/Login"));
+// eslint-disable-next-line react-refresh/only-export-components
+const CallbackPage = lazy(
+  () => import("@/features/authentication/components/CalbackComponent"),
+);
 
 export const router = createBrowserRouter([
   {
     path: "/login",
-    element: <Login />,
+    element: <LoginPage />,
   },
   {
     path: "/callback",
-    element: <CallbackComponent />,
+    element: <CallbackPage />,
   },
   {
     path: "/",
     element: (
       <PrivateComponent>
-        <Home />
+        <HomePage />
       </PrivateComponent>
     ),
   },

@@ -1,3 +1,10 @@
+import RepositoriesLanguages from "@/components/RepositoriesLanguages";
+
 export default function Home() {
-  return <h1>Home page</h1>;
+  console.log("rendering home");
+  return (
+    <div style={{ padding: "20px" }}>
+      <RepositoriesLanguages />
+    </div>
+  );
 }
