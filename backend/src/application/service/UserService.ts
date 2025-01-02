@@ -76,6 +76,7 @@ export class UserService {
       repoName,
       token,
     );
+
     return response;
   }
 
@@ -84,8 +85,8 @@ export class UserService {
       "Requesting Github Gateway for languages from user repositories",
     );
     const userRepos = await this.getUserRepositories(token);
-    const awaitableRequests: Promise<{ [language: string]: number }>[] = [];
-    const parsedResponse = [];
+    const awaitableRequests = [];
+    const parsedResponse: Record<string, any> = {};
 
     for (const repo of userRepos) {
       awaitableRequests.push(
@@ -94,11 +95,16 @@ export class UserService {
     }
 
     const resolvedRequests = await Promise.all(awaitableRequests);
+
     for (const [idx, item] of resolvedRequests.entries()) {
-      parsedResponse.push({
-        repoName: userRepos[idx].name,
-        languages: item,
-      });
+      const repoName = userRepos[idx].name!;
+
+      parsedResponse[repoName] = Object.entries(item).map(
+        ([language, count]) => ({
+          language,
+          count,
+        }),
+      );
     }
 
     return parsedResponse;

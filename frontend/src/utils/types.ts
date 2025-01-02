@@ -1,7 +1,9 @@
-export interface repositoryLanguage {
-  repoName: string;
-  languages: { [language: string]: number };
-}
+export type LanguageCount = {
+  language: string;
+  count: number;
+};
+
+export type ProjectLanguages = Record<string, LanguageCount[]>;
 
 export type authResponse = {
   accessToken: string;
