@@ -1,14 +1,9 @@
-import useLocalStorage from "@/hooks/useLocalStorage";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthService } from "../services/authService";
 import { GithubUserService } from "@/services/githubUserService";
 
 export default function CallbackComponent() {
-  const { setValue: guardAccessToken } = useLocalStorage<string>("accessToken");
-  const { setValue: guardRefreshToken } =
-    useLocalStorage<string>("refreshToken");
-  const { setValue: guardUsername } = useLocalStorage<string>("username");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -17,11 +12,12 @@ export default function CallbackComponent() {
       try {
         const response = await AuthService.authUsingRouteLocation(location);
         if (response) {
-          guardAccessToken(response.accessToken);
-          guardRefreshToken(response.refreshToken);
+          localStorage.setItem("accessToken", response.accessToken);
+          localStorage.setItem("refreshToken", response.refreshToken);
           const userInformationResponse =
             await GithubUserService.getLoggedUserInfo(response.accessToken);
-          guardUsername(userInformationResponse.data.login);
+
+          localStorage.setItem("username", userInformationResponse.login);
           navigate("/");
         }
       } catch (error) {
@@ -30,7 +26,7 @@ export default function CallbackComponent() {
       }
     };
     fetchAuth();
-  }, [guardAccessToken, guardRefreshToken, location, navigate, guardUsername]);
+  }, [location, navigate]);
 
   return <>Callback Component</>;
 }

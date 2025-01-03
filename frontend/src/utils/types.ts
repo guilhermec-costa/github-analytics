@@ -9,3 +9,9 @@ export type authResponse = {
   accessToken: string;
   refreshToken: string;
 };
+
+export enum RepoMeasureDimension {
+  bytes = "bytes",
+  megabytes = "megabytes",
+  gigabytes = "gigabytes",
+}
