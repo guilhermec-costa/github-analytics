@@ -6,7 +6,7 @@ import { GithubUserProvider } from "./context/githubUserContext";
 export function App() {
   return (
     <GithubUserProvider>
-      <RouterProvider router={router} />;
+      <RouterProvider router={router} />
     </GithubUserProvider>
   );
 }
