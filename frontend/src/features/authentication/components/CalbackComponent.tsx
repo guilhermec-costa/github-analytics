@@ -2,10 +2,12 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthService } from "../services/authService";
 import { GithubUserService } from "@/services/githubUserService";
+import { useGithubUser } from "@/context/githubUserContext";
 
 export default function CallbackComponent() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { updateUserDetails } = useGithubUser();
 
   React.useEffect(() => {
     const fetchAuth = async () => {
@@ -17,7 +19,7 @@ export default function CallbackComponent() {
           const userInformationResponse =
             await GithubUserService.getLoggedUserInfo(response.accessToken);
 
-          localStorage.setItem("username", userInformationResponse.login);
+          updateUserDetails(userInformationResponse);
           navigate("/");
         }
       } catch (error) {

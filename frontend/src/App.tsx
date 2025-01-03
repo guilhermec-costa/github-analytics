@@ -1,7 +1,12 @@
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes/AppRouter";
 import "@/App.css";
+import { GithubUserProvider } from "./context/githubUserContext";
 
 export function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <GithubUserProvider>
+      <RouterProvider router={router} />;
+    </GithubUserProvider>
+  );
 }

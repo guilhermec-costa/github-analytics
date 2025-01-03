@@ -1,6 +1,11 @@
 import useRepositoriesLangugaes from "@/api/queries/useRepositoriesLanguages";
-import { Bar, BarChart, XAxis, YAxis, Tooltip } from "recharts";
-import { ChartConfig, ChartContainer, ChartTooltipContent } from "./ui/chart";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "./ui/chart";
 import {
   Select,
   SelectContent,
@@ -18,7 +23,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function RepositoriesLanguages() {
+export default function RepositoriesLanguages({
+  sectionId,
+}: {
+  sectionId: string;
+}) {
   const { data, isLoading, isError } = useRepositoriesLangugaes();
 
   const [selectedRepository, setSelectedRepository] =
@@ -43,11 +52,15 @@ export default function RepositoriesLanguages() {
 
   if (isLoading)
     return <h2 className="text-foreground">Loading repositories...</h2>;
-  if (isError)
+  if (isError) {
     return <h2 className="text-foreground">Failed to fetch repositories</h2>;
+  }
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-8 bg-background rounded-xl shadow-lg w-full max-w-screen-lg mx-auto">
+    <div
+      id={sectionId}
+      className="flex flex-col items-center space-y-6 p-8 bg-background rounded-xl shadow-lg w-full max-w-screen-lg mx-auto"
+    >
       <h1 className="text-3xl font-semibold text-foreground">
         Repository Languages
       </h1>
@@ -100,8 +113,16 @@ export default function RepositoriesLanguages() {
                 tickLine={false}
                 tickMargin={10}
               />
-              <Tooltip content={<ChartTooltipContent hideLabel />} />
-              <Bar dataKey="count" fill="hsl(var(--accent))" radius={10} />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Bar
+                dataKey="count"
+                fill="hsl(var(--accent))"
+                radius={10}
+                fontSize={16}
+              />
             </BarChart>
           </ChartContainer>
         </div>

@@ -9,7 +9,7 @@ import {
 
 export default function Login() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-slate-200 to-slate-400">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-background to-secondary">
       <Card className="w-full sm:w-[400px] shadow-xl rounded-2xl overflow-hidden bg-white">
         <CardHeader className="text-center p-8">
           <CardTitle className="text-2xl font-bold text-gray-800">
