@@ -1,4 +1,3 @@
-import useRepositoriesLangugaes from "@/api/queries/useRepositoriesLanguages";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 import {
   ChartConfig,
@@ -15,6 +14,7 @@ import {
 } from "./ui/select";
 import React from "react";
 import { LanguageCount, RepoMeasureDimension } from "@/utils/types";
+import useRepositoriesLanguages from "@/api/queries/useRepositoriesLanguages";
 
 const chartConfig = {
   desktop: {
@@ -28,7 +28,7 @@ export default function RepositoriesLanguages({
 }: {
   sectionId: string;
 }) {
-  const { data, isLoading, isError } = useRepositoriesLangugaes();
+  const useRepos = useRepositoriesLanguages();
 
   const [selectedRepository, setSelectedRepository] =
     React.useState<LanguageCount[]>();
@@ -48,11 +48,11 @@ export default function RepositoriesLanguages({
         break;
       }
     }
-  }, [selectedDimension, data]);
+  }, [selectedDimension, useRepos.data]);
 
-  if (isLoading)
+  if (useRepos.isLoading)
     return <h2 className="text-foreground">Loading repositories...</h2>;
-  if (isError) {
+  if (useRepos.isError) {
     return <h2 className="text-foreground">Failed to fetch repositories</h2>;
   }
 
@@ -66,16 +66,17 @@ export default function RepositoriesLanguages({
       </h1>
 
       <div className="w-full flex justify-center space-x-6">
-        <Select onValueChange={(e) => setSelectedRepository(data![e])}>
+        <Select onValueChange={(e) => setSelectedRepository(useRepos.data![e])}>
           <SelectTrigger className="border border-border rounded-md p-2">
             <SelectValue placeholder="Select Repository" />
           </SelectTrigger>
           <SelectContent className="bg-popover text-popover-foreground">
-            {Object.keys(data!).map((repoName) => (
-              <SelectItem value={repoName} key={repoName}>
-                {repoName}
-              </SelectItem>
-            ))}
+            {useRepos.data &&
+              Object.keys(useRepos.data!).map((repoName) => (
+                <SelectItem value={repoName} key={repoName}>
+                  {repoName}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
 

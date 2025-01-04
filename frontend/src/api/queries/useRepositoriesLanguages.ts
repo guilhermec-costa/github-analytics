@@ -1,19 +1,14 @@
-import { useGithubUser } from "@/context/githubUserContext";
 import { GithubUserService } from "@/services/githubUserService";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import useUserInformation from "./useUserInformation";
 
 export default function useRepositoriesLanguages() {
-  const { userDetails } = useGithubUser();
-
-  React.useEffect(() => {
-    console.log(userDetails);
-  }, [userDetails]);
+  const userInfo = useUserInformation();
 
   return useQuery({
-    queryKey: ["repoLanguages", userDetails?.login],
+    queryKey: ["repoLanguages"],
     queryFn: () =>
-      GithubUserService.getRepositoriesAndLanguages(userDetails.login),
-    enabled: !!userDetails?.login,
+      GithubUserService.getRepositoriesAndLanguages(userInfo.data.login),
+    enabled: userInfo.status === "success",
   });
 }
