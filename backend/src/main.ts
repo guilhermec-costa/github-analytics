@@ -5,6 +5,8 @@ import { UserService } from "./application/service/UserService";
 import WinstonLogger from "./infra/config/WinstonLogger";
 import { GithubGatewayHttp } from "./infra/gateway/GithubGatewayHttp";
 import { FastifyAdapter } from "./infra/http/FastifyAdapter";
+import { RepositoryController } from "./api/RepositoryController";
+import { UserController } from "./api/UserController";
 
 const port = env.PORT;
 const httpServer = new FastifyAdapter();
@@ -18,6 +20,12 @@ const githubGateway = new GithubGatewayHttp(
 );
 const userService = new UserService(logger, githubGateway);
 
-new AuthController(httpServer, userService).setupRoutes();
+new AuthController(httpServer, userService).setPrefix("auth").setupRoutes();
+
+new RepositoryController(httpServer, userService)
+  .setPrefix("repo")
+  .setupRoutes();
+
+new UserController(httpServer, userService).setPrefix("user").setupRoutes();
 
 httpServer.listen(port);

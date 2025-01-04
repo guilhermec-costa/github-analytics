@@ -4,7 +4,7 @@ import { ProjectLanguages } from "@/utils/types";
 export class GithubUserService {
   static async getRepositoriesAndLanguages(username: string) {
     const data = await BackendHttpClient.get<ProjectLanguages>(
-      `repoLanguages/owner/${username}`,
+      `repo/languages/owner/${username}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -16,7 +16,7 @@ export class GithubUserService {
   }
 
   static async getLoggedUserInfo(token: string) {
-    const data = await BackendHttpClient.get("userInfo", {
+    const data = await BackendHttpClient.get("user/info", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

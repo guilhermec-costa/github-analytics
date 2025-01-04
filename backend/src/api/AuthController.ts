@@ -1,24 +1,28 @@
 import { UserService } from "../application/service/UserService";
 import { IHttpServer } from "./IHttpServer";
 import {
-  authHeaderSchema,
   authorizeGithubUserSchema,
   refreshTokenSchema,
-  repoBytesSchema,
-  repoLanguageSchema,
   ZodParserInterceptor,
 } from "../utils/schemas";
 import { HttpStatus } from "../utils/HttpStatus";
 import { HttpMethod } from "../utils/HttpMethod";
+import { BaseController } from "./BaseController";
 
-export class AuthController {
+export class AuthController extends BaseController {
   constructor(
-    private readonly httpServer: IHttpServer,
+    httpServer: IHttpServer,
     private readonly userService: UserService,
-  ) {}
+  ) {
+    super(httpServer);
+  }
 
   public setupRoutes() {
-    this.httpServer.register(HttpMethod.POST, "auth", async ({ body }) => {
+    if (!this.prefix) {
+      this.prefix = this.fallbackPrefix;
+    }
+
+    this.httpServer.register(HttpMethod.POST, this.prefix, async ({ body }) => {
       const payload = ZodParserInterceptor.parseWithSchema(
         authorizeGithubUserSchema,
         body,
@@ -38,7 +42,7 @@ export class AuthController {
 
     this.httpServer.register(
       HttpMethod.POST,
-      "auth/refresh",
+      `${this.prefix}/refresh`,
       async ({ body }) => {
         const payload = ZodParserInterceptor.parseWithSchema(
           refreshTokenSchema,
@@ -54,125 +58,6 @@ export class AuthController {
             accessToken,
             refreshToken,
           },
-        };
-      },
-    );
-
-    this.httpServer.register(
-      HttpMethod.GET,
-      "userInfo",
-      async ({ headers }) => {
-        const reqHeaders = ZodParserInterceptor.parseWithSchema(
-          authHeaderSchema,
-          headers,
-        );
-        const userData = await this.userService.getUserInformation(
-          reqHeaders.authorization,
-        );
-
-        return {
-          status: HttpStatus.OK,
-          data: userData,
-        };
-      },
-    );
-
-    this.httpServer.register(
-      HttpMethod.GET,
-      "userRepos",
-      async ({ headers }) => {
-        const reqHeaders = ZodParserInterceptor.parseWithSchema(
-          authHeaderSchema,
-          headers,
-        );
-        const userRepos = await this.userService.getUserRepositories(
-          reqHeaders.authorization,
-        );
-
-        return {
-          status: HttpStatus.OK,
-          data: userRepos,
-        };
-      },
-    );
-
-    this.httpServer.register(
-      HttpMethod.GET,
-      "repoLanguages/owner/:repoOwner/name/:repoName",
-      async ({ params, headers }) => {
-        const { repoName, repoOwner } = ZodParserInterceptor.parseWithSchema(
-          repoBytesSchema,
-          params,
-        );
-
-        const { authorization } = ZodParserInterceptor.parseWithSchema(
-          authHeaderSchema,
-          headers,
-        );
-
-        const userRepos = await this.userService.getSingleRepositoryLanguages(
-          repoOwner,
-          repoName,
-          authorization,
-        );
-
-        return {
-          status: HttpStatus.OK,
-          data: userRepos,
-        };
-      },
-    );
-
-    this.httpServer.register(
-      HttpMethod.GET,
-      "repoLanguages/owner/:repoOwner",
-      async ({ params, headers }) => {
-        const { repoOwner } = ZodParserInterceptor.parseWithSchema(
-          repoLanguageSchema,
-          params,
-        );
-
-        const { authorization } = ZodParserInterceptor.parseWithSchema(
-          authHeaderSchema,
-          headers,
-        );
-
-        const repoLanguages =
-          await this.userService.getUserRepositoriesLanguages(
-            authorization,
-            repoOwner,
-          );
-
-        return {
-          status: HttpStatus.OK,
-          data: repoLanguages,
-        };
-      },
-    );
-
-    this.httpServer.register(
-      HttpMethod.GET,
-      "owner/:repoOwner/name/:repoName/commits",
-      async ({ headers, params }) => {
-        const { repoName, repoOwner } = ZodParserInterceptor.parseWithSchema(
-          repoBytesSchema,
-          params,
-        );
-
-        const { authorization } = ZodParserInterceptor.parseWithSchema(
-          authHeaderSchema,
-          headers,
-        );
-
-        const userRepoCommits = await this.userService.getUserRepoCommits(
-          repoOwner,
-          repoName,
-          authorization,
-        );
-
-        return {
-          status: HttpStatus.OK,
-          data: userRepoCommits,
         };
       },
     );
