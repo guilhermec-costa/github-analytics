@@ -1,4 +1,8 @@
-import { GitHubRepository, GitHubUser } from "../../utils/types";
+import {
+  CommitResponse,
+  GitHubRepository,
+  GitHubUser,
+} from "../../utils/types";
 
 export interface IGithubGateway {
   auth(code: string): Promise<{ accessToken: string; refreshToken: string }>;
@@ -12,4 +16,9 @@ export interface IGithubGateway {
     repoName: string,
     token: string,
   ): Promise<{ [language: string]: number }>;
+  getUserRepoCommits(
+    repoOwner: string,
+    repoName: string,
+    token: string,
+  ): Promise<CommitResponse[]>;
 }

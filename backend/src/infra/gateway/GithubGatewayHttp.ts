@@ -6,7 +6,11 @@ import {
   NotFound,
   Unauthorized,
 } from "../../utils/Exceptions";
-import { GitHubRepository, GitHubUser } from "../../utils/types";
+import {
+  CommitResponse,
+  GitHubRepository,
+  GitHubUser,
+} from "../../utils/types";
 
 export class GithubGatewayHttp implements IGithubGateway {
   private readonly GITHUB_BASE_URL = "https://github.com";
@@ -38,6 +42,24 @@ export class GithubGatewayHttp implements IGithubGateway {
       (response) => this.handleSucess(response),
       (error) => this.handleError(error),
     );
+  }
+
+  async getUserRepoCommits(
+    repoOwner: string,
+    repoName: string,
+    token: string,
+  ): Promise<CommitResponse[]> {
+    const url = `/repos/${repoOwner}/${repoName}/commits`;
+    const response = await this.githubApiAxiosInstance.get<CommitResponse[]>(
+      url,
+      {
+        headers: {
+          Authorization: token,
+        },
+      },
+    );
+
+    return response.data;
   }
 
   async getRepositoryLanguages(

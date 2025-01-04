@@ -149,5 +149,32 @@ export class AuthController {
         };
       },
     );
+
+    this.httpServer.register(
+      HttpMethod.GET,
+      "owner/:repoOwner/name/:repoName/commits",
+      async ({ headers, params }) => {
+        const { repoName, repoOwner } = ZodParserInterceptor.parseWithSchema(
+          repoBytesSchema,
+          params,
+        );
+
+        const { authorization } = ZodParserInterceptor.parseWithSchema(
+          authHeaderSchema,
+          headers,
+        );
+
+        const userRepoCommits = await this.userService.getUserRepoCommits(
+          repoOwner,
+          repoName,
+          authorization,
+        );
+
+        return {
+          status: HttpStatus.OK,
+          data: userRepoCommits,
+        };
+      },
+    );
   }
 }

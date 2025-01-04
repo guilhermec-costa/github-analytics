@@ -1,10 +1,12 @@
 import { ILogger } from "../../infra/config/ILogger";
 import {
+  CommitResponse,
   GitHubRepository,
   GitHubUser,
   RecursivePartial,
 } from "../../utils/types";
 import { IGithubGateway } from "../gateway/IGithubGateway";
+import * as moment from "moment";
 
 export class UserService {
   constructor(
@@ -108,5 +110,42 @@ export class UserService {
     }
 
     return parsedResponse;
+  }
+
+  async getUserRepoCommits(
+    repoOwner: string,
+    repoName: string,
+    token: string,
+  ): Promise<CommitResponse[]> {
+    const userRepoCommits = await this.githubGateway.getUserRepoCommits(
+      repoOwner,
+      repoName,
+      token,
+    );
+
+    const groupedData: any = {};
+    for (const commit of userRepoCommits) {
+      const committedAt = moment
+        .default(commit.commit.author.date)
+        .format("YYYY-MM-DD");
+
+      if (!groupedData[committedAt]) {
+        groupedData[committedAt] = 1;
+        continue;
+      }
+
+      groupedData[committedAt] += 1;
+    }
+
+    const parsedGroupedData: any = {};
+    for (const date of Object.keys(groupedData)) {
+      const nrCommits = groupedData[date];
+      parsedGroupedData[date] = {
+        commits: nrCommits,
+        pctTotal: ((nrCommits / userRepoCommits.length) * 100).toFixed(2),
+      };
+    }
+
+    return parsedGroupedData;
   }
 }

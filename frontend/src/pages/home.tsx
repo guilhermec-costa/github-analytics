@@ -1,12 +1,24 @@
-import RepositoriesLanguages from "@/components/RepositoriesLanguages";
+import useUserInformation from "@/api/queries/useUserInformation";
+import RepositoriesLanguages from "@/features/repositories/components/RepositoriesLanguages";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Settings } from "lucide-react";
+import React from "react";
 
 export default function Home() {
+  const userInfo = useUserInformation();
+
+  const [username, setUsername] = React.useState<string>("");
+
+  React.useEffect(() => {
+    if (userInfo.status === "success") {
+      setUsername(userInfo.data.name);
+    }
+  }, [userInfo]);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-6">
       {/* <DashboardAnchors /> */}
@@ -20,7 +32,8 @@ export default function Home() {
       </Popover>
       <div className="w-full max-w-screen-lg p-8 bg-card rounded-lg shadow-lg">
         <h1 className="text-4xl font-bold text-center mb-6">
-          Welcome to the Dashboard
+          Welcome to the Dashboard,{" "}
+          <span className="text-muted-foreground">{username}</span>
         </h1>
         <RepositoriesLanguages sectionId={"repository-languages"} />
       </div>
