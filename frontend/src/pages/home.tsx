@@ -21,7 +21,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-6">
-      {/* <DashboardAnchors /> */}
       <Popover>
         <PopoverTrigger>
           <Settings className="absolute right-5 top-5 hover:cursor-pointer" />
