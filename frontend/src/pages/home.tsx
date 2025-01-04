@@ -1,5 +1,4 @@
 import useUserInformation from "@/api/queries/useUserInformation";
-import RepositoriesLanguages from "@/features/repositories/components/RepositoriesLanguages";
 import {
   Popover,
   PopoverContent,
@@ -7,6 +6,7 @@ import {
 } from "@/components/ui/popover";
 import { Settings } from "lucide-react";
 import React from "react";
+import RepositoriesMetrics from "@/features/repositories/components/RepositoriesMetrics";
 
 export default function Home() {
   const userInfo = useUserInformation();
@@ -35,7 +35,7 @@ export default function Home() {
           Welcome to the Dashboard,{" "}
           <span className="text-muted-foreground">{username}</span>
         </h1>
-        <RepositoriesLanguages sectionId={"repository-languages"} />
+        <RepositoriesMetrics sectionId={"repository-languages"} />
       </div>
     </div>
   );

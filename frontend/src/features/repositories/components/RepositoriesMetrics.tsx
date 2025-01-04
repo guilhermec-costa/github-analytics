@@ -1,10 +1,3 @@
-import { Bar, BarChart, XAxis, YAxis } from "recharts";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import {
   Select,
   SelectContent,
@@ -15,15 +8,10 @@ import {
 import React from "react";
 import { LanguageCount, RepoMeasureDimension } from "@/utils/types";
 import useRepositoriesLanguages from "@/api/queries/useRepositoriesLanguages";
+import LanguageChart from "./LanguageChart";
+import CommitChart from "./CommitChart";
 
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--primary))",
-  },
-} satisfies ChartConfig;
-
-export default function RepositoriesLanguages({
+export default function RepositoriesMetrics({
   sectionId,
 }: {
   sectionId: string;
@@ -36,22 +24,6 @@ export default function RepositoriesLanguages({
     RepoMeasureDimension.bytes,
   );
 
-  React.useEffect(() => {
-    if (useRepos.data) {
-      switch (selectedDimension) {
-        case RepoMeasureDimension.megabytes:
-          // Transform data to MB if needed
-          break;
-        case RepoMeasureDimension.gigabytes:
-          // Transform data to GB if needed
-          break;
-        default:
-          // Default to bytes
-          break;
-      }
-    }
-  }, [selectedDimension, useRepos.data]);
-
   if (useRepos.isLoading)
     return (
       <div
@@ -59,7 +31,7 @@ export default function RepositoriesLanguages({
         className="flex flex-col items-center p-8 space-y-6 bg-background rounded-xl shadow-lg w-full max-w-screen-lg mx-auto"
       >
         <h2 className="text-3xl font-semibold text-foreground">
-          Loading Repository Languages
+          Loading Repository Metrics
         </h2>
         <p className="text-foreground">Please wait while we fetch the data.</p>
       </div>
@@ -75,8 +47,7 @@ export default function RepositoriesLanguages({
           Failed to Load Data
         </h2>
         <p className="text-foreground">
-          An error occurred while fetching repository languages. Please try
-          again.
+          An error occurred while fetching repository metrics. Please try again.
         </p>
         <button
           className="px-4 py-2 bg-accent text-white rounded-md"
@@ -95,11 +66,10 @@ export default function RepositoriesLanguages({
       className="flex flex-col items-center space-y-6 p-8 bg-secondary rounded-xl shadow-lg w-full max-w-screen-lg mx-auto"
     >
       <h1 className="text-4xl font-bold text-foreground">
-        Repository Languages Analysis
+        Repository Metrics{" "}
       </h1>
       <p className="text-lg text-muted-foreground">
-        View and analyze the programming languages used across your
-        repositories.
+        View and analyze metrics across your repositories.
       </p>
       <p className="text-sm text-muted-foreground">
         Total repositories: <strong>{repositoryCount}</strong>
@@ -140,35 +110,10 @@ export default function RepositoriesLanguages({
         </div>
 
         {selectedRepository ? (
-          <div className="w-full md:w-2/3 lg:w-1/2 p-4 bg-card rounded-lg shadow-xl">
-            <ChartContainer config={chartConfig} className="w-full">
-              <BarChart
-                data={selectedRepository}
-                layout="vertical"
-                margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
-                barSize={20}
-                className="transition-all"
-              >
-                <XAxis type="number" dataKey={"count"} hide />
-                <YAxis
-                  type="category"
-                  dataKey={"language"}
-                  tickLine={false}
-                  tickMargin={10}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
-                <Bar
-                  dataKey="count"
-                  fill="var(--color-desktop)"
-                  radius={10}
-                  fontSize={13}
-                />
-              </BarChart>
-            </ChartContainer>
-          </div>
+          <>
+            <LanguageChart selectedRepository={selectedRepository} />
+            <CommitChart selectedRepository={selectedRepository} />
+          </>
         ) : (
           <p className="text-muted-foreground text-center">
             Please select a repository to view its language data.
