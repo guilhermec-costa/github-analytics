@@ -3,7 +3,21 @@ export type LanguageCount = {
   count: number;
 };
 
-export type ProjectLanguages = Record<string, LanguageCount[]>;
+export type CommitCount = {
+  commits: number;
+  pctTotal: string;
+};
+
+export type CommitCountPeriod = Record<string, CommitCount>;
+
+export type MetricUnit = {
+  LanguageDetails: LanguageCount[];
+  CommitDetails: CommitCountPeriod[];
+};
+
+export type RepositoryMetrics = {
+  [repoName: string]: MetricUnit;
+};
 
 export type authResponse = {
   accessToken: string;

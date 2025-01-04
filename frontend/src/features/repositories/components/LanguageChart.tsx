@@ -4,7 +4,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { LanguageCount } from "@/utils/types";
+import { LanguageCount, MetricUnit } from "@/utils/types";
 import { BarChart, XAxis, YAxis, Bar } from "recharts";
 
 const chartConfig = {
@@ -14,16 +14,13 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function LanguageChart({
-  selectedRepository,
-}: {
-  selectedRepository: LanguageCount[];
-}) {
+export default function LanguageChart({ metric }: { metric: MetricUnit }) {
+  console.log(metric);
   return (
-    <div className="w-full md:w-2/3 lg:w-1/2 p-4 bg-card rounded-lg shadow-xl">
+    <div className="w-full md:w-2/3 lg:w-2/3 p-4 bg-card rounded-lg shadow-xl">
       <ChartContainer config={chartConfig} className="w-full">
         <BarChart
-          data={selectedRepository}
+          data={metric.LanguageDetails}
           layout="vertical"
           margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
           barSize={20}

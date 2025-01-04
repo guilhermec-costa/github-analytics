@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
 
 // eslint-disable-next-line react-refresh/only-export-components
-const HomePage = lazy(() => import("@/pages/Home"));
+const HomePage = lazy(() => import("@/pages/home"));
 // eslint-disable-next-line react-refresh/only-export-components
 const LoginPage = lazy(() => import("@/pages/Login"));
 // eslint-disable-next-line react-refresh/only-export-components

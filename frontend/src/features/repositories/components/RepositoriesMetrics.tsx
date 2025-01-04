@@ -6,25 +6,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import React from "react";
-import { LanguageCount, RepoMeasureDimension } from "@/utils/types";
-import useRepositoriesLanguages from "@/api/queries/useRepositoriesLanguages";
+import { LanguageCount, MetricUnit, RepoMeasureDimension } from "@/utils/types";
 import LanguageChart from "./LanguageChart";
 import CommitChart from "./CommitChart";
+import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
 
 export default function RepositoriesMetrics({
   sectionId,
 }: {
   sectionId: string;
 }) {
-  const useRepos = useRepositoriesLanguages();
+  const useReposMetrics = useRepositoriesMetrics();
 
-  const [selectedRepository, setSelectedRepository] =
-    React.useState<LanguageCount[]>();
+  const [selectedMetric, setSelectedMetric] = React.useState<MetricUnit>();
   const [selectedDimension, setSelectedDimension] = React.useState<string>(
     RepoMeasureDimension.bytes,
   );
 
-  if (useRepos.isLoading)
+  if (useReposMetrics.isLoading)
     return (
       <div
         id={sectionId}
@@ -37,7 +36,7 @@ export default function RepositoriesMetrics({
       </div>
     );
 
-  if (useRepos.isError)
+  if (useReposMetrics.isError)
     return (
       <div
         id={sectionId}
@@ -51,14 +50,14 @@ export default function RepositoriesMetrics({
         </p>
         <button
           className="px-4 py-2 bg-accent text-white rounded-md"
-          onClick={() => useRepos.refetch()}
+          onClick={() => useReposMetrics.refetch()}
         >
           Retry
         </button>
       </div>
     );
 
-  const repositoryCount = Object.keys(useRepos.data || {}).length;
+  const repositoryCount = Object.keys(useReposMetrics.data || {}).length;
 
   return (
     <div
@@ -78,14 +77,14 @@ export default function RepositoriesMetrics({
       <div className="w-full flex flex-col items-center space-y-6">
         <div className="flex justify-center space-x-6 w-full">
           <Select
-            onValueChange={(e) => setSelectedRepository(useRepos.data![e])}
+            onValueChange={(e) => setSelectedMetric(useReposMetrics.data![e])}
           >
             <SelectTrigger className="border border-border rounded-md p-2">
               <SelectValue placeholder="Select Repository" />
             </SelectTrigger>
             <SelectContent className="bg-popover text-popover-foreground">
-              {useRepos.data &&
-                Object.keys(useRepos.data!).map((repoName) => (
+              {useReposMetrics.data &&
+                Object.keys(useReposMetrics.data!).map((repoName) => (
                   <SelectItem value={repoName} key={repoName}>
                     {repoName}
                   </SelectItem>
@@ -109,10 +108,10 @@ export default function RepositoriesMetrics({
           </Select>
         </div>
 
-        {selectedRepository ? (
+        {selectedMetric ? (
           <>
-            <LanguageChart selectedRepository={selectedRepository} />
-            <CommitChart selectedRepository={selectedRepository} />
+            <LanguageChart metric={selectedMetric} />
+            <CommitChart metric={selectedMetric} />
           </>
         ) : (
           <p className="text-muted-foreground text-center">

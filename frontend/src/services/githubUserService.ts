@@ -1,10 +1,10 @@
 import { BackendHttpClient } from "@/lib/http/BackendClient";
-import { ProjectLanguages } from "@/utils/types";
+import { RepositoryMetrics } from "@/utils/types";
 
 export class GithubUserService {
-  static async getRepositoriesAndLanguages(username: string) {
-    const data = await BackendHttpClient.get<ProjectLanguages>(
-      `repo/languages/owner/${username}`,
+  static async getRepositoryMetrics(username: string) {
+    const data = await BackendHttpClient.get<RepositoryMetrics>(
+      `repo/metrics/${username}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

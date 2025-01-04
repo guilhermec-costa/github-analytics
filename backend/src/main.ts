@@ -7,6 +7,7 @@ import { GithubGatewayHttp } from "./infra/gateway/GithubGatewayHttp";
 import { FastifyAdapter } from "./infra/http/FastifyAdapter";
 import { RepositoryController } from "./api/RepositoryController";
 import { UserController } from "./api/UserController";
+import { RepositoryService } from "./application/service/RepositoryService";
 
 const port = env.PORT;
 const httpServer = new FastifyAdapter();
@@ -19,10 +20,11 @@ const githubGateway = new GithubGatewayHttp(
   env.GITHUB_CLIENT_ID,
 );
 const userService = new UserService(logger, githubGateway);
+const repositoryService = new RepositoryService(logger, githubGateway);
 
 new AuthController(httpServer, userService).setPrefix("auth").setupRoutes();
 
-new RepositoryController(httpServer, userService)
+new RepositoryController(httpServer, repositoryService)
   .setPrefix("repo")
   .setupRoutes();
 

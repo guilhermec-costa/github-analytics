@@ -1,6 +1,11 @@
-import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { LanguageCount } from "@/utils/types";
-import { Area, AreaChart, XAxis, YAxis } from "recharts";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { LanguageCount, MetricUnit } from "@/utils/types";
+import { Area, AreaChart, Line, LineChart, XAxis, YAxis } from "recharts";
 
 const chartConfig = {
   desktop: {
@@ -9,25 +14,22 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function CommitChart({
-  selectedRepository,
-}: {
-  selectedRepository: LanguageCount[];
-}) {
+export default function CommitChart({ metric }: { metric: MetricUnit }) {
+  console.log(metric.CommitDetails);
   return (
-    <div className="w-full md:w-2/3 lg:w-1/2 p-4 bg-card rounded-lg shadow-xl">
+    <div className="w-full md:w-2/3 lg:w-2/3 p-4 bg-card rounded-lg shadow-xl">
       <ChartContainer config={chartConfig} className="w-full">
-        <AreaChart data={selectedRepository}>
-          <XAxis type="category" dataKey={"language"} />
-          <YAxis type="number" dataKey={"count"} />
-          <Area
+        <LineChart data={metric.CommitDetails}>
+          <XAxis type="category" dataKey={"date"} />
+          <YAxis type="number" dataKey={"commits"} />
+          <Line
             type="monotone"
-            dataKey="count"
+            dataKey="commits"
             stroke="#8884d8"
-            fillOpacity={1}
-            fill="url(#colorUv)"
+            fill="#8884d8"
           />
-        </AreaChart>
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        </LineChart>
       </ChartContainer>
     </div>
   );

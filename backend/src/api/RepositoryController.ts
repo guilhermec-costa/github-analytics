@@ -1,4 +1,4 @@
-import { UserService } from "../application/service/UserService";
+import { RepositoryService } from "../application/service/RepositoryService";
 import { HttpMethod } from "../utils/HttpMethod";
 import { HttpStatus } from "../utils/HttpStatus";
 import {
@@ -6,6 +6,7 @@ import {
   authHeaderSchema,
   repoBytesSchema,
   repoLanguageSchema,
+  repoOwnerSchema,
 } from "../utils/schemas";
 import { BaseController } from "./BaseController";
 import { IHttpServer } from "./IHttpServer";
@@ -13,7 +14,7 @@ import { IHttpServer } from "./IHttpServer";
 export class RepositoryController extends BaseController {
   constructor(
     protected readonly httpServer: IHttpServer,
-    private readonly userService: UserService,
+    private readonly repositoryService: RepositoryService,
   ) {
     super(httpServer);
   }
@@ -31,7 +32,7 @@ export class RepositoryController extends BaseController {
           authHeaderSchema,
           headers,
         );
-        const userRepos = await this.userService.getUserRepositories(
+        const userRepos = await this.repositoryService.getUserRepositories(
           reqHeaders.authorization,
         );
 
@@ -56,11 +57,12 @@ export class RepositoryController extends BaseController {
           headers,
         );
 
-        const userRepos = await this.userService.getSingleRepositoryLanguages(
-          repoOwner,
-          repoName,
-          authorization,
-        );
+        const userRepos =
+          await this.repositoryService.getSingleRepositoryLanguages(
+            repoOwner,
+            repoName,
+            authorization,
+          );
 
         return {
           status: HttpStatus.OK,
@@ -84,7 +86,7 @@ export class RepositoryController extends BaseController {
         );
 
         const repoLanguages =
-          await this.userService.getUserRepositoriesLanguages(
+          await this.repositoryService.getUserRepositoriesLanguages(
             authorization,
             repoOwner,
           );
@@ -110,7 +112,7 @@ export class RepositoryController extends BaseController {
           headers,
         );
 
-        const userRepoCommits = await this.userService.getUserRepoCommits(
+        const userRepoCommits = await this.repositoryService.getUserRepoCommits(
           repoOwner,
           repoName,
           authorization,
@@ -119,6 +121,33 @@ export class RepositoryController extends BaseController {
         return {
           status: HttpStatus.OK,
           data: userRepoCommits,
+        };
+      },
+    );
+
+    this.httpServer.register(
+      HttpMethod.GET,
+      `${this.prefix}/metrics/:repoOwner`,
+      async ({ params, headers }) => {
+        const { repoOwner } = ZodParserInterceptor.parseWithSchema(
+          repoOwnerSchema,
+          params,
+        );
+
+        const { authorization } = ZodParserInterceptor.parseWithSchema(
+          authHeaderSchema,
+          headers,
+        );
+
+        const userRepos =
+          await this.repositoryService.getUserRepositoriesMetrics(
+            repoOwner,
+            authorization,
+          );
+
+        return {
+          status: HttpStatus.OK,
+          data: userRepos,
         };
       },
     );

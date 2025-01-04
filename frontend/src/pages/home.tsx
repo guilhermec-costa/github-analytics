@@ -29,7 +29,7 @@ export default function Home() {
           Place content for the popover here.
         </PopoverContent>
       </Popover>
-      <div className="w-full max-w-screen-lg p-8 bg-card rounded-lg shadow-lg">
+      <div className="w-full p-8 bg-card rounded-lg shadow-lg">
         <h1 className="text-4xl font-bold text-center mb-6">
           Welcome to the Dashboard,{" "}
           <span className="text-muted-foreground">{username}</span>
