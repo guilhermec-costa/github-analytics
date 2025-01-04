@@ -24,4 +24,18 @@ export class AuthService {
 
     return accessToken && refreshToken;
   }
+
+  static async refresh() {
+    const refreshToken = localStorage.getItem("refreshToken");
+    const {
+      data: { accessToken, refreshToken: newRefreshToken },
+    } = await BackendHttpClient.post<authResponse>("auth/refresh", {
+      refreshToken,
+    });
+
+    return {
+      accessToken,
+      newRefreshToken,
+    };
+  }
 }
