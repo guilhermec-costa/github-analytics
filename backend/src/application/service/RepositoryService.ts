@@ -96,26 +96,42 @@ export class RepositoryService {
     );
 
     const groupedData: any = {};
-    for (const commit of userRepoCommits) {
+    for (const _commit of userRepoCommits) {
+      const { commit } = _commit;
       const committedAt = moment
-        .default(commit.commit.author.date)
+        .default(commit.author.date)
         .format("YYYY-MM-DD");
 
+      const commitDetail = {
+        sha: _commit.sha,
+        author: commit.author.name,
+        date: commit.author.date,
+        email: commit.author.email,
+        message: commit.message,
+      };
+
       if (!groupedData[committedAt]) {
-        groupedData[committedAt] = 1;
+        groupedData[committedAt] = {
+          count: 1,
+          details: [commitDetail],
+        };
         continue;
       }
 
-      groupedData[committedAt] += 1;
+      groupedData[committedAt] = {
+        count: groupedData[committedAt].count + 1,
+        details: [commitDetail, ...groupedData[committedAt].details],
+      };
     }
 
     const parsedGroupedData = [];
     for (const date of Object.keys(groupedData)) {
-      const nrCommits = groupedData[date];
+      const nrCommits = groupedData[date].count;
       parsedGroupedData.push({
         date,
         commits: nrCommits,
         pctTotal: ((nrCommits / userRepoCommits.length) * 100).toFixed(2),
+        details: groupedData[date].details,
       });
     }
 

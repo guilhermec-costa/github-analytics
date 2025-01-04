@@ -6,10 +6,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MetricUnit, RepoMeasureDimension } from "@/utils/types";
+import { CommitCount, MetricUnit, RepoMeasureDimension } from "@/utils/types";
 import LanguageChart from "./LanguageChart";
 import CommitChart from "./CommitChart";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
+import DetailedCommit from "./DetailedCommit";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -22,6 +23,8 @@ export default function RepositoriesMetrics({
   const [selectedDimension, setSelectedDimension] = React.useState<string>(
     RepoMeasureDimension.bytes,
   );
+  const [selectedDetailedCommitPeriod, setDetailedCommitPeriod] =
+    React.useState<CommitCount>();
 
   if (useReposMetrics.isLoading)
     return (
@@ -119,14 +122,20 @@ export default function RepositoriesMetrics({
               <h3 className="text-xl font-bold text-gray-800 mb-4">
                 Language Breakdown
               </h3>
-              <LanguageChart metric={selectedMetric} />
+              <LanguageChart
+                metric={selectedMetric}
+                dimension={selectedDimension}
+              />
             </div>
 
             <div className="p-6 bg-gray-50 rounded-lg shadow-lg">
               <h3 className="text-xl font-bold text-gray-800 mb-4">
                 Commit Activity
               </h3>
-              <CommitChart metric={selectedMetric} />
+              <CommitChart
+                metric={selectedMetric}
+                setDetailedCommitPeriod={setDetailedCommitPeriod}
+              />
             </div>
           </>
         ) : (
@@ -135,6 +144,14 @@ export default function RepositoriesMetrics({
           </p>
         )}
       </div>
+      {selectedDetailedCommitPeriod && (
+        <section className="flex flex-col w-full">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">
+            Detailed Commits
+          </h3>
+          <DetailedCommit commitDetails={selectedDetailedCommitPeriod} />
+        </section>
+      )}
     </div>
   );
 }

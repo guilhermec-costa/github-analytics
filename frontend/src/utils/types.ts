@@ -6,13 +6,21 @@ export type LanguageCount = {
 export type CommitCount = {
   commits: number;
   pctTotal: string;
+  date: string;
+  details: CommitDetail[];
 };
 
-export type CommitCountPeriod = Record<string, CommitCount>;
+export type CommitDetail = {
+  sha: string;
+  author: string;
+  date: string;
+  email: string;
+  message: string;
+};
 
 export type MetricUnit = {
   LanguageDetails: LanguageCount[];
-  CommitDetails: CommitCountPeriod[];
+  CommitDetails: CommitCount[];
 };
 
 export type RepositoryMetrics = {

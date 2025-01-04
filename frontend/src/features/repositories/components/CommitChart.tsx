@@ -16,9 +16,20 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-import { MetricUnit } from "@/utils/types";
+import { CommitCount, MetricUnit } from "@/utils/types";
+import { CategoricalChartState } from "recharts/types/chart/types";
 
-export default function CommitChart({ metric }: { metric: MetricUnit }) {
+export default function CommitChart({
+  metric,
+  setDetailedCommitPeriod,
+}: {
+  metric: MetricUnit;
+  setDetailedCommitPeriod: (period: CommitCount) => void;
+}) {
+  function manageSelectedDetailedCommit(e: CategoricalChartState) {
+    const commitDetails = e.activePayload?.at(0).payload;
+    setDetailedCommitPeriod(commitDetails as CommitCount);
+  }
   return (
     <Card className="w-full shadow-xl border border-border bg-background">
       {/* Cabeçalho do Card */}
@@ -33,6 +44,7 @@ export default function CommitChart({ metric }: { metric: MetricUnit }) {
           <AreaChart
             data={metric.CommitDetails}
             margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
+            onClick={manageSelectedDetailedCommit}
           >
             {/* Grid */}
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-muted)" />
@@ -48,7 +60,7 @@ export default function CommitChart({ metric }: { metric: MetricUnit }) {
             <YAxis
               type="number"
               dataKey="commits"
-              tick={{ fontSize: 12, fill: "var(--foreground-muted)" }}
+              tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
               axisLine={false}
               tickLine={false}
             />

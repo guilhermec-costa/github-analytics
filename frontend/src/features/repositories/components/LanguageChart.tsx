@@ -13,12 +13,17 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import { MetricUnit } from "@/utils/types";
+import { MetricUnit, RepoMeasureDimension } from "@/utils/types";
 
-export default function LanguageChart({ metric }: { metric: MetricUnit }) {
+export default function LanguageChart({
+  metric,
+  dimension,
+}: {
+  metric: MetricUnit;
+  dimension: string;
+}) {
   return (
     <Card className="w-full shadow-xl border border-border bg-background">
-      {/* Cabeçalho do Card */}
       <CardHeader>
         <CardTitle className="text-lg font-bold">
           Language Distribution
@@ -28,7 +33,6 @@ export default function LanguageChart({ metric }: { metric: MetricUnit }) {
         </CardDescription>
       </CardHeader>
 
-      {/* Conteúdo do Gráfico */}
       <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -36,7 +40,6 @@ export default function LanguageChart({ metric }: { metric: MetricUnit }) {
             layout="vertical"
             margin={{ top: 10, right: 20, left: 20, bottom: 10 }}
           >
-            {/* Eixo X */}
             <XAxis
               type="number"
               dataKey="count"
@@ -50,12 +53,11 @@ export default function LanguageChart({ metric }: { metric: MetricUnit }) {
               axisLine={false}
               tickLine={false}
               tick={{
-                fontSize: 14,
-                fontWeight: "bold",
-                fill: "var(--foreground-muted)",
+                fontSize: 13,
+                fontWeight: "regular",
+                fill: "#ffffff",
               }}
             />
-            {/* Tooltip Personalizado */}
             <Tooltip
               cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
               content={({ active, payload }) =>
@@ -65,7 +67,7 @@ export default function LanguageChart({ metric }: { metric: MetricUnit }) {
                       {payload[0].payload.language}
                     </p>
                     <p>
-                      Byte Count: <strong>{payload[0].value}</strong>
+                      {dimension} Count: <strong>{payload[0].value}</strong>
                     </p>
                   </div>
                 ) : null
