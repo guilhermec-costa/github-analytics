@@ -1,3 +1,11 @@
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import {
   Dialog,
   DialogContent,
@@ -5,9 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { CommitCount, CommitDetail } from "@/utils/types";
 import React from "react";
+import { CommitCount, CommitDetail } from "@/utils/types";
 
 export default function DetailedCommit({
   commitDetails,
@@ -56,44 +63,53 @@ export default function DetailedCommit({
         </DialogContent>
       </Dialog>
 
-      <ScrollArea className="h-[400px] caret-red-300">
-        <ul className="space-y-4">
+      <Carousel>
+        <CarouselContent>
           {commitDetails.details.map((commit) => {
             const { author, date, email, message, sha } = commit;
             return (
-              <li
+              <CarouselItem
                 key={sha}
-                className="p-5 bg-card rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow hover:cursor-pointer"
+                className="md:basis-1/2 lg:basis-1/3"
                 onClick={() => handleCommitClick(commit)}
               >
-                <div className="flex flex-col gap-2">
-                  <div className="flex justify-between items-center">
-                    <p className="text-base font-medium text-foreground">
-                      {author}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(date).toLocaleDateString("en-US", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{email}</p>
-                  <p className="text-sm text-foreground">
-                    <span className="font-semibold">Message:</span> {message}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    <span className="font-semibold">SHA:</span> {sha}
-                  </p>
+                <div className="p-2">
+                  <Card className="rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl bg-gradient-to-r from-blue-50 to-blue-100">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col gap-4">
+                        <div className="flex justify-between items-center">
+                          <p className="text-lg font-semibold text-background">
+                            {author}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {new Date(date).toLocaleDateString("en-US", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                        <p className="text-sm text-gray-600">{email}</p>
+                        <p className="text-sm text-gray-800">
+                          <span className="font-semibold">Message:</span>{" "}
+                          {message}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate">
+                          <span className="font-semibold">SHA:</span> {sha}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-              </li>
+              </CarouselItem>
             );
           })}
-        </ul>
-      </ScrollArea>
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
     </div>
   );
 }
