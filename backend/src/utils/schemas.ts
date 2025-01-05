@@ -13,18 +13,20 @@ export const authorizeGithubUserSchema = z.object({
   code: z.string().nonempty(),
 });
 
-export const repoBytesSchema = z.object({
+export const repoOwnerPair = z.object({
   repoName: z.string().nonempty(),
-  repoOwner: z.string().nonempty(),
-});
-
-export const repoLanguageSchema = z.object({
   repoOwner: z.string().nonempty(),
 });
 
 export const repoOwnerSchema = z.object({
   repoOwner: z.string().nonempty(),
 });
+
+export const commitDetailsSchema = z
+  .object({
+    ref: z.string().nonempty(),
+  })
+  .merge(repoOwnerPair);
 
 export class ZodParserInterceptor {
   static parseWithSchema<T extends ZodRawShape>(

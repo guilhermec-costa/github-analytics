@@ -155,4 +155,20 @@ export class RepositoryService {
 
     return parsedMetrics;
   }
+
+  async getCommitDetails(
+    owner: string,
+    repo: string,
+    token: string,
+    id: string,
+  ) {
+    const commitDetails = await this.githubGateway.getCommitDetail(
+      owner,
+      repo,
+      token,
+      id,
+    );
+
+    return commitDetails;
+  }
 }

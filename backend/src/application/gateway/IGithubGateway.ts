@@ -1,4 +1,5 @@
 import {
+  CommitDetail,
   CommitResponse,
   GitHubRepository,
   GitHubUser,
@@ -21,4 +22,10 @@ export interface IGithubGateway {
     repoName: string,
     token: string,
   ): Promise<CommitResponse[]>;
+  getCommitDetail(
+    owner: string,
+    repo: string,
+    token: string,
+    id: string,
+  ): Promise<CommitDetail>;
 }

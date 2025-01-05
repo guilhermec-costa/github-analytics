@@ -74,7 +74,7 @@ export default function DetailedCommit({
                 onClick={() => handleCommitClick(commit)}
               >
                 <div className="p-2">
-                  <Card className="rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl bg-gradient-to-r from-blue-50 to-blue-100">
+                  <Card className="rounded-lg overflow-hidden shadow-lg transition-transform transform hover:cursor-pointer hover:scale-105 hover:shadow-xl bg-gradient-to-r from-blue-50 to-blue-100">
                     <CardContent className="p-6">
                       <div className="flex flex-col gap-4">
                         <div className="flex justify-between items-center">

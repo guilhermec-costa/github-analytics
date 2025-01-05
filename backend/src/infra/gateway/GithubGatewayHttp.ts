@@ -7,6 +7,7 @@ import {
   Unauthorized,
 } from "../../utils/Exceptions";
 import {
+  CommitDetail,
   CommitResponse,
   GitHubRepository,
   GitHubUser,
@@ -42,6 +43,22 @@ export class GithubGatewayHttp implements IGithubGateway {
       (response) => this.handleSucess(response),
       (error) => this.handleError(error),
     );
+  }
+
+  async getCommitDetail(
+    owner: string,
+    repo: string,
+    token: string,
+    id: string,
+  ): Promise<CommitDetail> {
+    const url = `/repos/${owner}/${repo}/commits/${id}`;
+    const response = await this.githubApiAxiosInstance.get<CommitDetail>(url, {
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    return response.data;
   }
 
   async getUserRepoCommits(

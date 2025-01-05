@@ -1,9 +1,12 @@
+import { date } from "zod";
 import { RepositoryService } from "../application/service/RepositoryService";
 import { HttpMethod } from "../utils/HttpMethod";
 import { HttpStatus } from "../utils/HttpStatus";
 import {
   ZodParserInterceptor,
   authHeaderSchema,
+  authorizeGithubUserSchema,
+  commitDetailsSchema,
   repoOwnerSchema,
 } from "../utils/schemas";
 import { BaseController } from "./BaseController";
@@ -45,6 +48,30 @@ export class RepositoryController extends BaseController {
         return {
           status: HttpStatus.OK,
           data: userRepos,
+        };
+      },
+    );
+
+    this.httpServer.register(
+      HttpMethod.GET,
+      `${this.prefix}/owner/:repoOwner/repo/:repoName/commitDetail/:ref`,
+      async ({ headers, params }) => {
+        const { ref, repoOwner, repoName, authorization } =
+          ZodParserInterceptor.parseWithSchema(
+            authHeaderSchema.merge(commitDetailsSchema),
+            { ...(headers as object), ...(params as object) },
+          );
+
+        const commitInfo = await this.repositoryService.getCommitDetails(
+          repoOwner,
+          repoName,
+          authorization,
+          ref,
+        );
+
+        return {
+          status: HttpStatus.OK,
+          data: commitInfo,
         };
       },
     );
