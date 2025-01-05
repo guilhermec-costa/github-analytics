@@ -8,9 +8,6 @@ export default function DetailedCommit({
 }) {
   return (
     <div className="p-6 bg-muted rounded-lg shadow-lg">
-      <h2 className="text-2xl font-semibold text-primary mb-6">
-        Commit Details
-      </h2>
       <ScrollArea className="h-[400px]">
         <ul className="space-y-4">
           {commitDetails.details.map((commit) => {

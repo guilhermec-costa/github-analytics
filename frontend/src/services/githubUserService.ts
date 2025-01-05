@@ -3,6 +3,11 @@ import { RepositoryMetrics } from "@/utils/types";
 
 export class GithubUserService {
   static async getRepositoryMetrics(username: string) {
+    const cachedData = localStorage.getItem("metricsData");
+
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
     const data = await BackendHttpClient.get<RepositoryMetrics>(
       `repo/metrics/${username}`,
       {
@@ -11,6 +16,10 @@ export class GithubUserService {
         },
       },
     );
+
+    if (!cachedData) {
+      localStorage.setItem("metricsData", JSON.stringify(data.data));
+    }
 
     return data.data;
   }

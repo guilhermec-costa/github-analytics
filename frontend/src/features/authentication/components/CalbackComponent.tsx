@@ -14,6 +14,7 @@ export default function CallbackComponent() {
           localStorage.setItem("accessToken", response.accessToken);
           localStorage.setItem("refreshToken", response.refreshToken);
         }
+        navigate("/");
       } catch (error) {
         console.error(error);
         navigate("/login");
