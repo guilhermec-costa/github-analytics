@@ -11,6 +11,7 @@ import LanguageChart from "./LanguageChart";
 import CommitChart from "./CommitChart";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
 import DetailedCommit from "./DetailedCommit";
+import { Separator } from "@/components/ui/separator";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -65,6 +66,11 @@ export default function RepositoriesMetrics({
 
   const repositoryCount = Object.keys(useReposMetrics.data || {}).length;
 
+  function handleMetricChange(repo: string) {
+    setSelectedMetric(useReposMetrics.data![repo]);
+    setDetailedCommitPeriod(undefined);
+  }
+
   return (
     <div
       id={sectionId}
@@ -73,9 +79,16 @@ export default function RepositoriesMetrics({
       <h1 className="text-4xl font-extrabold text-gray-800">
         Repository Metrics
       </h1>
+      <Separator className="bg-gray-300" />
       <p className="text-lg text-gray-600">
-        Gain insights into your repositories with detailed metrics and data
-        visualizations.
+        Gain insights into your repositories with{" "}
+        <span className="font-bold bg-gradient-to-r from-orange-500 to-orange-400 inline-block text-transparent bg-clip-text">
+          detailed metrics
+        </span>{" "}
+        and{" "}
+        <span className="font-bold bg-gradient-to-r from-orange-500 to-orange-400 inline-block text-transparent bg-clip-text">
+          data visualizations
+        </span>{" "}
       </p>
       <p className="text-sm text-gray-500">
         Total repositories:{" "}
@@ -83,9 +96,7 @@ export default function RepositoriesMetrics({
       </p>
 
       <div className="flex flex-col md:flex-row items-center justify-center w-full space-y-4 md:space-y-0 md:space-x-6">
-        <Select
-          onValueChange={(e) => setSelectedMetric(useReposMetrics.data![e])}
-        >
+        <Select onValueChange={handleMetricChange}>
           <SelectTrigger className="border border-gray-300 bg-gray-50 text-gray-700 rounded-lg shadow-sm p-3 w-64">
             <SelectValue placeholder="Select Repository" />
           </SelectTrigger>
@@ -144,13 +155,18 @@ export default function RepositoriesMetrics({
           </p>
         )}
       </div>
-      {selectedDetailedCommitPeriod && (
+      <h3 className="text-xl font-bold text-gray-800 mb-4">
+        Detailed Commits on {selectedDetailedCommitPeriod?.date}
+      </h3>
+      <Separator className="bg-gray-300" />
+      {selectedDetailedCommitPeriod ? (
         <section className="flex flex-col w-full">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">
-            Detailed Commits
-          </h3>
           <DetailedCommit commitDetails={selectedDetailedCommitPeriod} />
         </section>
+      ) : (
+        <p className="text-gray-500 text-center col-span-2">
+          Please select a commit on the above chart
+        </p>
       )}
     </div>
   );

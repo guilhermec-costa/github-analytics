@@ -20,7 +20,7 @@ export default function Home() {
   }, [userInfo]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-background from-20% via-secondary via-50% to-card to-80% p-6 text-foreground">
       <Popover>
         <PopoverTrigger>
           <Settings className="absolute right-5 top-5 hover:cursor-pointer" />
@@ -29,10 +29,12 @@ export default function Home() {
           Place content for the popover here.
         </PopoverContent>
       </Popover>
-      <div className="w-full p-8 bg-card rounded-lg shadow-lg">
+      <div className="w-full p-8 bg-transparent rounded-lg">
         <h1 className="text-4xl font-bold text-center mb-6">
           Welcome to the Dashboard,{" "}
-          <span className="text-muted-foreground">{username}</span>
+          <span className="bg-gradient-to-r from-cyan-500 via-purple-400 to-blue-500 inline-block text-transparent bg-clip-text">
+            {username}
+          </span>
         </h1>
         <RepositoriesMetrics sectionId={"repository-languages"} />
       </div>
