@@ -1,11 +1,9 @@
-import { date } from "zod";
 import { RepositoryService } from "../application/service/RepositoryService";
 import { HttpMethod } from "../utils/HttpMethod";
 import { HttpStatus } from "../utils/HttpStatus";
 import {
   ZodParserInterceptor,
   authHeaderSchema,
-  authorizeGithubUserSchema,
   commitDetailsSchema,
   repoOwnerSchema,
 } from "../utils/schemas";

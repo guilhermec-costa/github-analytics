@@ -12,6 +12,7 @@ import CommitChart from "./CommitChart";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
 import DetailedCommit from "./DetailedCommit";
 import { Separator } from "@/components/ui/separator";
+import useCommitDetails from "@/api/queries/useCommitDetails";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -26,6 +27,7 @@ export default function RepositoriesMetrics({
   );
   const [selectedDetailedCommitPeriod, setDetailedCommitPeriod] =
     React.useState<CommitCount>();
+  const [selectedRepository, setSelectedRepository] = React.useState<string>();
 
   if (useReposMetrics.isLoading)
     return (
@@ -69,6 +71,7 @@ export default function RepositoriesMetrics({
   function handleMetricChange(repo: string) {
     setSelectedMetric(useReposMetrics.data![repo]);
     setDetailedCommitPeriod(undefined);
+    setSelectedRepository(repo);
   }
 
   return (
@@ -129,7 +132,7 @@ export default function RepositoriesMetrics({
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
         {selectedMetric ? (
           <>
-            <div className="p-6 bg-gray-50 rounded-lg shadow-lg">
+            <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
               <h3 className="text-xl font-bold text-gray-800 mb-4">
                 Language Breakdown
               </h3>
@@ -139,7 +142,7 @@ export default function RepositoriesMetrics({
               />
             </div>
 
-            <div className="p-6 bg-gray-50 rounded-lg shadow-lg">
+            <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
               <h3 className="text-xl font-bold text-gray-800 mb-4">
                 Commit Activity
               </h3>
@@ -159,9 +162,12 @@ export default function RepositoriesMetrics({
         Detailed Commits on {selectedDetailedCommitPeriod?.date}
       </h3>
       <Separator className="bg-gray-300" />
-      {selectedDetailedCommitPeriod ? (
-        <section className="flex flex-col w-full">
-          <DetailedCommit commitDetails={selectedDetailedCommitPeriod} />
+      {selectedDetailedCommitPeriod && selectedRepository ? (
+        <section className="w-full">
+          <DetailedCommit
+            commitDetails={selectedDetailedCommitPeriod}
+            selectedRepository={selectedRepository}
+          />
         </section>
       ) : (
         <p className="text-gray-500 text-center col-span-2">

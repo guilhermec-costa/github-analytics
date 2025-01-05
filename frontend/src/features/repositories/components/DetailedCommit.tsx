@@ -14,50 +14,125 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import React from "react";
-import { CommitCount, CommitDetail } from "@/utils/types";
+import { CommitCount, CommitDetail, DeepViewCommit } from "@/utils/types";
+import useCommitDetails from "@/api/queries/useCommitDetails";
 
 export default function DetailedCommit({
   commitDetails,
+  selectedRepository,
 }: {
   commitDetails: CommitCount;
+  selectedRepository: string;
 }) {
   const [deepViewCommit, setDeepViewCommit] =
-    React.useState<CommitDetail | null>(null);
+    React.useState<DeepViewCommit | null>(null);
   const [modalOpen, setModalOpen] = React.useState(false);
 
+  const { data, isLoading, error, status } = useCommitDetails(
+    selectedRepository,
+    commitDetails,
+  );
+
+  React.useEffect(() => {
+    console.log(deepViewCommit);
+  }, [deepViewCommit]);
+
   const handleCommitClick = (commit: CommitDetail) => {
-    setDeepViewCommit(commit);
-    setModalOpen(true);
+    if (status === "success") {
+      const detailed = data.find((detail) => detail.sha === commit.sha);
+      setDeepViewCommit({
+        author: commit.author,
+        date: commit.date,
+        email: commit.email,
+        files: detailed!.files,
+        message: commit.message,
+        sha: commit.sha,
+        stats: detailed!.stats,
+      });
+      setModalOpen(true);
+    }
   };
 
   return (
-    <div className="p-6 bg-secondary rounded-lg shadow-xl">
+    <div className="p-6 bg-gradient-to-r from-background from-20% to-secondary to-80% rounded-lg shadow-xl">
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="p-8 bg-white rounded-lg shadow-xl">
           <DialogHeader>
-            <DialogTitle>Commit Details</DialogTitle>
-            <DialogDescription>
-              View details of the commit selected.
+            <DialogTitle className="text-xl font-semibold">
+              Commit Details
+            </DialogTitle>
+            <DialogDescription className="text-sm text-gray-500">
+              View detailed information about the selected commit.
             </DialogDescription>
           </DialogHeader>
+
           {deepViewCommit && (
-            <div className="space-y-4">
-              <p>
-                <strong>Author:</strong> {deepViewCommit.author}
-              </p>
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(deepViewCommit.date).toLocaleString()}
-              </p>
-              <p>
-                <strong>Email:</strong> {deepViewCommit.email}
-              </p>
-              <p>
-                <strong>Message:</strong> {deepViewCommit.message}
-              </p>
-              <p>
-                <strong>SHA:</strong> {deepViewCommit.sha}
-              </p>
+            <div className="space-y-6">
+              <div className="text-lg font-semibold">Commit Information</div>
+              <div className="space-y-3">
+                <p>
+                  <strong className="font-medium">Author:</strong>{" "}
+                  {deepViewCommit.author}
+                </p>
+                <p>
+                  <strong className="font-medium">Date:</strong>
+                  {new Date(deepViewCommit.date).toLocaleString()}
+                </p>
+                <p>
+                  <strong className="font-medium">Email:</strong>{" "}
+                  {deepViewCommit.email}
+                </p>
+                <p>
+                  <strong className="font-medium">Message:</strong>{" "}
+                  {deepViewCommit.message}
+                </p>
+                <p>
+                  <strong className="font-medium">SHA:</strong>{" "}
+                  {deepViewCommit.sha}
+                </p>
+              </div>
+
+              <div className="text-lg font-semibold">Files Modified</div>
+              <Carousel>
+                <CarouselContent className="">
+                  {deepViewCommit.files.map((file) => (
+                    <CarouselItem
+                      key={file.filename}
+                      className="space-y-4 w-[30px]"
+                    >
+                      <Card className="rounded-lg shadow-lg bg-">
+                        <CardContent className="p-4">
+                          <div className="flex flex-col gap-2">
+                            <p className="text-lg font-medium break-words">
+                              {file.filename}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Status: {file.status}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Additions:{" "}
+                              <span className="text-green-500 ">
+                                {file.additions}+
+                              </span>
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Deletions:{" "}
+                              <span className="text-red-500">
+                                {file.deletions}-
+                              </span>
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Changes: {file.changes}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="text-gray-600 hover:text-black" />
+                <CarouselNext className="text-gray-600 hover:text-black" />
+              </Carousel>
             </div>
           )}
         </DialogContent>

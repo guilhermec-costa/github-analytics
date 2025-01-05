@@ -1,4 +1,9 @@
-import { RecursivePartial, GitHubRepository } from "../../utils/types";
+import {
+  RecursivePartial,
+  GitHubRepository,
+  CommitDetail,
+  CommitFile,
+} from "../../utils/types";
 import { IGithubGateway } from "../gateway/IGithubGateway";
 import { ILogger } from "../../infra/config/ILogger";
 import * as moment from "moment";
@@ -161,14 +166,30 @@ export class RepositoryService {
     repo: string,
     token: string,
     id: string,
-  ) {
-    const commitDetails = await this.githubGateway.getCommitDetail(
+  ): Promise<RecursivePartial<CommitDetail>> {
+    const data = await this.githubGateway.getCommitDetail(
       owner,
       repo,
       token,
       id,
     );
 
-    return commitDetails;
+    const parsedFiles: RecursivePartial<CommitFile>[] = [];
+    for (const file of data.files) {
+      parsedFiles.push({
+        filename: file.filename,
+        status: file.status,
+        additions: file.additions,
+        deletions: file.deletions,
+        changes: file.changes,
+        patch: file.patch,
+      });
+    }
+
+    return {
+      sha: data.sha,
+      files: parsedFiles,
+      stats: data.stats,
+    };
   }
 }

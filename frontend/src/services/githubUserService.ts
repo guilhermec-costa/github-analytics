@@ -33,4 +33,22 @@ export class GithubUserService {
 
     return data.data;
   }
+
+  static async getCommitDetails(
+    owner: string,
+    repo: string,
+    sha: string,
+    token: string,
+  ) {
+    const data = await BackendHttpClient.get(
+      `repo/owner/${owner}/repo/${repo}/commitDetail/${sha}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return data.data;
+  }
 }
