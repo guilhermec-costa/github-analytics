@@ -1,6 +1,6 @@
+import { AuthCredentials } from "../../utils/types";
+
 export interface IGithubWebGateway {
-  auth(code: string): Promise<{ accessToken: string; refreshToken: string }>;
-  refreshToken(
-    refreshToken: string,
-  ): Promise<{ accessToken: string; refreshToken: string }>;
+  oauth(code: string): Promise<AuthCredentials>;
+  refreshToken(refreshToken: string): Promise<AuthCredentials>;
 }

@@ -1,13 +1,13 @@
 import { RepositoryService } from "../../application/service/RepositoryService";
 import { HttpStatus } from "../../utils/HttpStatus";
 import {
-  ZodParserInterceptor,
-  authHeaderSchema,
-  commitDetailsSchema,
-  repoOwnerSchema,
+  AuthorizationHeaderSchema,
+  CommitReferenceSchema,
+  RepositoryOwnerSchema,
 } from "../schemas";
 import { BaseController } from "./BaseController";
 import { IHttpServer } from "../IHttpServer";
+import { ZodParserInterceptor } from "../../utils/ZodParserInterceptor";
 
 export class RepositoryController extends BaseController {
   constructor(
@@ -27,12 +27,12 @@ export class RepositoryController extends BaseController {
       async ({ params, headers }) => {
         const { authorization, repoOwner } =
           ZodParserInterceptor.parseWithSchema(
-            repoOwnerSchema.merge(authHeaderSchema),
+            RepositoryOwnerSchema.merge(AuthorizationHeaderSchema),
             { ...(params as object), ...(headers as object) },
           );
 
         const userRepos =
-          await this.repositoryService.getUserRepositoriesMetrics(
+          await this.repositoryService.loadUserRepositoriesMetrics(
             repoOwner,
             authorization,
           );
@@ -49,11 +49,11 @@ export class RepositoryController extends BaseController {
       async ({ headers, params }) => {
         const { ref, repoOwner, repoName, authorization } =
           ZodParserInterceptor.parseWithSchema(
-            authHeaderSchema.merge(commitDetailsSchema),
+            AuthorizationHeaderSchema.merge(CommitReferenceSchema),
             { ...(headers as object), ...(params as object) },
           );
 
-        const commitInfo = await this.repositoryService.getCommitDetails(
+        const commitInfo = await this.repositoryService.loadCommitDetails(
           repoOwner,
           repoName,
           authorization,

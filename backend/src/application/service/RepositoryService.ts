@@ -21,11 +21,10 @@ export class RepositoryService {
    * @param token - The access token of the authenticated user.
    * @returns A list of repositories with partial details.
    */
-  async getUserRepositories(
+  async loadUserRepos(
     token: string,
   ): Promise<RecursivePartial<GitHubRepository>[]> {
-    this.logger.log("Requesting Github Gateway for authorized user");
-    const userRepos = await this.githubApi.getUserRepositories(token);
+    const userRepos = await this.githubApi.fetchUserRepos(token);
 
     return userRepos.map((repo) => ({
       id: repo.id,
@@ -60,12 +59,8 @@ export class RepositoryService {
    * @param token - The access token of the authenticated user.
    * @returns A mapping of languages and their usage in the repository.
    */
-  async getSingleRepositoryLanguages(
-    repoOwner: string,
-    repoName: string,
-    token: string,
-  ) {
-    const response = await this.githubApi.getRepositoryLanguages(
+  async loadRepoLanguages(repoOwner: string, repoName: string, token: string) {
+    const response = await this.githubApi.fetchRepoLanguages(
       repoOwner,
       repoName,
       token,
@@ -81,17 +76,17 @@ export class RepositoryService {
    * @param repoOwner - The owner of the repositories.
    * @returns A mapping of repositories to their language usage details.
    */
-  async getUserRepositoriesLanguages(token: string, repoOwner: string) {
+  async loadUserReposLanguages(token: string, repoOwner: string) {
     this.logger.log(
       "Requesting Github Gateway for languages from user repositories",
     );
-    const userRepos = await this.getUserRepositories(token);
+    const userRepos = await this.loadUserRepos(token);
     const awaitableRequests = [];
     const parsedResponse: Record<string, any> = {};
 
     for (const repo of userRepos) {
       awaitableRequests.push(
-        this.getSingleRepositoryLanguages(repoOwner, repo.name!, token),
+        this.loadRepoLanguages(repoOwner, repo.name!, token),
       );
     }
 
@@ -124,7 +119,7 @@ export class RepositoryService {
     repoName: string,
     token: string,
   ): Promise<any> {
-    const userRepoCommits = await this.githubApi.getUserRepoCommits(
+    const userRepoCommits = await this.githubApi.fetchUserRepoCommits(
       repoOwner,
       repoName,
       token,
@@ -180,9 +175,9 @@ export class RepositoryService {
    * @param token - The access token of the authenticated user.
    * @returns A mapping of repositories to their metrics including languages and commits.
    */
-  async getUserRepositoriesMetrics(owner: string, token: string) {
-    const userRepos = await this.getUserRepositories(token);
-    const repositoriesLanguages = await this.getUserRepositoriesLanguages(
+  async loadUserRepositoriesMetrics(owner: string, token: string) {
+    const userRepos = await this.loadUserRepos(token);
+    const repositoriesLanguages = await this.loadUserReposLanguages(
       token,
       owner,
     );
@@ -207,13 +202,13 @@ export class RepositoryService {
    * @param id - The ID or SHA of the commit.
    * @returns Details of the specified commit including files and statistics.
    */
-  async getCommitDetails(
+  async loadCommitDetails(
     owner: string,
     repo: string,
     token: string,
     id: string,
   ): Promise<RecursivePartial<CommitDetail>> {
-    const data = await this.githubApi.getCommitDetail(owner, repo, token, id);
+    const data = await this.githubApi.fetchCommitDetail(owner, repo, token, id);
 
     const parsedFiles: RecursivePartial<CommitFile>[] = [];
     for (const file of data.files) {

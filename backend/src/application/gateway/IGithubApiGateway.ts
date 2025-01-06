@@ -6,19 +6,19 @@ import {
 } from "../../utils/types";
 
 export interface IGithubApiGateway {
-  getUserInformation(userToken: string): Promise<GitHubUser>;
-  getUserRepositories(userToken: string): Promise<GitHubRepository[]>;
-  getRepositoryLanguages(
+  fetchUserInfo(userToken: string): Promise<GitHubUser>;
+  fetchUserRepos(userToken: string): Promise<GitHubRepository[]>;
+  fetchRepoLanguages(
     repoOwner: string,
     repoName: string,
     token: string,
   ): Promise<{ [language: string]: number }>;
-  getUserRepoCommits(
+  fetchUserRepoCommits(
     repoOwner: string,
     repoName: string,
     token: string,
   ): Promise<CommitResponse[]>;
-  getCommitDetail(
+  fetchCommitDetail(
     owner: string,
     repo: string,
     token: string,

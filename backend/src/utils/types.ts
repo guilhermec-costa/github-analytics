@@ -332,3 +332,8 @@ export type CommitFile = {
   contents_url: string;
   patch: string;
 };
+
+export type AuthCredentials = {
+  accessToken: string;
+  refreshToken: string;
+};

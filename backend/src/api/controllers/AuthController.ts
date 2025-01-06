@@ -1,12 +1,12 @@
 import { UserService } from "../../application/service/UserService";
 import { HttpStatus } from "../../utils/HttpStatus";
 import {
-  ZodParserInterceptor,
-  authorizeGithubUserSchema,
-  refreshTokenSchema,
+  GithubUserAuthorizationSchema,
+  RefreshTokenRequestSchema,
 } from "../schemas";
 import { IHttpServer } from "../IHttpServer";
 import { BaseController } from "./BaseController";
+import { ZodParserInterceptor } from "../../utils/ZodParserInterceptor";
 
 export class AuthController extends BaseController {
   constructor(
@@ -22,14 +22,12 @@ export class AuthController extends BaseController {
     }
 
     this.httpServer.post(this.prefix, async ({ body }) => {
-      const payload = ZodParserInterceptor.parseWithSchema(
-        authorizeGithubUserSchema,
+      const { code } = ZodParserInterceptor.parseWithSchema(
+        GithubUserAuthorizationSchema,
         body,
       );
 
-      const { accessToken, refreshToken } = await this.userService.auth(
-        payload.code,
-      );
+      const { accessToken, refreshToken } = await this.userService.oauth(code);
       return {
         status: HttpStatus.CREATED,
         data: {
@@ -40,13 +38,12 @@ export class AuthController extends BaseController {
     });
 
     this.httpServer.post(`${this.prefix}/refresh`, async ({ body }) => {
-      const payload = ZodParserInterceptor.parseWithSchema(
-        refreshTokenSchema,
+      const { refreshToken: reqToken } = ZodParserInterceptor.parseWithSchema(
+        RefreshTokenRequestSchema,
         body,
       );
-      const { accessToken, refreshToken } = await this.userService.refresh(
-        payload.refreshToken,
-      );
+      const { accessToken, refreshToken } =
+        await this.userService.refresh(reqToken);
 
       return {
         status: HttpStatus.CREATED,

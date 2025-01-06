@@ -1,8 +1,9 @@
 import { UserService } from "../../application/service/UserService";
 import { HttpStatus } from "../../utils/HttpStatus";
-import { authHeaderSchema, ZodParserInterceptor } from "../schemas";
+import { AuthorizationHeaderSchema } from "../schemas";
 import { BaseController } from "./BaseController";
 import { IHttpServer } from "../IHttpServer";
+import { ZodParserInterceptor } from "../../utils/ZodParserInterceptor";
 
 export class UserController extends BaseController {
   constructor(
@@ -18,13 +19,11 @@ export class UserController extends BaseController {
     }
 
     this.httpServer.get(`${this.prefix}/info`, async ({ headers }) => {
-      const reqHeaders = ZodParserInterceptor.parseWithSchema(
-        authHeaderSchema,
+      const { authorization } = ZodParserInterceptor.parseWithSchema(
+        AuthorizationHeaderSchema,
         headers,
       );
-      const userData = await this.userService.getUserInformation(
-        reqHeaders.authorization,
-      );
+      const userData = await this.userService.loadUserInfo(authorization);
 
       return {
         status: HttpStatus.OK,

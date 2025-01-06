@@ -15,7 +15,7 @@ export class GithubApiGateway
     super("https://api.github.com");
   }
 
-  async getCommitDetail(
+  async fetchCommitDetail(
     owner: string,
     repo: string,
     token: string,
@@ -31,7 +31,7 @@ export class GithubApiGateway
     return response.data;
   }
 
-  async getUserRepoCommits(
+  async fetchUserRepoCommits(
     repoOwner: string,
     repoName: string,
     token: string,
@@ -46,7 +46,7 @@ export class GithubApiGateway
     return response.data;
   }
 
-  async getRepositoryLanguages(
+  async fetchRepoLanguages(
     repoOwner: string,
     repoName: string,
     token: string,
@@ -60,7 +60,7 @@ export class GithubApiGateway
     return response.data;
   }
 
-  async getUserRepositories(userToken: string): Promise<GitHubRepository[]> {
+  async fetchUserRepos(userToken: string): Promise<GitHubRepository[]> {
     const url = "/user/repos";
     const response = await this.httpClient().get<GitHubRepository[]>(url, {
       headers: {
@@ -71,7 +71,7 @@ export class GithubApiGateway
     return response.data;
   }
 
-  async getUserInformation(userToken: string): Promise<GitHubUser> {
+  async fetchUserInfo(userToken: string): Promise<GitHubUser> {
     const url = "/user";
     const response = await this.httpClient().get<GitHubUser>(url, {
       headers: {

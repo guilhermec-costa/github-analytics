@@ -1,4 +1,5 @@
 import { IGithubWebGateway } from "../../application/gateway/IGithubWebGateway";
+import { AuthCredentials } from "../../utils/types";
 import { GithubGateway } from "./GithubGateway";
 
 export class GithubWebGateway
@@ -12,9 +13,7 @@ export class GithubWebGateway
     super("https://github.com");
   }
 
-  async auth(
-    code: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async oauth(code: string): Promise<AuthCredentials> {
     const url = "/login/oauth/access_token";
     const response = await this.httpClient().post(url, null, {
       params: {
@@ -24,24 +23,24 @@ export class GithubWebGateway
       },
     });
 
-    const { access_token, refresh_token } = response.data;
-    return { accessToken: access_token, refreshToken: refresh_token };
+    const { access_token: accessToken, refresh_token: refreshToken } =
+      response.data;
+    return { accessToken, refreshToken };
   }
 
-  async refreshToken(
-    refreshToken: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async refreshToken(_refreshToken: string): Promise<AuthCredentials> {
     const url = "/login/oauth/access_token";
     const response = await this.httpClient().post(url, null, {
       params: {
         client_id: this.GITHUB_CLIENT_ID,
         client_secret: this.GITHUB_CLIENT_SECRET,
         grant_type: "refresh_token",
-        refresh_token: refreshToken,
+        refresh_token: _refreshToken,
       },
     });
 
-    const { access_token, refresh_token } = response.data;
-    return { accessToken: access_token, refreshToken: refresh_token };
+    const { access_token: accessToken, refresh_token: refreshToken } =
+      response.data;
+    return { accessToken, refreshToken };
   }
 }

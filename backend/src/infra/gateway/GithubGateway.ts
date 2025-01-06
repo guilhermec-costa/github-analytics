@@ -5,13 +5,17 @@ import {
   NotFound,
   InternalServerError,
 } from "../../utils/Exceptions";
+import { HttpStatus } from "../../utils/HttpStatus";
+import { ILogger } from "../config/ILogger";
+import WinstonLogger from "../config/WinstonLogger";
 
 export abstract class GithubGateway {
   private client: AxiosInstance;
+  private logger: ILogger;
 
   constructor(readonly url: string) {
     this.client = axios.create({
-      baseURL: this.url,
+      baseURL: url,
       headers: { Accept: "application/json" },
     });
 
@@ -19,59 +23,60 @@ export abstract class GithubGateway {
       (response) => this.handleSucess(response),
       (error) => this.handleError(error),
     );
+
+    this.logger = new WinstonLogger();
   }
 
   protected httpClient() {
     return this.client;
   }
 
-  protected handleError(error: unknown): void {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        const status = error.response.status;
-        const data = error.response.data;
-
-        console.error(
-          `[HTTP Error] Status: ${status}, Data: ${JSON.stringify(data)}`,
-        );
-
-        switch (status) {
-          case 422:
-          case 400:
-            throw new BadRequest(data?.message || "Bad Request");
-          case 401:
-            throw new Unauthorized(data?.message || "Unauthorized");
-          case 404:
-            throw new NotFound(data?.message || "Not Found");
-          case 500:
-          default:
-            throw new InternalServerError(
-              data?.message || "Internal Server Error",
-            );
-        }
-      } else if (error.request) {
-        console.error(`[Network Error] No response received: ${error.message}`);
-        throw new InternalServerError("Network error: No response received");
-      } else {
-        console.error(`[Axios Error] ${error.message}`);
-        throw new InternalServerError(`Request setup error: ${error.message}`);
-      }
-    } else {
-      console.error(`[Unknown Error] ${String(error)}`);
+  protected handleError(error: unknown): never {
+    if (!axios.isAxiosError(error)) {
+      this.logger.error(`[Unknown Error] ${String(error)}`);
       throw new InternalServerError(`Unknown error: ${String(error)}`);
+    }
+
+    if (!error.response) {
+      if (error.request) {
+        this.logger.error(
+          `[Network Error] No response received: ${error.message}`,
+        );
+        throw new InternalServerError("Network error: No response received");
+      }
+      this.logger.error(`[Axios Error] ${error.message}`);
+      throw new InternalServerError(`Request setup error: ${error.message}`);
+    }
+
+    const { status, data } = error.response;
+
+    this.logger.error(
+      `[HTTP Error] Status: ${status}, Data: ${JSON.stringify(data)}`,
+    );
+
+    switch (status) {
+      case HttpStatus.UNPROCESSABLE_ENTITY:
+      case HttpStatus.BAD_REQUEST:
+        throw new BadRequest(data?.message || "Bad Request");
+      case HttpStatus.UNAUTHORIZED:
+        throw new Unauthorized(data?.message || "Unauthorized");
+      case HttpStatus.NOT_FOUND:
+        throw new NotFound(data?.message || "Not Found");
+      case HttpStatus.INTERNAL_SERVER_ERROR:
+      default:
+        throw new InternalServerError(data?.message || "Internal Server Error");
     }
   }
 
   protected handleSucess(response: any) {
-    // Isso é porque o pessoal do gh curte xp programming (faltou daily, review, retro)
-    if (response.data.error) {
-      this.handleError(
-        new AxiosError("", "", undefined, {}, {
-          data: { message: response.data.error_description },
-          status: 400,
-        } as any),
-      );
-    }
-    return response;
+    // This is because the GitHub folks love XP programming (missing daily, review, retro)
+    if (!response.data.error) return response;
+
+    this.handleError(
+      new AxiosError("", "", undefined, {}, {
+        data: { message: response.data.error_description },
+        status: HttpStatus.BAD_REQUEST,
+      } as any),
+    );
   }
 }

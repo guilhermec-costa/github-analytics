@@ -1,6 +1,6 @@
 import { ILogger } from "../../infra/config/ILogger";
 import { GithubGateway } from "../../infra/gateway/GithubGateway";
-import { GitHubUser } from "../../utils/types";
+import { AuthCredentials, GitHubUser } from "../../utils/types";
 import { IGithubApiGateway } from "../gateway/IGithubApiGateway";
 import { IGithubWebGateway } from "../gateway/IGithubWebGateway";
 
@@ -20,11 +20,9 @@ export class UserService {
    * @param code - The authentication code provided by GitHub after OAuth authorization.
    * @returns An object containing `accessToken` and `refreshToken`.
    */
-  async auth(
-    code: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async oauth(code: string): Promise<AuthCredentials> {
     this.logger.log("Requesting Github Gateway for user authentication");
-    return await this.githubWeb.auth(code);
+    return await this.githubWeb.oauth(code);
   }
 
   /**
@@ -52,10 +50,10 @@ export class UserService {
    * @param token - The access token of the authenticated user.
    * @returns A `GitHubUser` object containing user information like username, avatar, etc.
    */
-  async getUserInformation(token: string): Promise<GitHubUser> {
+  async loadUserInfo(token: string): Promise<GitHubUser> {
     this.logger.log(
       "Requesting Github Gateway information about for authorized user",
     );
-    return await this.githubApi.getUserInformation(token);
+    return await this.githubApi.fetchUserInfo(token);
   }
 }
