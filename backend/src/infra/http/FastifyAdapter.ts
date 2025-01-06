@@ -13,6 +13,7 @@ import {
 import { BaseException } from "../../utils/Exceptions";
 import { ILogger } from "../config/ILogger";
 import WinstonLogger from "../config/WinstonLogger";
+import { HttpMethod } from "../../utils/HttpMethod";
 
 export class FastifyAdapter implements IHttpServer {
   private app: FastifyInstance;
@@ -29,6 +30,34 @@ export class FastifyAdapter implements IHttpServer {
     this.logger = new WinstonLogger();
   }
 
+  post(
+    url: string,
+    callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
+  ): void {
+    this.bindRouteHandler(HttpMethod.POST, url, callback);
+  }
+
+  put(
+    url: string,
+    callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
+  ): void {
+    this.bindRouteHandler(HttpMethod.PUT, url, callback);
+  }
+
+  delete(
+    url: string,
+    callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
+  ): void {
+    this.bindRouteHandler(HttpMethod.DELETE, url, callback);
+  }
+
+  get(
+    url: string,
+    callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
+  ): void {
+    this.bindRouteHandler(HttpMethod.GET, url, callback);
+  }
+
   listen(port: number): void {
     this.app.listen({ port }).then(() => {
       this.logger.log(`Github Analytics server running at port ${port}`);
@@ -39,11 +68,11 @@ export class FastifyAdapter implements IHttpServer {
     this.routePrefix = prefix;
   }
 
-  register(
+  private bindRouteHandler(
     method: string,
     url: string,
     callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
-  ): void {
+  ) {
     const fullUrl = `/${this.routePrefix}/${url}`;
     this.app.route({
       method: method as HTTPMethods,
@@ -60,6 +89,14 @@ export class FastifyAdapter implements IHttpServer {
     this.logger.log(
       `[${method.toUpperCase()}] Route ${fullUrl} successfully registered`,
     );
+  }
+
+  register(
+    method: string,
+    url: string,
+    callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
+  ): void {
+    this.bindRouteHandler(method, url, callback);
   }
 
   private setErrorMiddleware() {

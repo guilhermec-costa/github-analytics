@@ -1,5 +1,4 @@
 import { UserService } from "../../application/service/UserService";
-import { HttpMethod } from "../../utils/HttpMethod";
 import { HttpStatus } from "../../utils/HttpStatus";
 import { authHeaderSchema, ZodParserInterceptor } from "../../utils/schemas";
 import { BaseController } from "./BaseController";
@@ -13,33 +12,24 @@ export class UserController extends BaseController {
     super(httpServer);
   }
 
-  public setPrefix(prefix: string) {
-    this.prefix = prefix;
-    return this;
-  }
-
   public setupRoutes() {
     if (!this.prefix) {
       this.prefix = this.fallbackPrefix;
     }
 
-    this.httpServer.register(
-      HttpMethod.GET,
-      `${this.prefix}/info`,
-      async ({ headers }) => {
-        const reqHeaders = ZodParserInterceptor.parseWithSchema(
-          authHeaderSchema,
-          headers,
-        );
-        const userData = await this.userService.getUserInformation(
-          reqHeaders.authorization,
-        );
+    this.httpServer.get(`${this.prefix}/info`, async ({ headers }) => {
+      const reqHeaders = ZodParserInterceptor.parseWithSchema(
+        authHeaderSchema,
+        headers,
+      );
+      const userData = await this.userService.getUserInformation(
+        reqHeaders.authorization,
+      );
 
-        return {
-          status: HttpStatus.OK,
-          data: userData,
-        };
-      },
-    );
+      return {
+        status: HttpStatus.OK,
+        data: userData,
+      };
+    });
   }
 }

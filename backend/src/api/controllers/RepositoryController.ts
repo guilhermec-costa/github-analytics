@@ -1,5 +1,4 @@
 import { RepositoryService } from "../../application/service/RepositoryService";
-import { HttpMethod } from "../../utils/HttpMethod";
 import { HttpStatus } from "../../utils/HttpStatus";
 import {
   ZodParserInterceptor,
@@ -23,8 +22,7 @@ export class RepositoryController extends BaseController {
       this.prefix = this.fallbackPrefix;
     }
 
-    this.httpServer.register(
-      HttpMethod.GET,
+    this.httpServer.get(
       `${this.prefix}/metrics/:repoOwner`,
       async ({ params, headers }) => {
         const { authorization, repoOwner } =
@@ -46,8 +44,7 @@ export class RepositoryController extends BaseController {
       },
     );
 
-    this.httpServer.register(
-      HttpMethod.GET,
+    this.httpServer.get(
       `${this.prefix}/owner/:repoOwner/repo/:repoName/commitDetail/:ref`,
       async ({ headers, params }) => {
         const { ref, repoOwner, repoName, authorization } =

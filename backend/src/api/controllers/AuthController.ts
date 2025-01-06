@@ -1,5 +1,4 @@
 import { UserService } from "../../application/service/UserService";
-import { HttpMethod } from "../../utils/HttpMethod";
 import { HttpStatus } from "../../utils/HttpStatus";
 import {
   ZodParserInterceptor,
@@ -22,7 +21,7 @@ export class AuthController extends BaseController {
       this.prefix = this.fallbackPrefix;
     }
 
-    this.httpServer.register(HttpMethod.POST, this.prefix, async ({ body }) => {
+    this.httpServer.post(this.prefix, async ({ body }) => {
       const payload = ZodParserInterceptor.parseWithSchema(
         authorizeGithubUserSchema,
         body,
@@ -40,26 +39,22 @@ export class AuthController extends BaseController {
       };
     });
 
-    this.httpServer.register(
-      HttpMethod.POST,
-      `${this.prefix}/refresh`,
-      async ({ body }) => {
-        const payload = ZodParserInterceptor.parseWithSchema(
-          refreshTokenSchema,
-          body,
-        );
-        const { accessToken, refreshToken } = await this.userService.refresh(
-          payload.refreshToken,
-        );
+    this.httpServer.post(`${this.prefix}/refresh`, async ({ body }) => {
+      const payload = ZodParserInterceptor.parseWithSchema(
+        refreshTokenSchema,
+        body,
+      );
+      const { accessToken, refreshToken } = await this.userService.refresh(
+        payload.refreshToken,
+      );
 
-        return {
-          status: HttpStatus.CREATED,
-          data: {
-            accessToken,
-            refreshToken,
-          },
-        };
-      },
-    );
+      return {
+        status: HttpStatus.CREATED,
+        data: {
+          accessToken,
+          refreshToken,
+        },
+      };
+    });
   }
 }
