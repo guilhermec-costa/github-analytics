@@ -1,6 +1,6 @@
 import { UserService } from "../../application/service/UserService";
 import { HttpStatus } from "../../utils/HttpStatus";
-import { authHeaderSchema, ZodParserInterceptor } from "../../utils/schemas";
+import { authHeaderSchema, ZodParserInterceptor } from "../schemas";
 import { BaseController } from "./BaseController";
 import { IHttpServer } from "../IHttpServer";
 

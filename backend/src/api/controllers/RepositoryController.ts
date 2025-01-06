@@ -5,7 +5,7 @@ import {
   authHeaderSchema,
   commitDetailsSchema,
   repoOwnerSchema,
-} from "../../utils/schemas";
+} from "../schemas";
 import { BaseController } from "./BaseController";
 import { IHttpServer } from "../IHttpServer";
 

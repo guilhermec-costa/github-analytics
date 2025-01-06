@@ -4,7 +4,7 @@ import {
   ZodParserInterceptor,
   authorizeGithubUserSchema,
   refreshTokenSchema,
-} from "../../utils/schemas";
+} from "../schemas";
 import { IHttpServer } from "../IHttpServer";
 import { BaseController } from "./BaseController";
 

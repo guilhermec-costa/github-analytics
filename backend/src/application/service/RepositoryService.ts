@@ -15,6 +15,12 @@ export class RepositoryService {
     private readonly githubApi: IGithubApiGateway & GithubGateway,
   ) {}
 
+  /**
+   * Retrieves repositories for an authenticated user.
+   *
+   * @param token - The access token of the authenticated user.
+   * @returns A list of repositories with partial details.
+   */
   async getUserRepositories(
     token: string,
   ): Promise<RecursivePartial<GitHubRepository>[]> {
@@ -46,6 +52,14 @@ export class RepositoryService {
     }));
   }
 
+  /**
+   * Retrieves the languages used in a specific repository.
+   *
+   * @param repoOwner - The owner of the repository.
+   * @param repoName - The name of the repository.
+   * @param token - The access token of the authenticated user.
+   * @returns A mapping of languages and their usage in the repository.
+   */
   async getSingleRepositoryLanguages(
     repoOwner: string,
     repoName: string,
@@ -60,6 +74,13 @@ export class RepositoryService {
     return response;
   }
 
+  /**
+   * Retrieves languages used across all repositories of an authenticated user.
+   *
+   * @param token - The access token of the authenticated user.
+   * @param repoOwner - The owner of the repositories.
+   * @returns A mapping of repositories to their language usage details.
+   */
   async getUserRepositoriesLanguages(token: string, repoOwner: string) {
     this.logger.log(
       "Requesting Github Gateway for languages from user repositories",
@@ -90,6 +111,14 @@ export class RepositoryService {
     return parsedResponse;
   }
 
+  /**
+   * Retrieves commit details grouped by date for a specific repository.
+   *
+   * @param repoOwner - The owner of the repository.
+   * @param repoName - The name of the repository.
+   * @param token - The access token of the authenticated user.
+   * @returns Commit details grouped by date with percentages.
+   */
   async getUserRepoCommits(
     repoOwner: string,
     repoName: string,
@@ -144,6 +173,13 @@ export class RepositoryService {
     return parsedGroupedData;
   }
 
+  /**
+   * Aggregates metrics for all repositories of an authenticated user.
+   *
+   * @param owner - The owner of the repositories.
+   * @param token - The access token of the authenticated user.
+   * @returns A mapping of repositories to their metrics including languages and commits.
+   */
   async getUserRepositoriesMetrics(owner: string, token: string) {
     const userRepos = await this.getUserRepositories(token);
     const repositoriesLanguages = await this.getUserRepositoriesLanguages(
@@ -162,6 +198,15 @@ export class RepositoryService {
     return parsedMetrics;
   }
 
+  /**
+   * Retrieves detailed information about a specific commit in a repository.
+   *
+   * @param owner - The owner of the repository.
+   * @param repo - The name of the repository.
+   * @param token - The access token of the authenticated user.
+   * @param id - The ID or SHA of the commit.
+   * @returns Details of the specified commit including files and statistics.
+   */
   async getCommitDetails(
     owner: string,
     repo: string,

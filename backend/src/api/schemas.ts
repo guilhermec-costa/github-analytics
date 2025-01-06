@@ -1,5 +1,5 @@
 import { z, ZodObject, ZodRawShape } from "zod";
-import { BadRequest } from "./Exceptions";
+import { BadRequest } from "../utils/Exceptions";
 
 export const authHeaderSchema = z.object({
   authorization: z.string().nonempty(),
