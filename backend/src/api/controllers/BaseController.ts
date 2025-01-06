@@ -1,4 +1,4 @@
-import { IHttpServer } from "./IHttpServer";
+import { IHttpServer } from "../IHttpServer";
 
 export abstract class BaseController {
   protected prefix: string = "";

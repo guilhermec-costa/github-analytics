@@ -7,11 +7,9 @@ import {
 } from "@/components/ui/card";
 import {
   ResponsiveContainer,
-  LineChart,
   XAxis,
   YAxis,
   Tooltip,
-  Line,
   CartesianGrid,
   AreaChart,
   Area,
@@ -32,13 +30,11 @@ export default function CommitChart({
   }
   return (
     <Card className="w-full shadow-xl border border-border bg-background">
-      {/* Cabeçalho do Card */}
       <CardHeader>
         <CardTitle className="text-lg font-bold">Commit Activity</CardTitle>
         <CardDescription>Daily commit activity over time.</CardDescription>
       </CardHeader>
 
-      {/* Gráfico */}
       <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
@@ -46,9 +42,7 @@ export default function CommitChart({
             margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
             onClick={manageSelectedDetailedCommit}
           >
-            {/* Grid */}
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-muted)" />
-            {/* Eixo X */}
             <XAxis
               type="category"
               dataKey="date"
@@ -56,7 +50,6 @@ export default function CommitChart({
               axisLine={false}
               tickLine={false}
             />
-            {/* Eixo Y */}
             <YAxis
               type="number"
               dataKey="commits"
@@ -64,7 +57,6 @@ export default function CommitChart({
               axisLine={false}
               tickLine={false}
             />
-            {/* Tooltip Customizado */}
             <Tooltip
               content={({ active, payload }) =>
                 active && payload && payload.length ? (
@@ -79,7 +71,6 @@ export default function CommitChart({
                 ) : null
               }
             />
-            {/* Área do Gráfico */}
             <Area
               type="monotone"
               dataKey="commits"

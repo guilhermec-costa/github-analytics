@@ -1,9 +1,9 @@
-import { UserService } from "../application/service/UserService";
-import { HttpMethod } from "../utils/HttpMethod";
-import { HttpStatus } from "../utils/HttpStatus";
-import { authHeaderSchema, ZodParserInterceptor } from "../utils/schemas";
+import { UserService } from "../../application/service/UserService";
+import { HttpMethod } from "../../utils/HttpMethod";
+import { HttpStatus } from "../../utils/HttpStatus";
+import { authHeaderSchema, ZodParserInterceptor } from "../../utils/schemas";
 import { BaseController } from "./BaseController";
-import { IHttpServer } from "./IHttpServer";
+import { IHttpServer } from "../IHttpServer";
 
 export class UserController extends BaseController {
   constructor(

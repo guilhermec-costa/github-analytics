@@ -12,7 +12,7 @@ import CommitChart from "./CommitChart";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
 import DetailedCommit from "./DetailedCommit";
 import { Separator } from "@/components/ui/separator";
-import useCommitDetails from "@/api/queries/useCommitDetails";
+import { Button } from "@/components/ui/button";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -127,6 +127,15 @@ export default function RepositoriesMetrics({
             </SelectItem>
           </SelectContent>
         </Select>
+        <Button
+          className="bg-secondary"
+          onClick={() => {
+            localStorage.removeItem("metricsData");
+            useReposMetrics.refetch();
+          }}
+        >
+          Refetch
+        </Button>
       </div>
 
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">

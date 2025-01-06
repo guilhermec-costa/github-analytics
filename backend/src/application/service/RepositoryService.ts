@@ -4,21 +4,22 @@ import {
   CommitDetail,
   CommitFile,
 } from "../../utils/types";
-import { IGithubGateway } from "../gateway/IGithubGateway";
 import { ILogger } from "../../infra/config/ILogger";
 import * as moment from "moment";
+import { IGithubApiGateway } from "../gateway/IGithubApiGateway";
+import { GithubGateway } from "../../infra/gateway/GithubGateway";
 
 export class RepositoryService {
   constructor(
     private readonly logger: ILogger,
-    private readonly githubGateway: IGithubGateway,
+    private readonly githubApi: IGithubApiGateway & GithubGateway,
   ) {}
 
   async getUserRepositories(
     token: string,
   ): Promise<RecursivePartial<GitHubRepository>[]> {
     this.logger.log("Requesting Github Gateway for authorized user");
-    const userRepos = await this.githubGateway.getUserRepositories(token);
+    const userRepos = await this.githubApi.getUserRepositories(token);
 
     return userRepos.map((repo) => ({
       id: repo.id,
@@ -50,7 +51,7 @@ export class RepositoryService {
     repoName: string,
     token: string,
   ) {
-    const response = await this.githubGateway.getRepositoryLanguages(
+    const response = await this.githubApi.getRepositoryLanguages(
       repoOwner,
       repoName,
       token,
@@ -94,7 +95,7 @@ export class RepositoryService {
     repoName: string,
     token: string,
   ): Promise<any> {
-    const userRepoCommits = await this.githubGateway.getUserRepoCommits(
+    const userRepoCommits = await this.githubApi.getUserRepoCommits(
       repoOwner,
       repoName,
       token,
@@ -167,12 +168,7 @@ export class RepositoryService {
     token: string,
     id: string,
   ): Promise<RecursivePartial<CommitDetail>> {
-    const data = await this.githubGateway.getCommitDetail(
-      owner,
-      repo,
-      token,
-      id,
-    );
+    const data = await this.githubApi.getCommitDetail(owner, repo, token, id);
 
     const parsedFiles: RecursivePartial<CommitFile>[] = [];
     for (const file of data.files) {

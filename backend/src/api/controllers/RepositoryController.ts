@@ -1,14 +1,14 @@
-import { RepositoryService } from "../application/service/RepositoryService";
-import { HttpMethod } from "../utils/HttpMethod";
-import { HttpStatus } from "../utils/HttpStatus";
+import { RepositoryService } from "../../application/service/RepositoryService";
+import { HttpMethod } from "../../utils/HttpMethod";
+import { HttpStatus } from "../../utils/HttpStatus";
 import {
   ZodParserInterceptor,
   authHeaderSchema,
   commitDetailsSchema,
   repoOwnerSchema,
-} from "../utils/schemas";
+} from "../../utils/schemas";
 import { BaseController } from "./BaseController";
-import { IHttpServer } from "./IHttpServer";
+import { IHttpServer } from "../IHttpServer";
 
 export class RepositoryController extends BaseController {
   constructor(
@@ -27,15 +27,11 @@ export class RepositoryController extends BaseController {
       HttpMethod.GET,
       `${this.prefix}/metrics/:repoOwner`,
       async ({ params, headers }) => {
-        const { repoOwner } = ZodParserInterceptor.parseWithSchema(
-          repoOwnerSchema,
-          params,
-        );
-
-        const { authorization } = ZodParserInterceptor.parseWithSchema(
-          authHeaderSchema,
-          headers,
-        );
+        const { authorization, repoOwner } =
+          ZodParserInterceptor.parseWithSchema(
+            repoOwnerSchema.merge(authHeaderSchema),
+            { ...(params as object), ...(headers as object) },
+          );
 
         const userRepos =
           await this.repositoryService.getUserRepositoriesMetrics(

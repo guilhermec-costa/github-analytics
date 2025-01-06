@@ -6,5 +6,4 @@ const envSchema = z.object({
 
 const env = envSchema.parse(import.meta.env);
 
-console.log(env);
 export default env;

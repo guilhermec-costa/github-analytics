@@ -1,12 +1,12 @@
-import { UserService } from "../application/service/UserService";
-import { IHttpServer } from "./IHttpServer";
+import { UserService } from "../../application/service/UserService";
+import { HttpMethod } from "../../utils/HttpMethod";
+import { HttpStatus } from "../../utils/HttpStatus";
 import {
+  ZodParserInterceptor,
   authorizeGithubUserSchema,
   refreshTokenSchema,
-  ZodParserInterceptor,
-} from "../utils/schemas";
-import { HttpStatus } from "../utils/HttpStatus";
-import { HttpMethod } from "../utils/HttpMethod";
+} from "../../utils/schemas";
+import { IHttpServer } from "../IHttpServer";
 import { BaseController } from "./BaseController";
 
 export class AuthController extends BaseController {

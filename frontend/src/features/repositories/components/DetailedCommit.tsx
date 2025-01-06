@@ -33,10 +33,6 @@ export default function DetailedCommit({
     commitDetails,
   );
 
-  React.useEffect(() => {
-    console.log(deepViewCommit);
-  }, [deepViewCommit]);
-
   const handleCommitClick = (commit: CommitDetail) => {
     if (status === "success") {
       const detailed = data.find((detail) => detail.sha === commit.sha);
