@@ -15,5 +15,5 @@ export abstract class BaseController {
     return this;
   }
 
-  public abstract setupRoutes(): void;
+  public abstract mapRoutes(): void;
 }

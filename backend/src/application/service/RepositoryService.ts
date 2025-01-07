@@ -1,13 +1,10 @@
-import {
-  RecursivePartial,
-  GitHubRepository,
-  CommitDetail,
-  CommitFile,
-} from "../../utils/types";
+import { CommitDetail, CommitFile } from "../../utils/types";
 import { ILogger } from "../../infra/config/ILogger";
 import * as moment from "moment";
 import { IGithubApiGateway } from "../gateway/IGithubApiGateway";
 import { GithubGateway } from "../../infra/gateway/GithubGateway";
+import { RecursivePartial } from "../../utils/types/shared";
+import { GithubRepo } from "../../utils/types/repository";
 
 export class RepositoryService {
   constructor(
@@ -21,9 +18,7 @@ export class RepositoryService {
    * @param token - The access token of the authenticated user.
    * @returns A list of repositories with partial details.
    */
-  async loadUserRepos(
-    token: string,
-  ): Promise<RecursivePartial<GitHubRepository>[]> {
+  async loadUserRepos(token: string): Promise<RecursivePartial<GithubRepo>[]> {
     const userRepos = await this.githubApi.fetchUserRepos(token);
 
     return userRepos.map((repo) => ({

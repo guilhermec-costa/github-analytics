@@ -1,11 +1,8 @@
-import {
-  CommitDetail,
-  CommitResponse,
-  GitHubRepository,
-  GitHubUser,
-} from "../../utils/types";
+import { CommitDetail, RepoCommits } from "../../utils/types";
 import { IGithubApiGateway } from "../../application/gateway/IGithubApiGateway";
 import { GithubGateway } from "./GithubGateway";
+import { GithubRepo, RepoLanguageCount } from "../../utils/types/repository";
+import { GithubUser } from "../../utils/types/githubUser";
 
 export class GithubApiGateway
   extends GithubGateway
@@ -35,9 +32,9 @@ export class GithubApiGateway
     repoOwner: string,
     repoName: string,
     token: string,
-  ): Promise<CommitResponse[]> {
+  ): Promise<RepoCommits[]> {
     const url = `/repos/${repoOwner}/${repoName}/commits`;
-    const response = await this.httpClient().get<CommitResponse[]>(url, {
+    const response = await this.httpClient().get<RepoCommits[]>(url, {
       headers: {
         Authorization: token,
       },
@@ -50,7 +47,7 @@ export class GithubApiGateway
     repoOwner: string,
     repoName: string,
     token: string,
-  ): Promise<{ [language: string]: number }> {
+  ): Promise<RepoLanguageCount> {
     const url = `/repos/${repoOwner}/${repoName}/languages`;
     const response = await this.httpClient().get(url, {
       headers: {
@@ -60,9 +57,9 @@ export class GithubApiGateway
     return response.data;
   }
 
-  async fetchUserRepos(userToken: string): Promise<GitHubRepository[]> {
+  async fetchUserRepos(userToken: string): Promise<GithubRepo[]> {
     const url = "/user/repos";
-    const response = await this.httpClient().get<GitHubRepository[]>(url, {
+    const response = await this.httpClient().get<GithubRepo[]>(url, {
       headers: {
         Authorization: userToken,
       },
@@ -71,9 +68,9 @@ export class GithubApiGateway
     return response.data;
   }
 
-  async fetchUserInfo(userToken: string): Promise<GitHubUser> {
+  async fetchUserInfo(userToken: string): Promise<GithubUser> {
     const url = "/user";
-    const response = await this.httpClient().get<GitHubUser>(url, {
+    const response = await this.httpClient().get<GithubUser>(url, {
       headers: {
         Authorization: userToken,
       },

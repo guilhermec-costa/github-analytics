@@ -1,6 +1,6 @@
 import { ILogger } from "../../infra/config/ILogger";
 import { GithubGateway } from "../../infra/gateway/GithubGateway";
-import { AuthCredentials, GitHubUser } from "../../utils/types";
+import { AuthCredentials, GithubUser } from "../../utils/types/githubUser";
 import { IGithubApiGateway } from "../gateway/IGithubApiGateway";
 import { IGithubWebGateway } from "../gateway/IGithubWebGateway";
 
@@ -33,9 +33,7 @@ export class UserService {
    * @param token - The refresh token used to generate new tokens.
    * @returns An object containing the new `accessToken` and `refreshToken`.
    */
-  async refresh(
-    token: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async refresh(token: string): Promise<AuthCredentials> {
     this.logger.log(
       "Requesting Github Gateway for user authentication with refresh token",
     );
@@ -50,7 +48,7 @@ export class UserService {
    * @param token - The access token of the authenticated user.
    * @returns A `GitHubUser` object containing user information like username, avatar, etc.
    */
-  async loadUserInfo(token: string): Promise<GitHubUser> {
+  async loadUserInfo(token: string): Promise<GithubUser> {
     this.logger.log(
       "Requesting Github Gateway information about for authorized user",
     );

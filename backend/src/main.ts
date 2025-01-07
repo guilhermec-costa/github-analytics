@@ -10,7 +10,6 @@ import { RepositoryController } from "./api/controllers/RepositoryController";
 import { UserController } from "./api/controllers/UserController";
 import { RepositoryService } from "./application/service/RepositoryService";
 
-const port = env.PORT;
 const httpServer = new FastifyAdapter();
 httpServer.addRoutePrefix("api/v1");
 
@@ -26,12 +25,12 @@ const githubApiGateway = new GithubApiGateway();
 const userService = new UserService(logger, githubWebGateway, githubApiGateway);
 const repositoryService = new RepositoryService(logger, githubApiGateway);
 
-new AuthController(httpServer, userService).setPrefix("auth").setupRoutes();
+new AuthController(httpServer, userService).setPrefix("auth").mapRoutes();
 
 new RepositoryController(httpServer, repositoryService)
   .setPrefix("repo")
-  .setupRoutes();
+  .mapRoutes();
 
-new UserController(httpServer, userService).setPrefix("user").setupRoutes();
+new UserController(httpServer, userService).setPrefix("user").mapRoutes();
 
-httpServer.listen(port);
+httpServer.listen(env.PORT);

@@ -17,7 +17,7 @@ export class RepositoryController extends BaseController {
     super(httpServer);
   }
 
-  public setupRoutes(): void {
+  public mapRoutes() {
     if (!this.prefix) {
       this.prefix = this.fallbackPrefix;
     }

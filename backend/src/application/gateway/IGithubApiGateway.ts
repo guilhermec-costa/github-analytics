@@ -1,23 +1,20 @@
-import {
-  CommitDetail,
-  CommitResponse,
-  GitHubRepository,
-  GitHubUser,
-} from "../../utils/types";
+import { CommitDetail, RepoCommits } from "../../utils/types";
+import { GithubUser } from "../../utils/types/githubUser";
+import { GithubRepo, RepoLanguageCount } from "../../utils/types/repository";
 
 export interface IGithubApiGateway {
-  fetchUserInfo(userToken: string): Promise<GitHubUser>;
-  fetchUserRepos(userToken: string): Promise<GitHubRepository[]>;
+  fetchUserInfo(userToken: string): Promise<GithubUser>;
+  fetchUserRepos(userToken: string): Promise<GithubRepo[]>;
   fetchRepoLanguages(
     repoOwner: string,
     repoName: string,
     token: string,
-  ): Promise<{ [language: string]: number }>;
+  ): Promise<RepoLanguageCount>;
   fetchUserRepoCommits(
     repoOwner: string,
     repoName: string,
     token: string,
-  ): Promise<CommitResponse[]>;
+  ): Promise<RepoCommits[]>;
   fetchCommitDetail(
     owner: string,
     repo: string,

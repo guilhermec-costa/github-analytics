@@ -16,7 +16,7 @@ export class AuthController extends BaseController {
     super(httpServer);
   }
 
-  public setupRoutes() {
+  public mapRoutes() {
     if (!this.prefix) {
       this.prefix = this.fallbackPrefix;
     }
