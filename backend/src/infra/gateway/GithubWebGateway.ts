@@ -1,5 +1,5 @@
 import { IGithubWebGateway } from "../../application/gateway/IGithubWebGateway";
-import { AuthCredentials } from "../../utils/types";
+import { AuthCredentials } from "../../utils/types/githubUser";
 import { GithubGateway } from "./GithubGateway";
 
 export class GithubWebGateway

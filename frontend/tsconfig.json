@@ -6,8 +6,10 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+    "outDir": "./dist",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "shared/*": ["../shared/src/*"]
     }
   }
 }

@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "composite": true, // Necessário para projetos referenciados
+    // "declaration": true, // Gera arquivos .d.ts para exportar tipos
+    // "declarationMap": true, // Opcional, mas útil para debug
+    "outDir": "./dist", // Saída para arquivos compilados
+    "rootDir": "./src", // Diretório base para os arquivos de entrada
+    "strict": true, // Boa prática
+    "paths": {
+      "backendTypes/*": ["../backend/src/utils/types/"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "references": [{ "path": "../backend" }]
+}

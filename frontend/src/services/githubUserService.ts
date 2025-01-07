@@ -1,5 +1,5 @@
 import { BackendHttpClient } from "@/lib/http/BackendClient";
-import { RepositoryMetrics } from "@/utils/types";
+import { RepoMetrics } from "shared/types";
 
 export class GithubUserService {
   static async getRepositoryMetrics(username: string) {
@@ -8,7 +8,7 @@ export class GithubUserService {
     if (cachedData) {
       return JSON.parse(cachedData);
     }
-    const data = await BackendHttpClient.get<RepositoryMetrics>(
+    const data = await BackendHttpClient.get<RepoMetrics>(
       `repo/metrics/${username}`,
       {
         headers: {

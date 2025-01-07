@@ -1,4 +1,3 @@
-import { RepositoryService } from "../../application/service/RepoManager";
 import { HttpStatus } from "../../utils/HttpStatus";
 import {
   AuthorizationHeaderSchema,
@@ -8,11 +7,12 @@ import {
 import { BaseController } from "./BaseController";
 import { IHttpServer } from "../IHttpServer";
 import { ZodParserInterceptor } from "../../utils/ZodParserInterceptor";
+import { RepoManager } from "../../application/service/RepoManager";
 
 export class RepositoryController extends BaseController {
   constructor(
     protected readonly httpServer: IHttpServer,
-    private readonly repositoryService: RepositoryService,
+    private readonly repositoryService: RepoManager,
   ) {
     super(httpServer);
   }
