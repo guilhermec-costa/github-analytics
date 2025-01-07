@@ -33,7 +33,7 @@ export class GithubApiGateway
     repoName: string,
     token: string,
   ): Promise<RepoCommit[]> {
-    const url = `/repos/${repoOwner}/${repoName}/commits`;
+    const url = `/repos/${repoOwner}/${repoName}/commits?per_page=100`;
     const response = await this.httpClient().get<RepoCommit[]>(url, {
       headers: {
         Authorization: token,

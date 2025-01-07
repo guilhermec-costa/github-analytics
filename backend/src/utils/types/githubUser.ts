@@ -1,3 +1,5 @@
+import { ParsedCommitDetails } from "./commit";
+
 export type GithubUser = {
   login: string;
   id: number;
@@ -42,7 +44,7 @@ export type AuthCredentials = {
 
 export type DetailedRepoCommit = {
   date: string;
-  commits: any;
+  commits: number;
   pctTotal: string;
-  details: any;
+  details: Array<ParsedCommitDetails>;
 };

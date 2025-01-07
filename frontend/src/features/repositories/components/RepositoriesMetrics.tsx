@@ -13,6 +13,7 @@ import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
 import DetailedCommit from "./DetailedCommit";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import ContributorsDashboard from "./ContributorsDashboard";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -182,6 +183,9 @@ export default function RepositoriesMetrics({
         <p className="text-gray-500 text-center col-span-2">
           Please select a commit on the above chart
         </p>
+      )}
+      {selectedRepository && (
+        <ContributorsDashboard selectedRepo={selectedRepository} />
       )}
     </div>
   );

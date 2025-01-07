@@ -6,7 +6,7 @@ export class GithubUserService {
     const cachedData = localStorage.getItem("metricsData");
 
     if (cachedData) {
-      return JSON.parse(cachedData);
+      return JSON.parse(cachedData) as RepoMetrics;
     }
     const data = await BackendHttpClient.get<RepoMetrics>(
       `repo/metrics/${username}`,
