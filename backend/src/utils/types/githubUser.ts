@@ -40,9 +40,9 @@ export type AuthCredentials = {
   refreshToken: string;
 };
 
-export type RepoCommits = {
+export type DetailedRepoCommit = {
   date: string;
   commits: any;
   pctTotal: string;
   details: any;
-}[];
+};

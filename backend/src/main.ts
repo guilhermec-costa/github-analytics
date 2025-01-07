@@ -8,7 +8,7 @@ import { GithubWebGateway } from "./infra/gateway/GithubWebGateway";
 import { FastifyAdapter } from "./infra/http/FastifyAdapter";
 import { RepositoryController } from "./api/controllers/RepositoryController";
 import { UserController } from "./api/controllers/UserController";
-import { RepositoryService } from "./application/service/RepositoryService";
+import { RepoManager } from "./application/service/RepoManager";
 
 const httpServer = new FastifyAdapter();
 httpServer.addRoutePrefix("api/v1");
@@ -23,7 +23,7 @@ const githubWebGateway = new GithubWebGateway(
 const githubApiGateway = new GithubApiGateway();
 
 const userService = new UserService(logger, githubWebGateway, githubApiGateway);
-const repositoryService = new RepositoryService(logger, githubApiGateway);
+const repositoryService = new RepoManager(logger, githubApiGateway);
 
 new AuthController(httpServer, userService).setPrefix("auth").mapRoutes();
 

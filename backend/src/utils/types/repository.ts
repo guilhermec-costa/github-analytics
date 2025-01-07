@@ -1,4 +1,4 @@
-import { RepoCommits } from "./githubUser";
+import { DetailedRepoCommit } from "./githubUser";
 
 export interface GithubRepoOwner {
   login: string;
@@ -128,6 +128,6 @@ export type RepoMetrics = Record<
   string,
   {
     LanguageDetails: { language: string; count: number }[];
-    CommitDetails: RepoCommits;
+    CommitDetails: DetailedRepoCommit[];
   }
 >;

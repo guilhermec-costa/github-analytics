@@ -1,4 +1,4 @@
-import { RepoCommits, CommitDetail } from "../../utils/types/commit";
+import { CommitDetail, RepoCommit } from "../../utils/types/commit";
 import { GithubUser } from "../../utils/types/githubUser";
 import { GithubRepo, RepoLanguageCount } from "../../utils/types/repository";
 
@@ -14,7 +14,7 @@ export interface IGithubApiGateway {
     repoOwner: string,
     repoName: string,
     token: string,
-  ): Promise<RepoCommits[]>;
+  ): Promise<RepoCommit[]>;
   fetchCommitDetail(
     owner: string,
     repo: string,

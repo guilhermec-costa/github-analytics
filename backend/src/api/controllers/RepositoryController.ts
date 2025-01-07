@@ -1,4 +1,4 @@
-import { RepositoryService } from "../../application/service/RepositoryService";
+import { RepositoryService } from "../../application/service/RepoManager";
 import { HttpStatus } from "../../utils/HttpStatus";
 import {
   AuthorizationHeaderSchema,

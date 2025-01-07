@@ -2,7 +2,7 @@ import { IGithubApiGateway } from "../../application/gateway/IGithubApiGateway";
 import { GithubGateway } from "./GithubGateway";
 import { GithubRepo, RepoLanguageCount } from "../../utils/types/repository";
 import { GithubUser } from "../../utils/types/githubUser";
-import { CommitDetail, RepoCommits } from "../../utils/types/commit";
+import { CommitDetail, RepoCommit } from "../../utils/types/commit";
 
 export class GithubApiGateway
   extends GithubGateway
@@ -32,9 +32,9 @@ export class GithubApiGateway
     repoOwner: string,
     repoName: string,
     token: string,
-  ): Promise<RepoCommits[]> {
+  ): Promise<RepoCommit[]> {
     const url = `/repos/${repoOwner}/${repoName}/commits`;
-    const response = await this.httpClient().get<RepoCommits[]>(url, {
+    const response = await this.httpClient().get<RepoCommit[]>(url, {
       headers: {
         Authorization: token,
       },

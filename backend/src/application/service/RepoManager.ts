@@ -1,5 +1,4 @@
 import { ILogger } from "../../infra/config/ILogger";
-import * as moment from "moment";
 import { IGithubApiGateway } from "../gateway/IGithubApiGateway";
 import { GithubGateway } from "../../infra/gateway/GithubGateway";
 import { RecursivePartial } from "../../utils/types/shared";
@@ -10,9 +9,9 @@ import {
 } from "../../utils/types/repository";
 import { CommitDetail } from "../../utils/types/commit";
 import { CommitDataTransformer } from "./CommitDataTransformer";
-import { RepoCommits } from "../../utils/types/githubUser";
+import { DetailedRepoCommit } from "../../utils/types/githubUser";
 
-export class RepositoryService {
+export class RepoManager {
   private readonly commitTransformer = new CommitDataTransformer();
 
   constructor(
@@ -121,50 +120,24 @@ export class RepositoryService {
     repoOwner: string,
     repoName: string,
     token: string,
-  ): Promise<RepoCommits> {
-    const userRepoCommits = await this.githubApi.fetchUserRepoCommits(
+  ): Promise<DetailedRepoCommit[]> {
+    const repoCommits = await this.githubApi.fetchUserRepoCommits(
       repoOwner,
       repoName,
       token,
     );
 
-    const groupedData: any = {};
-    for (const _commit of userRepoCommits) {
-      const { commit } = _commit;
-      const committedAt = moment
-        .default(commit.author.date)
-        .format("YYYY-MM-DD");
-
-      const commitDetail = {
-        sha: _commit.sha,
-        author: commit.author.name,
-        date: commit.author.date,
-        email: commit.author.email,
-        message: commit.message,
-      };
-
-      if (!groupedData[committedAt]) {
-        groupedData[committedAt] = {
-          count: 1,
-          details: [commitDetail],
-        };
-        continue;
-      }
-
-      groupedData[committedAt] = {
-        count: groupedData[committedAt].count + 1,
-        details: [commitDetail, ...groupedData[committedAt].details],
-      };
-    }
+    const groupedCommitDetails =
+      this.commitTransformer.groupRepoCommitsByDate(repoCommits);
 
     const parsedGroupedData = [];
-    for (const date of Object.keys(groupedData)) {
-      const nrCommits = groupedData[date].count;
+    for (const date of Object.keys(groupedCommitDetails)) {
+      const nrCommits = groupedCommitDetails[date].count;
       parsedGroupedData.push({
         date,
         commits: nrCommits,
-        pctTotal: ((nrCommits / userRepoCommits.length) * 100).toFixed(2),
-        details: groupedData[date].details,
+        pctTotal: ((nrCommits / repoCommits.length) * 100).toFixed(2),
+        details: groupedCommitDetails[date].details,
       });
     }
 

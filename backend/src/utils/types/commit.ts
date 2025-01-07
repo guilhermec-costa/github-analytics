@@ -4,35 +4,37 @@ export interface CommitActorEntity {
   date: string;
 }
 
-export type RepoCommits = {
+export type RepoCommit = {
   sha: string;
   node_id: string;
-  commit: {
-    author: {
-      name: string;
-      email: string;
-      date: string;
-    };
-    committer: {
-      name: string;
-      email: string;
-      date: string;
-    };
-    message: string;
-    tree: {
-      sha: string;
-      url: string;
-    };
-    url: string;
-    comment_count: number;
-    verification: CommitVerification;
-  };
+  commit: InnerRepoCommit;
   url: string;
   html_url: string;
   comments_url: string;
   author: CommitAuthor;
   committer: CommitCommiter;
   parents: Array<CommitParent>;
+};
+
+export type InnerRepoCommit = {
+  author: {
+    name: string;
+    email: string;
+    date: string;
+  };
+  committer: {
+    name: string;
+    email: string;
+    date: string;
+  };
+  message: string;
+  tree: {
+    sha: string;
+    url: string;
+  };
+  url: string;
+  comment_count: number;
+  verification: CommitVerification;
 };
 
 export type CommitParent = {
@@ -135,4 +137,12 @@ export type CommitVerification = {
   signature: string | null;
   payload: string | null;
   verified_at: string | null;
+};
+
+export type ParsedCommitDetails = {
+  sha: string;
+  author: string;
+  date: string;
+  email: string;
+  message: string;
 };
