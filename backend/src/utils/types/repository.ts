@@ -1,3 +1,5 @@
+import { RepoCommits } from "./githubUser";
+
 export interface GithubRepoOwner {
   login: string;
   id: number;
@@ -116,3 +118,16 @@ export interface GithubPermissions {
   triage: boolean;
   pull: boolean;
 }
+
+export type RepoLanguages = Record<
+  string,
+  { language: string; count: number }[]
+>;
+
+export type RepoMetrics = Record<
+  string,
+  {
+    LanguageDetails: { language: string; count: number }[];
+    CommitDetails: RepoCommits;
+  }
+>;

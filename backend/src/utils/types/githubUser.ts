@@ -39,3 +39,10 @@ export type AuthCredentials = {
   accessToken: string;
   refreshToken: string;
 };
+
+export type RepoCommits = {
+  date: string;
+  commits: any;
+  pctTotal: string;
+  details: any;
+}[];

@@ -1,12 +1,20 @@
-import { CommitDetail, CommitFile } from "../../utils/types";
 import { ILogger } from "../../infra/config/ILogger";
 import * as moment from "moment";
 import { IGithubApiGateway } from "../gateway/IGithubApiGateway";
 import { GithubGateway } from "../../infra/gateway/GithubGateway";
 import { RecursivePartial } from "../../utils/types/shared";
-import { GithubRepo } from "../../utils/types/repository";
+import {
+  GithubRepo,
+  RepoLanguages,
+  RepoMetrics,
+} from "../../utils/types/repository";
+import { CommitDetail } from "../../utils/types/commit";
+import { CommitDataTransformer } from "./CommitDataTransformer";
+import { RepoCommits } from "../../utils/types/githubUser";
 
 export class RepositoryService {
+  private readonly commitTransformer = new CommitDataTransformer();
+
   constructor(
     private readonly logger: ILogger,
     private readonly githubApi: IGithubApiGateway & GithubGateway,
@@ -77,7 +85,7 @@ export class RepositoryService {
     );
     const userRepos = await this.loadUserRepos(token);
     const awaitableRequests = [];
-    const parsedResponse: Record<string, any> = {};
+    const parsedResponse: RepoLanguages = {};
 
     for (const repo of userRepos) {
       awaitableRequests.push(
@@ -113,7 +121,7 @@ export class RepositoryService {
     repoOwner: string,
     repoName: string,
     token: string,
-  ): Promise<any> {
+  ): Promise<RepoCommits> {
     const userRepoCommits = await this.githubApi.fetchUserRepoCommits(
       repoOwner,
       repoName,
@@ -176,13 +184,13 @@ export class RepositoryService {
       token,
       owner,
     );
-    const parsedMetrics: any = {};
+    const parsedMetrics: RepoMetrics = {};
+
     for (const repo of userRepos) {
-      parsedMetrics[repo.name!] = {};
-      parsedMetrics[repo.name!]["LanguageDetails"] =
-        repositoriesLanguages[repo.name!];
-      parsedMetrics[repo.name!]["CommitDetails"] =
-        await this.getUserRepoCommits(owner, repo.name!, token);
+      parsedMetrics[repo.name!] = {
+        LanguageDetails: repositoriesLanguages[repo.name!],
+        CommitDetails: await this.getUserRepoCommits(owner, repo.name!, token),
+      };
     }
 
     return parsedMetrics;
@@ -204,22 +212,11 @@ export class RepositoryService {
     id: string,
   ): Promise<RecursivePartial<CommitDetail>> {
     const data = await this.githubApi.fetchCommitDetail(owner, repo, token, id);
-
-    const parsedFiles: RecursivePartial<CommitFile>[] = [];
-    for (const file of data.files) {
-      parsedFiles.push({
-        filename: file.filename,
-        status: file.status,
-        additions: file.additions,
-        deletions: file.deletions,
-        changes: file.changes,
-        patch: file.patch,
-      });
-    }
+    const extractedFiles = this.commitTransformer.refineFilesInfo(data);
 
     return {
       sha: data.sha,
-      files: parsedFiles,
+      files: extractedFiles,
       stats: data.stats,
     };
   }

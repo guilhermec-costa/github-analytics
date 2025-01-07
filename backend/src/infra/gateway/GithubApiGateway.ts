@@ -1,8 +1,8 @@
-import { CommitDetail, RepoCommits } from "../../utils/types";
 import { IGithubApiGateway } from "../../application/gateway/IGithubApiGateway";
 import { GithubGateway } from "./GithubGateway";
 import { GithubRepo, RepoLanguageCount } from "../../utils/types/repository";
 import { GithubUser } from "../../utils/types/githubUser";
+import { CommitDetail, RepoCommits } from "../../utils/types/commit";
 
 export class GithubApiGateway
   extends GithubGateway

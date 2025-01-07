@@ -1,4 +1,4 @@
-import { CommitDetail, RepoCommits } from "../../utils/types";
+import { RepoCommits, CommitDetail } from "../../utils/types/commit";
 import { GithubUser } from "../../utils/types/githubUser";
 import { GithubRepo, RepoLanguageCount } from "../../utils/types/repository";
 
