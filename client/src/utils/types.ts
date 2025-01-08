@@ -54,11 +54,6 @@ export type RepositoryMetrics = {
   [repoName: string]: MetricUnit;
 };
 
-export type authResponse = {
-  accessToken: string;
-  refreshToken: string;
-};
-
 export enum RepoMeasureDimension {
   bytes = "bytes",
   megabytes = "megabytes",

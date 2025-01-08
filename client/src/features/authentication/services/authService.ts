@@ -1,6 +1,6 @@
 import { BackendHttpClient } from "@/lib/http/BackendClient";
-import { authResponse } from "@/utils/types";
 import { Location } from "react-router";
+import { AuthCredentials } from "shared/types";
 
 export class AuthService {
   static async authUsingRouteLocation(location: Location<any>) {
@@ -10,7 +10,7 @@ export class AuthService {
     if (code) {
       const {
         data: { accessToken, refreshToken },
-      } = await BackendHttpClient.post<authResponse>("auth", {
+      } = await BackendHttpClient.post<AuthCredentials>("auth", {
         code,
       });
 
@@ -29,7 +29,7 @@ export class AuthService {
     const refreshToken = localStorage.getItem("refreshToken");
     const {
       data: { accessToken, refreshToken: newRefreshToken },
-    } = await BackendHttpClient.post<authResponse>("auth/refresh", {
+    } = await BackendHttpClient.post<AuthCredentials>("auth/refresh", {
       refreshToken,
     });
 
