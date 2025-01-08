@@ -14,14 +14,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import React from "react";
-import { CommitCount, CommitDetail, DeepViewCommit } from "@/utils/types";
+import { DeepViewCommit } from "@/utils/types";
+import { DetailedRepoCommit } from "shared/types";
 import useCommitDetails from "@/api/queries/useCommitDetails";
+import { ParsedCommitDetails } from "../../../../../server/src/utils/types/commit";
 
 export default function DetailedCommit({
   commitDetails,
   selectedRepository,
 }: {
-  commitDetails: CommitCount;
+  commitDetails: DetailedRepoCommit;
   selectedRepository: string;
 }) {
   const [deepViewCommit, setDeepViewCommit] =
@@ -33,7 +35,7 @@ export default function DetailedCommit({
     commitDetails,
   );
 
-  const handleCommitClick = (commit: CommitDetail) => {
+  const handleCommitClick = (commit: ParsedCommitDetails) => {
     if (status === "success") {
       const detailed = data.find((detail) => detail.sha === commit.sha);
       setDeepViewCommit({

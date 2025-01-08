@@ -14,19 +14,20 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-import { CommitCount, MetricUnit } from "@/utils/types";
+import { MetricUnit } from "@/utils/types";
 import { CategoricalChartState } from "recharts/types/chart/types";
+import { DetailedRepoCommit } from "shared/types";
 
 export default function CommitChart({
   metric,
   setDetailedCommitPeriod,
 }: {
   metric: MetricUnit;
-  setDetailedCommitPeriod: (period: CommitCount) => void;
+  setDetailedCommitPeriod: (period: DetailedRepoCommit) => void;
 }) {
   function manageSelectedDetailedCommit(e: CategoricalChartState) {
     const commitDetails = e.activePayload?.at(0).payload;
-    setDetailedCommitPeriod(commitDetails as CommitCount);
+    setDetailedCommitPeriod(commitDetails as DetailedRepoCommit);
   }
   return (
     <Card className="w-full shadow-xl border border-border bg-background">

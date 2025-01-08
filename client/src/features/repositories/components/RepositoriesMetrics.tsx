@@ -6,14 +6,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CommitCount, MetricUnit, RepoMeasureDimension } from "@/utils/types";
+import { MetricUnit, RepoMeasureDimension } from "@/utils/types";
+import { DetailedRepoCommit } from "shared/types";
 import LanguageChart from "./LanguageChart";
 import CommitChart from "./CommitChart";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
 import DetailedCommit from "./DetailedCommit";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 import ContributorsDashboard from "./ContributorsDashboard";
+import Loading from "./Loading";
+import Error from "./Error";
+import InputSelect from "@/components/InputSelect";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -27,45 +30,13 @@ export default function RepositoriesMetrics({
     RepoMeasureDimension.bytes,
   );
   const [selectedDetailedCommitPeriod, setDetailedCommitPeriod] =
-    React.useState<CommitCount>();
+    React.useState<DetailedRepoCommit>();
   const [selectedRepository, setSelectedRepository] = React.useState<string>();
+  const [repoSearchInputOpen, setRepoSearchInputOpen] =
+    React.useState<boolean>(false);
 
-  if (useReposMetrics.isLoading)
-    return (
-      <div
-        id={sectionId}
-        className="flex flex-col items-center justify-center min-h-screen bg-gray-50"
-      >
-        <div className="animate-spin w-16 h-16 border-4 border-t-accent border-gray-200 rounded-full" />
-        <h2 className="text-2xl font-semibold text-gray-700 mt-6">
-          Loading Repository Metrics
-        </h2>
-        <p className="text-gray-500 mt-2">
-          Please wait while we fetch the data for you.
-        </p>
-      </div>
-    );
-
-  if (useReposMetrics.isError)
-    return (
-      <div
-        id={sectionId}
-        className="flex flex-col items-center justify-center min-h-screen bg-gray-50"
-      >
-        <h2 className="text-2xl font-semibold text-red-500">
-          Failed to Load Data
-        </h2>
-        <p className="text-gray-500 mt-2 text-center">
-          An error occurred while fetching repository metrics. Please try again.
-        </p>
-        <button
-          className="px-6 py-3 bg-red-500 text-white font-semibold rounded-lg mt-4 hover:bg-red-600 transition-all"
-          onClick={() => useReposMetrics.refetch()}
-        >
-          Retry
-        </button>
-      </div>
-    );
+  if (useReposMetrics.isLoading) return <Loading />;
+  if (useReposMetrics.isError) return <Error />;
 
   const repositoryCount = Object.keys(useReposMetrics.data || {}).length;
 
@@ -73,6 +44,7 @@ export default function RepositoriesMetrics({
     setSelectedMetric(useReposMetrics.data![repo]);
     setDetailedCommitPeriod(undefined);
     setSelectedRepository(repo);
+    setRepoSearchInputOpen(false);
   }
 
   return (
@@ -100,20 +72,15 @@ export default function RepositoriesMetrics({
       </p>
 
       <div className="flex flex-col md:flex-row items-center justify-center w-full space-y-4 md:space-y-0 md:space-x-6">
-        <Select onValueChange={handleMetricChange}>
-          <SelectTrigger className="border border-gray-300 bg-gray-50 text-gray-700 rounded-lg shadow-sm p-3 w-64">
-            <SelectValue placeholder="Select Repository" />
-          </SelectTrigger>
-          <SelectContent className="bg-white text-gray-700 rounded-lg shadow-lg">
-            {useReposMetrics.data &&
-              Object.keys(useReposMetrics.data!).map((repoName) => (
-                <SelectItem value={repoName} key={repoName}>
-                  {repoName}
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
-
+        {useReposMetrics.data && (
+          <InputSelect
+            options={Object.keys(useReposMetrics.data)}
+            onSelectionChange={handleMetricChange}
+            openState={repoSearchInputOpen}
+            setOpenState={setRepoSearchInputOpen}
+            selectedOption={selectedRepository}
+          />
+        )}
         <Select onValueChange={(e) => setSelectedDimension(e)}>
           <SelectTrigger className="border border-gray-300 bg-gray-50 text-gray-700 rounded-lg shadow-sm p-3 w-64">
             <SelectValue placeholder="Select Dimension" />
@@ -128,15 +95,6 @@ export default function RepositoriesMetrics({
             </SelectItem>
           </SelectContent>
         </Select>
-        <Button
-          className="bg-secondary"
-          onClick={() => {
-            localStorage.removeItem("metricsData");
-            useReposMetrics.refetch();
-          }}
-        >
-          Refetch
-        </Button>
       </div>
 
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">

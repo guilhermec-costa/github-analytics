@@ -1,5 +1,7 @@
 import { BackendHttpClient } from "@/lib/http/BackendClient";
 import { RepoMetrics } from "shared/types";
+import { RecursivePartial } from "shared/types";
+import { CommitDetail } from "../../../server/src/utils/types/commit";
 
 export class GithubUserService {
   static async getRepositoryMetrics(username: string) {
@@ -40,7 +42,7 @@ export class GithubUserService {
     sha: string,
     token: string,
   ) {
-    const data = await BackendHttpClient.get(
+    const data = await BackendHttpClient.get<RecursivePartial<CommitDetail>>(
       `repo/owner/${owner}/repo/${repo}/commitDetail/${sha}`,
       {
         headers: {
