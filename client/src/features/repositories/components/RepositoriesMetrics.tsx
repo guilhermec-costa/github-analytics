@@ -38,16 +38,14 @@ export default function RepositoriesMetrics({
     React.useState<boolean>(false);
   const [commitCount, setCommitCount] = React.useState<number>(0);
   const [topLanguage, setTopLanguage] = React.useState<string>("");
+  const [averageRepoSize, setAverageRepoSize] = React.useState<string>("");
 
   React.useEffect(() => {
     if (useReposMetrics.data!) {
       const values = Object.values(useReposMetrics.data!);
-      const commitSum = RepoAnalyser.sumCommits(values);
-      const topLanguage = RepoAnalyser.findTopLanguage(values);
-      setCommitCount(commitSum);
-      setTopLanguage(topLanguage);
-
-      // const topLanguage = RepoAnalyser.getTopLanguage(values);
+      setCommitCount(RepoAnalyser.sumCommits(values));
+      setTopLanguage(RepoAnalyser.findTopLanguage(values));
+      setAverageRepoSize(RepoAnalyser.calcAvgRepoSize(values));
     }
   }, [useReposMetrics.data]);
 
@@ -137,8 +135,12 @@ export default function RepositoriesMetrics({
             <Database size={32} className="text-green-500" />
           </div>
           <div>
-            <p className="text-sm text-gray-500">Average Repo Size</p>
-            <h3 className="text-lg font-bold text-gray-800">1.2 GB</h3>
+            <p className="text-sm text-gray-500">
+              Average Repo Size ({selectedDimension})
+            </p>
+            <h3 className="text-lg font-bold text-gray-800">
+              {averageRepoSize}
+            </h3>
           </div>
         </div>
       </div>

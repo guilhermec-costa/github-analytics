@@ -29,23 +29,25 @@ export default function DetailedCommit({
   const [deepViewCommit, setDeepViewCommit] =
     React.useState<DeepViewCommit | null>(null);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [selectedCommit, setSelectedCommit] =
+    React.useState<ParsedCommitDetails>();
 
   const { data, isLoading, error, status } = useCommitDetails(
     selectedRepository,
-    commitDetails,
+    selectedCommit!,
   );
 
   const handleCommitClick = (commit: ParsedCommitDetails) => {
+    setSelectedCommit(commit);
     if (status === "success") {
-      const detailed = data.find((detail) => detail.sha === commit.sha);
       setDeepViewCommit({
         author: commit.author,
         date: commit.date,
         email: commit.email,
-        files: detailed!.files,
+        files: data!.files,
         message: commit.message,
         sha: commit.sha,
-        stats: detailed!.stats,
+        stats: data!.stats,
       });
       setModalOpen(true);
     }

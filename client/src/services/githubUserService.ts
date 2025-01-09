@@ -42,7 +42,7 @@ export class GithubUserService {
     sha: string,
     token: string,
   ) {
-    const data = await BackendHttpClient.get<RecursivePartial<CommitDetail>>(
+    const data = await BackendHttpClient.get<CommitDetail>(
       `repo/owner/${owner}/repo/${repo}/commitDetail/${sha}`,
       {
         headers: {

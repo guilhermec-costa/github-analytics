@@ -49,4 +49,33 @@ export class RepoAnalyser {
 
     return sortedLanguages[0][0] ?? "Not language";
   }
+
+  static calcAvgRepoSize(
+    metrics: {
+      LanguageDetails: {
+        language: string;
+        count: number;
+      }[];
+      CommitDetails: DetailedRepoCommit[];
+    }[],
+  ) {
+    const languageBytes: Record<string, number> = {};
+    for (const { LanguageDetails } of metrics) {
+      for (const { language, count } of LanguageDetails) {
+        if (!languageBytes[language]) {
+          languageBytes[language] = count;
+          continue;
+        }
+
+        languageBytes[language] += count;
+      }
+    }
+
+    const languageCounts = Object.entries(languageBytes);
+    const bytesSum = languageCounts.reduce((acc, currValue) => {
+      return (acc += currValue[1]);
+    }, 0);
+
+    return (bytesSum / languageCounts.length).toFixed(2);
+  }
 }
