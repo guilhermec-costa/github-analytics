@@ -30,32 +30,63 @@ export default function DetailedCommit({
     React.useState<DeepViewCommit | null>(null);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [selectedCommit, setSelectedCommit] =
-    React.useState<ParsedCommitDetails>();
+    React.useState<ParsedCommitDetails | null>();
 
-  const { data, isLoading, error, status } = useCommitDetails(
+  const [commitLoadings, setCommitLoadings] = React.useState<
+    Record<string, boolean>
+  >({});
+
+  const { data, isLoading, error } = useCommitDetails(
     selectedRepository,
     selectedCommit!,
   );
 
+  React.useEffect(() => {
+    console.log(commitLoadings);
+  }, [commitLoadings]);
+  React.useEffect(() => {
+    if (selectedCommit) {
+      setCommitLoadings((prevStates) => ({
+        ...prevStates,
+        [selectedCommit.sha]: isLoading,
+      }));
+    }
+  }, [isLoading, selectedCommit]);
+
   const handleCommitClick = (commit: ParsedCommitDetails) => {
     setSelectedCommit(commit);
-    if (status === "success") {
-      setDeepViewCommit({
-        author: commit.author,
-        date: commit.date,
-        email: commit.email,
-        files: data!.files,
-        message: commit.message,
-        sha: commit.sha,
-        stats: data!.stats,
-      });
-      setModalOpen(true);
+    if (!commitLoadings[commit.sha]) {
+      setDeepViewCommit(null);
+      setModalOpen(false);
     }
   };
 
+  React.useEffect(() => {
+    if (selectedCommit && !isLoading && data) {
+      setDeepViewCommit({
+        author: selectedCommit.author,
+        date: selectedCommit.date,
+        email: selectedCommit.email,
+        files: data?.files || [],
+        message: selectedCommit.message,
+        sha: selectedCommit.sha,
+        stats: data?.stats || null,
+      });
+      setModalOpen(true);
+    }
+  }, [isLoading, selectedCommit, data]);
+
   return (
     <div className="p-6 bg-gradient-to-r from-background from-20% to-secondary to-80% rounded-lg shadow-xl">
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+      <Dialog
+        open={modalOpen}
+        onOpenChange={(prev) => {
+          if (!prev) {
+            setSelectedCommit(null);
+          }
+          setModalOpen(prev);
+        }}
+      >
         <DialogContent className="p-8 bg-white rounded-lg shadow-xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
@@ -142,6 +173,8 @@ export default function DetailedCommit({
         <CarouselContent>
           {commitDetails.details.map((commit) => {
             const { author, date, email, message, sha } = commit;
+            const localLoading = commitLoadings[sha] || false;
+
             return (
               <CarouselItem
                 key={sha}
@@ -149,34 +182,43 @@ export default function DetailedCommit({
                 onClick={() => handleCommitClick(commit)}
               >
                 <div className="p-2">
-                  <Card className="rounded-lg overflow-hidden shadow-lg transition-transform transform hover:cursor-pointer hover:scale-105 hover:shadow-xl bg-gradient-to-r from-blue-50 to-blue-100">
-                    <CardContent className="p-6">
-                      <div className="flex flex-col gap-4">
-                        <div className="flex justify-between items-center">
-                          <p className="text-lg font-semibold text-background">
-                            {author}
+                  {localLoading ? (
+                    <div className="rounded-lg overflow-hidden shadow-lg bg-gray-200 p-6 animate-pulse">
+                      <div className="h-6 bg-gray-300 rounded w-1/3 mb-4"></div>
+                      <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
+                      <div className="h-4 bg-gray-300 rounded w-2/3 mb-4"></div>
+                      <div className="h-4 bg-gray-300 rounded w-full"></div>
+                    </div>
+                  ) : (
+                    <Card className="rounded-lg overflow-hidden shadow-lg transition-transform transform hover:cursor-pointer hover:scale-105 hover:shadow-xl bg-gradient-to-r from-blue-50 to-blue-100">
+                      <CardContent className="p-6">
+                        <div className="flex flex-col gap-4">
+                          <div className="flex justify-between items-center">
+                            <p className="text-lg font-semibold text-background">
+                              {author}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {new Date(date).toLocaleDateString("en-US", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </p>
+                          </div>
+                          <p className="text-sm text-gray-600">{email}</p>
+                          <p className="text-sm text-gray-800">
+                            <span className="font-semibold">Message:</span>{" "}
+                            {message}
                           </p>
-                          <p className="text-sm text-gray-500">
-                            {new Date(date).toLocaleDateString("en-US", {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                          <p className="text-xs text-gray-500 truncate">
+                            <span className="font-semibold">SHA:</span> {sha}
                           </p>
                         </div>
-                        <p className="text-sm text-gray-600">{email}</p>
-                        <p className="text-sm text-gray-800">
-                          <span className="font-semibold">Message:</span>{" "}
-                          {message}
-                        </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          <span className="font-semibold">SHA:</span> {sha}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </CarouselItem>
             );

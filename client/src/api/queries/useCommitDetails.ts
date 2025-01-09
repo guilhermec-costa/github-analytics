@@ -1,10 +1,7 @@
 import { GithubUserService } from "@/services/githubUserService";
 import { useQuery } from "@tanstack/react-query";
 import useUserInformation from "./useUserInformation";
-import {
-  CommitDetail,
-  ParsedCommitDetails,
-} from "../../../../server/src/utils/types/commit";
+import { ParsedCommitDetails } from "../../../../server/src/utils/types/commit";
 
 export default function useCommitDetails(
   repo: string,

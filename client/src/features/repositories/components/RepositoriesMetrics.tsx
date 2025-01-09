@@ -64,7 +64,7 @@ export default function RepositoriesMetrics({
   return (
     <div
       id={sectionId}
-      className="flex flex-col items-center p-10 bg-white shadow-md rounded-xl max-w-7xl mx-auto space-y-8"
+      className="flex flex-col items-center p-10 bg-white shadow-md rounded-xl max-w-8xl mx-auto space-y-8"
     >
       <h1 className="text-4xl font-extrabold text-gray-800">
         Repository Metrics
