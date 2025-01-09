@@ -17,6 +17,8 @@ import ContributorsDashboard from "./ContributorsDashboard";
 import Loading from "./Loading";
 import Error from "./Error";
 import InputSelect from "@/components/InputSelect";
+import { ChartArea, Code, Database } from "lucide-react";
+import { RepoAnalyser } from "../services/RepoAnalyser";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -34,6 +36,20 @@ export default function RepositoriesMetrics({
   const [selectedRepository, setSelectedRepository] = React.useState<string>();
   const [repoSearchInputOpen, setRepoSearchInputOpen] =
     React.useState<boolean>(false);
+  const [commitCount, setCommitCount] = React.useState<number>(0);
+  const [topLanguage, setTopLanguage] = React.useState<string>("");
+
+  React.useEffect(() => {
+    if (useReposMetrics.data!) {
+      const values = Object.values(useReposMetrics.data!);
+      const commitSum = RepoAnalyser.sumCommits(values);
+      const topLanguage = RepoAnalyser.findTopLanguage(values);
+      setCommitCount(commitSum);
+      setTopLanguage(topLanguage);
+
+      // const topLanguage = RepoAnalyser.getTopLanguage(values);
+    }
+  }, [useReposMetrics.data]);
 
   if (useReposMetrics.isLoading) return <Loading />;
   if (useReposMetrics.isError) return <Error />;
@@ -97,7 +113,37 @@ export default function RepositoriesMetrics({
         </Select>
       </div>
 
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+      <div className="flex flex-col md:flex-row items-center justify-between w-full bg-gray-50 p-6 rounded-lg shadow-sm space-y-6 md:space-y-0">
+        <div className="flex items-center space-x-4">
+          <div className="bg-orange-100 p-4 rounded-full">
+            <ChartArea size={32} className="text-orange-500" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Total Commits</p>
+            <h3 className="text-lg font-bold text-gray-800">{commitCount}</h3>
+          </div>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="bg-blue-100 p-4 rounded-full">
+            <Code size={32} className="text-blue-500" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Top Language</p>
+            <h3 className="text-lg font-bold text-gray-800">{topLanguage}</h3>
+          </div>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="bg-green-100 p-4 rounded-full">
+            <Database size={32} className="text-green-500" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Average Repo Size</p>
+            <h3 className="text-lg font-bold text-gray-800">1.2 GB</h3>
+          </div>
+        </div>
+      </div>
+
+      <section className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
         {selectedMetric ? (
           <>
             <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
@@ -125,7 +171,7 @@ export default function RepositoriesMetrics({
             Please select a repository to view its data.
           </p>
         )}
-      </div>
+      </section>
       <h3 className="text-xl font-bold text-gray-800 mb-4">
         Detailed Commits on {selectedDetailedCommitPeriod?.date}
       </h3>

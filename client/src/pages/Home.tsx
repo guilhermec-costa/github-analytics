@@ -32,9 +32,9 @@ export default function Home() {
       <div className="w-full p-8 bg-transparent rounded-lg">
         <h1 className="text-4xl font-bold text-center mb-6">
           Welcome to the Dashboard,{" "}
-          <span className="bg-gradient-to-r from-cyan-500 via-purple-400 to-blue-500 inline-block text-transparent bg-clip-text">
+          <mark className="bg-gradient-to-r from-cyan-500 via-purple-400 to-blue-500 inline-block text-transparent bg-clip-text">
             {username}
-          </span>
+          </mark>
         </h1>
         <RepositoriesMetrics sectionId={"repository-languages"} />
       </div>

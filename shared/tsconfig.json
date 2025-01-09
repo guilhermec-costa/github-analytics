@@ -7,10 +7,13 @@
     "rootDir": "./src", // Diretório base para os arquivos de entrada
     "strict": true, // Boa prática
     "paths": {
-      "backendTypes/*": ["../backend/src/utils/types/"]
+      "backendTypes/*": [
+        "../backend/src/utils/types/",
+        "../backend/src/utils/HttpStatus.ts"
+      ]
     }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
-  "references": [{ "path": "../backend" }]
+  "references": [{ "path": "../server" }]
 }

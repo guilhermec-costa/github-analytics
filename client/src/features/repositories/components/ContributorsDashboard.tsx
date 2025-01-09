@@ -51,10 +51,6 @@ export default function ContributorsDashboard({
     );
   }, [data, selectedRepo]);
 
-  React.useEffect(() => {
-    console.log(contributionsData);
-  }, [contributionsData]);
-
   return (
     <Card className="w-full shadow-xl border border-border bg-background">
       <CardHeader>
@@ -93,7 +89,7 @@ export default function ContributorsDashboard({
             <Bar
               dataKey="contributions"
               fill="url(#barGradient)"
-              radius={[10, 10, 0, 0]} // Smooth rounded corners
+              radius={[10, 10, 0, 0]}
             />
             <Tooltip
               cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
