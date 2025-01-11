@@ -34,7 +34,7 @@ export default function InputSelect({
         <Button
           variant="outline"
           role="combobox"
-          className="w-[200px] justify-between"
+          className="w-[250px] justify-between"
         >
           {selectedOption
             ? options.find((option) => option === selectedOption)

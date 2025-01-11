@@ -6,7 +6,6 @@ import { DetailedRepoCommit } from "shared/types";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
 import { AreaChartIcon as ChartArea, Code, Database } from "lucide-react";
 import { RepoAnalyser } from "../services/RepoAnalyser";
-import { If } from "semantic-react-ui-components";
 
 import {
   Card,
@@ -16,21 +15,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-// import { Skeleton } from "@/components/ui/skeleton";
-// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import DetailedCommit from "./DetailedCommit";
 import ContributorsDashboard from "./ContributorsDashboard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import LanguageChart from "./LanguageChart";
 import CommitChart from "./CommitChart";
+import InputSelect from "@/components/InputSelect";
+import DimensionSelect from "./DimensionSelect";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -50,6 +42,8 @@ export default function RepositoriesMetrics({
   const [commitCount, setCommitCount] = React.useState<number>(0);
   const [topLanguage, setTopLanguage] = React.useState<string>("");
   const [averageRepoSize, setAverageRepoSize] = React.useState<string>("");
+  const [repoSearchInputOpen, setRepoSearchInputOpen] =
+    React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (data) {
@@ -69,10 +63,11 @@ export default function RepositoriesMetrics({
     setSelectedMetric(data![repo]);
     setDetailedCommitPeriod(undefined);
     setSelectedRepository(repo);
+    setRepoSearchInputOpen(false);
   }
 
   return (
-    <Card id={sectionId} className="w-full max-w-7xl mx-auto">
+    <Card id={sectionId} className="w-full rounded-none">
       <CardHeader>
         <CardTitle className="text-3xl font-bold">Repository Metrics</CardTitle>
         <CardDescription>
@@ -87,37 +82,16 @@ export default function RepositoriesMetrics({
             <span className="font-medium">{repositoryCount}</span>
           </p>
           <div className="flex space-x-4">
-            <Select
-              onValueChange={handleMetricChange}
-              value={selectedRepository}
-            >
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select repository" />
-              </SelectTrigger>
-              <SelectContent>
-                {data &&
-                  Object.keys(data).map((repo) => (
-                    <SelectItem key={repo} value={repo}>
-                      {repo}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-            <Select
-              onValueChange={setSelectedDimension}
-              value={selectedDimension}
-            >
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select dimension" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.values(RepoMeasureDimension).map((dimension) => (
-                  <SelectItem key={dimension} value={dimension}>
-                    {dimension}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {data && (
+              <InputSelect
+                options={Object.keys(data)}
+                onSelectionChange={handleMetricChange}
+                openState={repoSearchInputOpen}
+                setOpenState={setRepoSearchInputOpen}
+                selectedOption={selectedRepository}
+              />
+            )}
+            <DimensionSelect setSelectedDimension={setSelectedDimension} />
           </div>
         </div>
 
@@ -196,10 +170,9 @@ export default function RepositoriesMetrics({
           </Card>
         )}
 
-        <If
-          condition={!!selectedRepository}
-          render={<ContributorsDashboard selectedRepo={selectedRepository} />}
-        />
+        {selectedRepository && (
+          <ContributorsDashboard selectedRepo={selectedRepository} />
+        )}
       </CardContent>
     </Card>
   );

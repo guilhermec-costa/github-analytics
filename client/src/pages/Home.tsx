@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/card";
 import useUserInformation from "@/api/queries/useUserInformation";
 import { RepositoriesMetrics } from "@/features/repositories";
+import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
   const { data, status } = useUserInformation();
@@ -82,7 +83,7 @@ export default function Home() {
         </div>
       </header>
       <main className="container mx-auto py-10">
-        <Card className="mb-10">
+        <Card className="rounded-none">
           <CardHeader>
             <CardTitle className="text-4xl font-bold">
               Welcome to the Dashboard
@@ -97,6 +98,7 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
         </Card>
+        <Separator />
         <section id="repository-metrics">
           <RepositoriesMetrics sectionId="repository-metrics" />
         </section>
