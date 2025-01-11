@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Settings, Github } from "lucide-react";
 
@@ -12,10 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -23,6 +19,7 @@ import {
 import useUserInformation from "@/api/queries/useUserInformation";
 import { RepositoriesMetrics } from "@/features/repositories";
 import { Separator } from "@/components/ui/separator";
+import TopNav from "@/layouts/TopNav";
 
 export default function Home() {
   const { data, status } = useUserInformation();
@@ -31,7 +28,7 @@ export default function Home() {
 
   React.useEffect(() => {
     if (status === "success") {
-      setUsername(data.login);
+      setUsername(data.name);
     }
   }, [data, status]);
 
@@ -42,48 +39,11 @@ export default function Home() {
           <div className="mr-4 hidden md:flex">
             <Github className="h-6 w-6" />
           </div>
-          <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-            <nav className="flex items-center space-x-6 text-sm font-medium">
-              <a
-                href="#repository-metrics"
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
-              >
-                Repository Metrics
-              </a>
-              <a
-                href="#"
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
-              >
-                Projects
-              </a>
-              <a
-                href="#"
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
-              >
-                Teams
-              </a>
-            </nav>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Settings className="h-4 w-4" />
-                  <span className="sr-only">Settings</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem>Subscription</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <TopNav />
         </div>
       </header>
       <main className="container mx-auto py-10">
-        <Card className="rounded-none">
+        <Card className="rounded-md">
           <CardHeader>
             <CardTitle className="text-4xl font-bold">
               Welcome to the Dashboard

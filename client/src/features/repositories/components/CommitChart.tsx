@@ -48,7 +48,6 @@ export default function CommitChart({
               type="category"
               dataKey="date"
               tick={{ fontSize: 12, fill: "var(--foreground-muted)" }}
-              axisLine={false}
               tickLine={false}
             />
             <YAxis
@@ -72,6 +71,7 @@ export default function CommitChart({
                 ) : null
               }
             />
+            <CartesianGrid />
             <Area
               type="monotone"
               dataKey="commits"

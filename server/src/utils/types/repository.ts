@@ -129,5 +129,7 @@ export type RepoMetrics = Record<
   {
     LanguageDetails: { language: string; count: number }[];
     CommitDetails: DetailedRepoCommit[];
+    StargazersCount?: number;
+    repo: string;
   }
 >;

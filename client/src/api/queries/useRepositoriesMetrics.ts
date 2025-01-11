@@ -6,7 +6,7 @@ export default function useRepositoriesMetrics() {
   const userInfo = useUserInformation();
 
   return useQuery({
-    queryKey: ["repoLanguages"],
+    queryKey: ["repoMetrics"],
     queryFn: () => GithubUserService.getRepositoryMetrics(userInfo.data.login),
     enabled: userInfo.status === "success",
   });

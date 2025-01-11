@@ -12,6 +12,7 @@ import {
   Bar,
   ResponsiveContainer,
   Tooltip,
+  CartesianGrid,
 } from "recharts";
 import { MetricUnit, RepoMeasureDimension } from "@/utils/types";
 
@@ -73,6 +74,7 @@ export default function LanguageChart({
                 ) : null
               }
             />
+            <CartesianGrid strokeDasharray={"3 3"} />
             <Bar
               dataKey="count"
               fill="url(#barGradient)"

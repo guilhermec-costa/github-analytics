@@ -1,16 +1,17 @@
 import { DetailedRepoCommit } from "shared/types";
-import { StringValidation } from "zod";
+
+export type Metric = {
+  LanguageDetails: {
+    language: string;
+    count: number;
+  }[];
+  CommitDetails: DetailedRepoCommit[];
+  StargazersCount?: number;
+  name?: string;
+};
 
 export class RepoAnalyser {
-  static sumCommits(
-    metrics: {
-      LanguageDetails: {
-        language: string;
-        count: number;
-      }[];
-      CommitDetails: DetailedRepoCommit[];
-    }[],
-  ) {
+  static sumCommits(metrics: Metric[]) {
     let commitSum = 0;
 
     for (const { CommitDetails } of metrics) {
@@ -22,15 +23,7 @@ export class RepoAnalyser {
     return commitSum;
   }
 
-  static findTopLanguage(
-    metrics: {
-      LanguageDetails: {
-        language: string;
-        count: number;
-      }[];
-      CommitDetails: DetailedRepoCommit[];
-    }[],
-  ): string {
+  static findTopLanguage(metrics: Metric[]): string {
     const languageBytes: Record<string, number> = {};
     for (const { LanguageDetails } of metrics) {
       for (const { language, count } of LanguageDetails) {
@@ -50,15 +43,7 @@ export class RepoAnalyser {
     return sortedLanguages[0][0] ?? "Not language";
   }
 
-  static calcAvgRepoSize(
-    metrics: {
-      LanguageDetails: {
-        language: string;
-        count: number;
-      }[];
-      CommitDetails: DetailedRepoCommit[];
-    }[],
-  ) {
+  static calcAvgRepoSize(metrics: Metric[]) {
     const languageBytes: Record<string, number> = {};
     for (const { LanguageDetails } of metrics) {
       for (const { language, count } of LanguageDetails) {
@@ -77,5 +62,13 @@ export class RepoAnalyser {
     }, 0);
 
     return (bytesSum / languageCounts.length).toFixed(2);
+  }
+
+  static findTopStargazer(metrics: Metric[]) {
+    const topStargazer = metrics.sort(
+      (mA, mB) => mB.StargazersCount! - mA.StargazersCount!,
+    )[0].name;
+
+    return topStargazer;
   }
 }

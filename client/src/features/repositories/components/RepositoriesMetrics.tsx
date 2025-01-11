@@ -1,10 +1,14 @@
-"use client";
-
 import React from "react";
 import { MetricUnit, RepoMeasureDimension } from "@/utils/types";
 import { DetailedRepoCommit } from "shared/types";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
-import { AreaChartIcon as ChartArea, Code, Database } from "lucide-react";
+import {
+  AreaChartIcon as ChartArea,
+  Code,
+  Database,
+  RefreshCcw,
+  Star,
+} from "lucide-react";
 import { RepoAnalyser } from "../services/RepoAnalyser";
 
 import {
@@ -23,6 +27,8 @@ import LanguageChart from "./LanguageChart";
 import CommitChart from "./CommitChart";
 import InputSelect from "@/components/InputSelect";
 import DimensionSelect from "./DimensionSelect";
+import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -44,6 +50,11 @@ export default function RepositoriesMetrics({
   const [averageRepoSize, setAverageRepoSize] = React.useState<string>("");
   const [repoSearchInputOpen, setRepoSearchInputOpen] =
     React.useState<boolean>(false);
+  const [topStargazers, setTopStargazers] = React.useState<string | undefined>(
+    "",
+  );
+
+  const queryClient = useQueryClient();
 
   React.useEffect(() => {
     if (data) {
@@ -51,6 +62,7 @@ export default function RepositoriesMetrics({
       setCommitCount(RepoAnalyser.sumCommits(values));
       setTopLanguage(RepoAnalyser.findTopLanguage(values));
       setAverageRepoSize(RepoAnalyser.calcAvgRepoSize(values));
+      setTopStargazers(RepoAnalyser.findTopStargazer(values));
     }
   }, [data]);
 
@@ -66,6 +78,10 @@ export default function RepositoriesMetrics({
     setRepoSearchInputOpen(false);
   }
 
+  function handleRefetch() {
+    queryClient.invalidateQueries({ queryKey: ["repoMetrics"] });
+  }
+
   return (
     <Card id={sectionId} className="w-full rounded-none">
       <CardHeader>
@@ -75,6 +91,10 @@ export default function RepositoriesMetrics({
           visualizations
         </CardDescription>
       </CardHeader>
+      <Button variant={"secondary"} className="flex" onClick={handleRefetch}>
+        <p>Refresh data</p>
+        <RefreshCcw />
+      </Button>
       <CardContent className="space-y-6">
         <div className="flex justify-between items-center">
           <p className="text-sm text-muted-foreground">
@@ -95,7 +115,7 @@ export default function RepositoriesMetrics({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <MetricCard
             icon={<ChartArea className="h-4 w-4" />}
             title="Total Commits"
@@ -110,6 +130,11 @@ export default function RepositoriesMetrics({
             icon={<Database className="h-4 w-4" />}
             title={`Average Repo Size (${selectedDimension})`}
             value={averageRepoSize}
+          />
+          <MetricCard
+            icon={<Star className="h-4 w-4" color="#fad900" fill="#fad900" />}
+            title={`Top stargazers`}
+            value={topStargazers}
           />
         </div>
 
@@ -185,7 +210,7 @@ function MetricCard({
 }: {
   icon: React.ReactNode;
   title: string;
-  value: string;
+  value: string | undefined;
 }) {
   return (
     <Card>

@@ -163,6 +163,8 @@ export class RepoManager {
       parsedMetrics[repo.name!] = {
         LanguageDetails: repositoriesLanguages[repo.name!],
         CommitDetails: await this.getUserRepoCommits(owner, repo.name!, token),
+        StargazersCount: repo.stargazers_count,
+        repo: repo.name!,
       };
     }
 
