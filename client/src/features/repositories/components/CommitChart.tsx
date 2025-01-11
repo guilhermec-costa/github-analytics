@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Card,
   CardHeader,
@@ -10,13 +11,12 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid,
   AreaChart,
   Area,
 } from "recharts";
 import { MetricUnit } from "@/utils/types";
-import { CategoricalChartState } from "recharts/types/chart/types";
 import { DetailedRepoCommit } from "shared/types";
+import { format, parseISO, subDays } from "date-fns";
 
 export default function CommitChart({
   metric,
@@ -25,74 +25,108 @@ export default function CommitChart({
   metric: MetricUnit;
   setDetailedCommitPeriod: (period: DetailedRepoCommit) => void;
 }) {
-  function manageSelectedDetailedCommit(e: CategoricalChartState) {
-    const commitDetails = e.activePayload?.at(0).payload;
-    setDetailedCommitPeriod(commitDetails as DetailedRepoCommit);
-  }
+  const data = React.useMemo(() => {
+    const sortedCommits = [...metric.CommitDetails].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
+
+    const today = new Date();
+    const thirtyDaysAgo = subDays(today, 30);
+
+    return Array.from({ length: 30 }, (_, i) => {
+      const date = format(subDays(today, 29 - i), "yyyy-MM-dd");
+      const existingCommit = sortedCommits.find(
+        (commit) => format(parseISO(commit.date), "yyyy-MM-dd") === date,
+      );
+      return existingCommit || { date, commits: 0 };
+    });
+  }, [metric.CommitDetails]);
+
+  const maxCommits = Math.max(...data.map((d) => d.commits));
+
+  const handleChartClick = React.useCallback(
+    (e: any) => {
+      if (e && e.activePayload && e.activePayload.length) {
+        setDetailedCommitPeriod(
+          e.activePayload[0].payload as DetailedRepoCommit,
+        );
+      }
+    },
+    [setDetailedCommitPeriod],
+  );
+
   return (
-    <Card className="w-full shadow-xl border border-border bg-background">
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-lg font-bold">Commit Activity</CardTitle>
-        <CardDescription>Daily commit activity over time.</CardDescription>
+        <CardTitle>Commit Activity</CardTitle>
+        <CardDescription>
+          Daily commit activity over the last 30 days
+        </CardDescription>
       </CardHeader>
 
       <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
-            data={metric.CommitDetails}
-            margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
-            onClick={manageSelectedDetailedCommit}
+            data={data}
+            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            onClick={handleChartClick}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-muted)" />
-            <XAxis
-              type="category"
-              dataKey="date"
-              tick={{ fontSize: 12, fill: "var(--foreground-muted)" }}
-              tickLine={false}
-            />
-            <YAxis
-              type="number"
-              dataKey="commits"
-              tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
-              axisLine={false}
-              tickLine={false}
-            />
-            <Tooltip
-              content={({ active, payload }) =>
-                active && payload && payload.length ? (
-                  <div className="p-3 bg-popover text-popover-foreground rounded-md shadow-md">
-                    <p className="font-semibold">
-                      {new Date(payload[0].payload.date).toLocaleDateString()}
-                    </p>
-                    <p>
-                      Commits: <strong>{payload[0].value}</strong>
-                    </p>
-                  </div>
-                ) : null
-              }
-            />
-            <CartesianGrid />
-            <Area
-              type="monotone"
-              dataKey="commits"
-              stroke="hsl(var(--primary))"
-              fill="url(#gradient)"
-              strokeWidth={2}
-            />
             <defs>
-              <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorCommits" x1="0" y1="0" x2="0" y2="1">
                 <stop
-                  offset="0%"
+                  offset="5%"
                   stopColor="hsl(var(--primary))"
                   stopOpacity={0.8}
                 />
                 <stop
-                  offset="100%"
+                  offset="95%"
                   stopColor="hsl(var(--primary))"
-                  stopOpacity={0.2}
+                  stopOpacity={0.1}
                 />
               </linearGradient>
             </defs>
+            <XAxis
+              dataKey="date"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+              tickFormatter={(value) => format(parseISO(value), "MMM dd")}
+            />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+              tickFormatter={(value) => value.toFixed(0)}
+              domain={[0, maxCommits]}
+            />
+            <Tooltip
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="rounded-lg border bg-background p-2 shadow-md">
+                      <p className="font-medium">
+                        {format(
+                          parseISO(payload[0].payload.date),
+                          "MMMM d, yyyy",
+                        )}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Commits:{" "}
+                        <span className="font-medium">{payload[0].value}</span>
+                      </p>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
+            <Area
+              type="monotone"
+              dataKey="commits"
+              stroke="hsl(var(--primary))"
+              fillOpacity={1}
+              fill="url(#colorCommits)"
+            />
           </AreaChart>
         </ResponsiveContainer>
       </CardContent>

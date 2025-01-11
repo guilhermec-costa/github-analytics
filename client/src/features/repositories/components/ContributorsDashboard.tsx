@@ -1,3 +1,4 @@
+import React, { useState, useMemo } from "react";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
 import {
   Card,
@@ -6,9 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import React, { useState } from "react";
-import { Bar, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { BarChart } from "recharts";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Cell,
+} from "recharts";
 
 export default function ContributorsDashboard({
   selectedRepo,
@@ -16,104 +23,101 @@ export default function ContributorsDashboard({
   selectedRepo: string;
 }) {
   const { data } = useRepositoriesMetrics();
-  const [contributionsData, setContributionsData] = useState<
-    {
-      author: string;
-      contributions: number;
-    }[]
-  >();
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  React.useEffect(() => {
-    const contributionsByAuthor: {
-      [author: string]: number;
-    } = {};
+  const contributionsData = useMemo(() => {
+    if (!data || !data[selectedRepo]) return [];
 
-    const commitGroups = data![selectedRepo].CommitDetails.map(
-      (dateGroup) => dateGroup.details,
-    );
+    const contributionsByAuthor: { [author: string]: number } = {};
 
-    for (const group of commitGroups) {
-      for (const { author } of group) {
-        if (!contributionsByAuthor[author]) {
-          contributionsByAuthor[author] = 1;
-          continue;
-        }
+    data[selectedRepo].CommitDetails.forEach((dateGroup) => {
+      dateGroup.details.forEach(({ author }) => {
+        contributionsByAuthor[author] =
+          (contributionsByAuthor[author] || 0) + 1;
+      });
+    });
 
-        contributionsByAuthor[author]++;
-      }
-    }
-
-    setContributionsData(
-      Object.entries(contributionsByAuthor).map(([author, contributions]) => ({
-        author,
-        contributions,
-      })),
-    );
+    return Object.entries(contributionsByAuthor)
+      .map(([author, contributions]) => ({ author, contributions }))
+      .sort((a, b) => b.contributions - a.contributions)
+      .slice(0, 10);
   }, [data, selectedRepo]);
 
+  const maxContributions = Math.max(
+    ...contributionsData.map((d) => d.contributions),
+  );
+
+  const colors = [
+    "hsl(var(--primary))",
+    "hsl(var(--secondary))",
+    "hsl(var(--accent))",
+    "hsl(var(--muted))",
+  ];
+
+  const handleMouseEnter = (_: any, index: number) => setActiveIndex(index);
+  const handleMouseLeave = () => setActiveIndex(null);
+
   return (
-    <Card className="w-full shadow-xl border border-border bg-background">
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-lg font-bold">
-          Contribution Distribution by Author
-        </CardTitle>
+        <CardTitle>Contribution Distribution</CardTitle>
         <CardDescription>
-          Breakdown of commit contributions by author
+          Top 10 contributors for {selectedRepo}
         </CardDescription>
       </CardHeader>
-
       <CardContent className="h-[450px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={contributionsData}
-            margin={{ top: 10, right: 20, left: 20, bottom: 30 }}
+            layout="vertical"
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <XAxis
-              type="category"
-              dataKey="author"
+              type="number"
+              domain={[0, maxContributions]}
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 13, fill: "#ffffff" }}
             />
             <YAxis
-              type="number"
-              dataKey="contributions"
+              dataKey="author"
+              type="category"
               axisLine={false}
               tickLine={false}
-              tick={{
-                fontSize: 13,
-                fontWeight: "bold",
-                fill: "#ffffff",
+              width={120}
+            />
+            <Tooltip
+              cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="rounded-lg border bg-background p-2 shadow-md">
+                      <p className="font-medium">{payload[0].payload.author}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Contributions:{" "}
+                        <span className="font-medium">{payload[0].value}</span>
+                      </p>
+                    </div>
+                  );
+                }
+                return null;
               }}
             />
             <Bar
               dataKey="contributions"
-              fill="url(#barGradient)"
-              radius={[10, 10, 0, 0]}
-            />
-            <Tooltip
-              cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
-              content={({ active, payload }) =>
-                active && payload && payload.length ? (
-                  <div className="p-3 bg-popover text-popover-foreground rounded-md shadow-md">
-                    <p className="font-semibold">{payload[0].payload.author}</p>
-                    <p>{`Contributions: ${payload[0].value}`}</p>
-                  </div>
-                ) : null
-              }
-            />
-            <defs>
-              <linearGradient
-                id="barGradient"
-                x1="0%"
-                x2="100%"
-                y1="0%"
-                y2="100%"
-              >
-                <stop offset="0%" stopColor="hsl(var(--primary))" />
-                <stop offset="100%" stopColor="hsl(var(--accent))" />
-              </linearGradient>
-            </defs>
+              radius={[0, 4, 4, 0]}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              {contributionsData.map((_, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={colors[index % colors.length]}
+                  fillOpacity={
+                    activeIndex === null || activeIndex === index ? 1 : 0.6
+                  }
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

@@ -154,9 +154,6 @@ export default function RepositoriesMetrics({
             </TabsList>
             <TabsContent value="languages">
               <Card>
-                <CardHeader>
-                  <CardTitle>Language Breakdown</CardTitle>
-                </CardHeader>
                 <CardContent>
                   <LanguageChart
                     metric={selectedMetric}
