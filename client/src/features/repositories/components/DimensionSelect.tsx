@@ -15,7 +15,7 @@ export default function DimensionSelect({
   return (
     <>
       <Select onValueChange={(e) => setSelectedDimension(e)}>
-        <SelectTrigger className="w-[150px]">
+        <SelectTrigger className="w-[250px]">
           <SelectValue placeholder="Select Dimension" />
         </SelectTrigger>
         <SelectContent className="bg-white text-gray-700 rounded-lg shadow-lg">

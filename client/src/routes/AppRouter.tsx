@@ -7,9 +7,7 @@ const HomePage = lazy(() => import("@/pages/Home"));
 // eslint-disable-next-line react-refresh/only-export-components
 const LoginPage = lazy(() => import("@/pages/Login"));
 // eslint-disable-next-line react-refresh/only-export-components
-const CallbackPage = lazy(
-  () => import("@/features/authentication/components/CalbackComponent"),
-);
+const GithubCallback = lazy(() => import("@/pages/GithubCallback"));
 
 export const router = createBrowserRouter([
   {
@@ -18,7 +16,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/callback",
-    element: <CallbackPage />,
+    element: <GithubCallback />,
   },
   {
     path: "/",

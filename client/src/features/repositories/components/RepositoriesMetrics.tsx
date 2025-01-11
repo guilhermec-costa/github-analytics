@@ -84,17 +84,25 @@ export default function RepositoriesMetrics({
 
   return (
     <Card id={sectionId} className="w-full rounded-none">
-      <CardHeader>
-        <CardTitle className="text-3xl font-bold">Repository Metrics</CardTitle>
-        <CardDescription>
-          Gain insights into your repositories with detailed metrics and data
-          visualizations
-        </CardDescription>
+      <CardHeader className="grid grid-cols-1 md:grid-cols-2">
+        <section>
+          <CardTitle className="text-3xl font-bold">
+            Repository Metrics
+          </CardTitle>
+          <CardDescription>
+            Gain insights into your repositories with detailed metrics and data
+            visualizations
+          </CardDescription>
+        </section>
+        <Button
+          variant={"secondary"}
+          className="flex w-fit justify-self-end"
+          onClick={handleRefetch}
+        >
+          <p>Refresh data</p>
+          <RefreshCcw />
+        </Button>
       </CardHeader>
-      <Button variant={"secondary"} className="flex" onClick={handleRefetch}>
-        <p>Refresh data</p>
-        <RefreshCcw />
-      </Button>
       <CardContent className="space-y-6">
         <div className="flex justify-between items-center">
           <p className="text-sm text-muted-foreground">

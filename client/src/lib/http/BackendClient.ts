@@ -1,6 +1,6 @@
 import env from "@/env";
-import { AuthService } from "@/features/authentication/services/authService";
 import axios from "axios";
+import { AuthService } from "@/services/AuthService";
 
 enum StatusCode {
   UNAUTHORIZED = 401,

@@ -1,8 +1,8 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AuthService } from "../services/authService";
+import { AuthService } from "@/services/AuthService";
 
-export default function CallbackComponent() {
+export default function GithubCallback() {
   const location = useLocation();
   const navigate = useNavigate();
 
