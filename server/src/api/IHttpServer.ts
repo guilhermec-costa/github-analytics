@@ -24,4 +24,5 @@ export type ControllerCallbackInput = {
   body: unknown;
   token?: string;
   headers: unknown;
+  queries: unknown;
 };

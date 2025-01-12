@@ -9,6 +9,7 @@ import { FastifyAdapter } from "./infra/http/FastifyAdapter";
 import { RepositoryController } from "./api/controllers/RepositoryController";
 import { UserController } from "./api/controllers/UserController";
 import { RepoManager } from "./application/service/RepoManager";
+import fastifyWebsocket from "@fastify/websocket";
 
 const httpServer = new FastifyAdapter();
 httpServer.addRoutePrefix("api/v1");

@@ -7,7 +7,7 @@ export type Metric = {
   }[];
   CommitDetails: DetailedRepoCommit[];
   StargazersCount?: number;
-  name?: string;
+  repo?: string;
 };
 
 export class RepoAnalyser {
@@ -67,7 +67,7 @@ export class RepoAnalyser {
   static findTopStargazer(metrics: Metric[]) {
     const topStargazer = metrics.sort(
       (mA, mB) => mB.StargazersCount! - mA.StargazersCount!,
-    )[0].name;
+    )[0].repo;
 
     return topStargazer;
   }

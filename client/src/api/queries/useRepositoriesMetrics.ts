@@ -1,13 +1,10 @@
 import { GithubUserService } from "@/services/githubUserService";
 import { useQuery } from "@tanstack/react-query";
-import useUserInformation from "./useUserInformation";
 
-export default function useRepositoriesMetrics() {
-  const userInfo = useUserInformation();
-
+export default function useRepositoriesMetrics(username: string | undefined) {
   return useQuery({
-    queryKey: ["repoMetrics"],
-    queryFn: () => GithubUserService.getRepositoryMetrics(userInfo.data.login),
-    enabled: userInfo.status === "success",
+    queryKey: ["repoMetrics", username!],
+    queryFn: () => GithubUserService.getRepositoryMetrics(username!),
+    enabled: !!username,
   });
 }

@@ -19,10 +19,12 @@ import {
 
 export default function ContributorsDashboard({
   selectedRepo,
+  user,
 }: {
   selectedRepo: string;
+  user: string | undefined;
 }) {
-  const { data } = useRepositoriesMetrics();
+  const { data } = useRepositoriesMetrics(user);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const contributionsData = useMemo(() => {

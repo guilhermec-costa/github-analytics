@@ -26,3 +26,7 @@ export const CommitReferenceSchema = z
     ref: z.string().nonempty(),
   })
   .merge(RepositoryOwnerPairSchema);
+
+export const SpecificUsernameQuery = z.object({
+  username: z.string().nonempty(),
+});

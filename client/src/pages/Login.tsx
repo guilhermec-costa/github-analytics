@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { useNavigate } from "react-router";
 import React from "react";
-import { AuthService } from "@/features/authentication/services/authService";
+import { AuthService } from "@/services/AuthService";
 
 export default function Login() {
   const navigate = useNavigate();

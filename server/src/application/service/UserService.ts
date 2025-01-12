@@ -48,10 +48,14 @@ export class UserService {
    * @param token - The access token of the authenticated user.
    * @returns A `GitHubUser` object containing user information like username, avatar, etc.
    */
-  async loadUserInfo(token: string): Promise<GithubUser> {
+  async loadAuthorizedUserInfo(token: string): Promise<GithubUser> {
     this.logger.log(
       "Requesting Github Gateway information about for authorized user",
     );
-    return await this.githubApi.fetchUserInfo(token);
+    return await this.githubApi.fetchAuthorizedUserInfo(token);
+  }
+
+  async loadSpecificUser(token: string, username: string) {
+    return await this.githubApi.fetchSpecificUser(token, username);
   }
 }

@@ -12,6 +12,17 @@ export class GithubApiGateway
     super("https://api.github.com");
   }
 
+  async fetchSpecificUser(token: string, username: string): Promise<any> {
+    const url = `/users/${username}`;
+    const response = await this.httpClient().get<CommitDetail>(url, {
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    return response.data;
+  }
+
   async fetchCommitDetail(
     owner: string,
     repo: string,
@@ -68,7 +79,7 @@ export class GithubApiGateway
     return response.data;
   }
 
-  async fetchUserInfo(userToken: string): Promise<GithubUser> {
+  async fetchAuthorizedUserInfo(userToken: string): Promise<GithubUser> {
     const url = "/user";
     const response = await this.httpClient().get<GithubUser>(url, {
       headers: {

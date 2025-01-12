@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import { MetricUnit, RepoMeasureDimension } from "@/utils/types";
 import { DetailedRepoCommit } from "shared/types";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
@@ -7,6 +7,7 @@ import {
   Code,
   Database,
   RefreshCcw,
+  Search,
   Star,
 } from "lucide-react";
 import { RepoAnalyser } from "../services/RepoAnalyser";
@@ -29,14 +30,24 @@ import InputSelect from "@/components/InputSelect";
 import DimensionSelect from "./DimensionSelect";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { Input } from "@/components/ui/input";
+import { GithubUserService } from "@/services/githubUserService";
+import useUserInformation from "@/api/queries/useUserInformation";
+import MetricCard from "@/components/MetricCard";
 
 export default function RepositoriesMetrics({
   sectionId,
 }: {
   sectionId: string;
 }) {
-  const { data, isLoading, isError } = useRepositoriesMetrics();
+  const [searchUser, setSearchUser] = React.useState<string>("");
+  const userInfo = useUserInformation();
+  const { data, isLoading, isError } = useRepositoriesMetrics(
+    searchUser || undefined,
+  );
 
+  const queryClient = useQueryClient();
+  const targetUserRef = React.useRef<HTMLInputElement>(null);
   const [selectedMetric, setSelectedMetric] = React.useState<MetricUnit>();
   const [selectedDimension, setSelectedDimension] = React.useState<string>(
     RepoMeasureDimension.bytes,
@@ -44,7 +55,6 @@ export default function RepositoriesMetrics({
   const [selectedDetailedCommitPeriod, setDetailedCommitPeriod] =
     React.useState<DetailedRepoCommit>();
   const [selectedRepository, setSelectedRepository] = React.useState<string>();
-
   const [commitCount, setCommitCount] = React.useState<number>(0);
   const [topLanguage, setTopLanguage] = React.useState<string>("");
   const [averageRepoSize, setAverageRepoSize] = React.useState<string>("");
@@ -54,7 +64,11 @@ export default function RepositoriesMetrics({
     "",
   );
 
-  const queryClient = useQueryClient();
+  React.useEffect(() => {
+    if (userInfo.data?.login) {
+      setSearchUser(userInfo.data.login);
+    }
+  }, [userInfo.data]);
 
   React.useEffect(() => {
     if (data) {
@@ -65,6 +79,20 @@ export default function RepositoriesMetrics({
       setTopStargazers(RepoAnalyser.findTopStargazer(values));
     }
   }, [data]);
+
+  async function handleUserSearch(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      if (targetUserRef.current?.value) {
+        const newUser = await GithubUserService.getSpecificUser(
+          targetUserRef.current?.value,
+          localStorage.getItem("accessToken")!,
+        );
+        if (newUser) {
+          setSearchUser(newUser.login);
+        }
+      }
+    }
+  }
 
   if (isLoading) return <RepositoriesMetricsSkeleton />;
   if (isError) return <RepositoriesMetricsError />;
@@ -110,6 +138,20 @@ export default function RepositoriesMetrics({
             <span className="font-medium">{repositoryCount}</span>
           </p>
           <div className="flex space-x-4">
+            <div className="relative">
+              <Input
+                placeholder="Type username"
+                type="text"
+                ref={targetUserRef}
+                onKeyDown={handleUserSearch}
+                className="relative"
+              />
+              <Search
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+                size={15}
+                opacity="50%"
+              />
+            </div>
             {data && (
               <InputSelect
                 options={Object.keys(data)}
@@ -201,30 +243,11 @@ export default function RepositoriesMetrics({
         )}
 
         {selectedRepository && (
-          <ContributorsDashboard selectedRepo={selectedRepository} />
+          <ContributorsDashboard
+            selectedRepo={selectedRepository}
+            user={searchUser}
+          />
         )}
-      </CardContent>
-    </Card>
-  );
-}
-
-function MetricCard({
-  icon,
-  title,
-  value,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  value: string | undefined;
-}) {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
       </CardContent>
     </Card>
   );

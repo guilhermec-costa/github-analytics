@@ -30,6 +30,10 @@ export class FastifyAdapter implements IHttpServer {
     this.logger = new WinstonLogger();
   }
 
+  getServer() {
+    return this.app;
+  }
+
   post(
     url: string,
     callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
@@ -82,6 +86,7 @@ export class FastifyAdapter implements IHttpServer {
           params: req.params,
           body: req.body,
           headers: req.headers,
+          queries: req.query,
         });
         reply.status(output.status).send(output.data && output.data);
       },
