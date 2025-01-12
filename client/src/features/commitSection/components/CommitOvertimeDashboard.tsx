@@ -18,7 +18,7 @@ import { MetricUnit } from "@/utils/types";
 import { DetailedRepoCommit } from "shared/types";
 import { format, parseISO, subDays } from "date-fns";
 
-export default function CommitChart({
+export default function CommitOvertimeDashboard({
   metric,
   setDetailedCommitPeriod,
 }: {

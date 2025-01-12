@@ -25,7 +25,7 @@ const COLORS = [
   "hsl(var(--card))",
 ];
 
-export default function LanguageChart({
+export default function LanguageAcrossRepoDashboard({
   metric,
   dimension,
 }: {

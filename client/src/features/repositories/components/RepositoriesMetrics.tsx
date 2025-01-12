@@ -14,8 +14,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DetailedCommit from "./DetailedCommit";
 import ContributorsDashboard from "./ContributorsDashboard";
-import LanguageChart from "./LanguageChart";
-import CommitChart from "./CommitChart";
 import InputSelect from "@/components/InputSelect";
 import DimensionSelect from "./DimensionSelect";
 import { Button } from "@/components/ui/button";
@@ -25,9 +23,11 @@ import useUserInformation from "@/api/queries/useUserInformation";
 import HighlightsPanel from "./HighlightsPanel";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import RepositoriesMetricsSkeleton from "./MetricsLoadingSkeleton";
-import RepositoriesMetricsError from "./RepositoriesMetricsError";
+import RepositoriesMetricsSkeleton from "../layout/MetricsLoadingSkeleton";
+import RepositoriesMetricsError from "../layout/RepositoriesMetricsError";
 import SearchInput from "@/components/SearchInput";
+import LanguageSection from "@/features/languageSection";
+import CommitSection from "@/features/commitSection";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -150,6 +150,7 @@ export default function RepositoriesMetrics({
                 openState={repoSearchInputOpen}
                 setOpenState={setRepoSearchInputOpen}
                 selectedOption={selectedRepository}
+                placeholder="Select a repository"
               />
             )}
             <DimensionSelect setSelectedDimension={setSelectedDimension} />
@@ -169,27 +170,16 @@ export default function RepositoriesMetrics({
               <TabsTrigger value="commits">Commit Activity</TabsTrigger>
             </TabsList>
             <TabsContent value="languages">
-              <Card>
-                <CardContent>
-                  <LanguageChart
-                    metric={selectedMetric}
-                    dimension={selectedDimension}
-                  />
-                </CardContent>
-              </Card>
+              <LanguageSection
+                metric={selectedMetric}
+                dimension={selectedDimension}
+              />
             </TabsContent>
             <TabsContent value="commits">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Commit Activity</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CommitChart
-                    metric={selectedMetric}
-                    setDetailedCommitPeriod={setDetailedCommitPeriod}
-                  />
-                </CardContent>
-              </Card>
+              <CommitSection
+                metric={selectedMetric}
+                setDetailedCommitPeriod={setDetailedCommitPeriod}
+              />
             </TabsContent>
           </Tabs>
         ) : (

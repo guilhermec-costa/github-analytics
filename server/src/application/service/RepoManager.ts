@@ -26,35 +26,9 @@ export class RepoManager {
    * @param username - The user to fetch repositories
    * @returns A list of repositories with partial details.
    */
-  async loadUserRepos(
-    token: string,
-    username: string,
-  ): Promise<RecursivePartial<GithubRepo>[]> {
+  async loadUserRepos(token: string, username: string): Promise<GithubRepo[]> {
     const userRepos = await this.githubApi.fetchUserRepos(token, username);
-
-    return userRepos.map((repo) => ({
-      id: repo.id,
-      name: repo.name,
-      full_name: repo.full_name,
-      description: repo.description,
-      private: repo.private,
-      fork: repo.fork,
-      stargazers_count: repo.stargazers_count,
-      forks_count: repo.forks_count,
-      watchers_count: repo.watchers_count,
-      created_at: repo.created_at,
-      updated_at: repo.updated_at,
-      pushed_at: repo.pushed_at,
-      language: repo.language,
-      license: repo.license ? repo.license : null,
-      owner: {
-        login: repo.owner.login,
-        avatar_url: repo.owner.avatar_url,
-      },
-      html_url: repo.html_url,
-      clone_url: repo.clone_url,
-      ssh_url: repo.ssh_url,
-    }));
+    return userRepos;
   }
 
   /**
@@ -82,24 +56,27 @@ export class RepoManager {
    * @param repoOwner - The owner of the repositories.
    * @returns A mapping of repositories to their language usage details.
    */
-  async loadUserReposLanguages(token: string, repoOwner: string) {
+  async loadUserReposLanguages(
+    token: string,
+    repoOwner: string,
+    repos: GithubRepo[],
+  ) {
     this.logger.log(
       "Requesting Github Gateway for languages from user repositories",
     );
-    const userRepos = await this.loadUserRepos(token, repoOwner);
     const awaitableRequests = [];
     const parsedResponse: RepoLanguages = {};
 
-    for (const repo of userRepos) {
+    for (const repo of repos) {
       awaitableRequests.push(
-        this.loadRepoLanguages(repoOwner, repo.name!, token),
+        this.loadRepoLanguages(repoOwner, repo?.name!, token),
       );
     }
 
     const resolvedRequests = await Promise.all(awaitableRequests);
 
     for (const [idx, item] of resolvedRequests.entries()) {
-      const repoName = userRepos[idx].name!;
+      const repoName = repos[idx].name!;
 
       parsedResponse[repoName] = Object.entries(item).map(
         ([language, count]) => ({
@@ -156,14 +133,16 @@ export class RepoManager {
    * @returns A mapping of repositories to their metrics including languages and commits.
    */
   async loadUserRepositoriesMetrics(owner: string, token: string) {
-    const userRepos = await this.loadUserRepos(token, owner);
+    const repos = await this.loadUserRepos(token, owner);
     const repositoriesLanguages = await this.loadUserReposLanguages(
       token,
       owner,
+      repos,
     );
     const parsedMetrics: RepoMetrics = {};
 
-    for (const repo of userRepos) {
+    for (const repo of repos) {
+      if (!repositoriesLanguages[repo.name!].length) continue;
       parsedMetrics[repo.name!] = {
         LanguageDetails: repositoriesLanguages[repo.name!],
         CommitDetails: await this.getUserRepoCommits(owner, repo.name!, token),

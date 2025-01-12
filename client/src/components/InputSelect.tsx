@@ -20,6 +20,7 @@ interface InputSelectProps {
   selectedOption?: string;
   openState: boolean;
   setOpenState: (state: boolean) => void;
+  placeholder: string;
 }
 export default function InputSelect({
   options,
@@ -27,6 +28,7 @@ export default function InputSelect({
   selectedOption,
   openState,
   setOpenState,
+  placeholder,
 }: InputSelectProps) {
   return (
     <Popover open={openState} onOpenChange={setOpenState}>
@@ -38,7 +40,7 @@ export default function InputSelect({
         >
           {selectedOption
             ? options.find((option) => option === selectedOption)
-            : "Select repository..."}
+            : placeholder}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
