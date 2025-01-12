@@ -20,9 +20,10 @@ export class RepoManager {
   ) {}
 
   /**
-   * Retrieves repositories for an authenticated user.
+   * Retrieves repositories for an user.
    *
    * @param token - The access token of the authenticated user.
+   * @param username - The user to fetch repositories
    * @returns A list of repositories with partial details.
    */
   async loadUserRepos(

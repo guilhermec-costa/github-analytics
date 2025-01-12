@@ -55,9 +55,11 @@ export default function RepositoriesMetrics({
   const [selectedDetailedCommitPeriod, setDetailedCommitPeriod] =
     React.useState<DetailedRepoCommit>();
   const [selectedRepository, setSelectedRepository] = React.useState<string>();
-  const [commitCount, setCommitCount] = React.useState<number>(0);
-  const [topLanguage, setTopLanguage] = React.useState<string>("");
-  const [averageRepoSize, setAverageRepoSize] = React.useState<string>("");
+  const [commitCount, setCommitCount] = React.useState<number | undefined>(0);
+  const [topLanguage, setTopLanguage] = React.useState<string | undefined>("");
+  const [averageRepoSize, setAverageRepoSize] = React.useState<
+    string | undefined
+  >("");
   const [repoSearchInputOpen, setRepoSearchInputOpen] =
     React.useState<boolean>(false);
   const [topStargazers, setTopStargazers] = React.useState<string | undefined>(
@@ -79,6 +81,15 @@ export default function RepositoriesMetrics({
       setTopStargazers(RepoAnalyser.findTopStargazer(values));
     }
   }, [data]);
+
+  React.useEffect(() => {
+    setCommitCount(undefined);
+    setTopLanguage(undefined);
+    setAverageRepoSize(undefined);
+    setTopStargazers(undefined);
+    setSelectedRepository(undefined);
+    setSelectedMetric(undefined);
+  }, [searchUser]);
 
   async function handleUserSearch(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
@@ -169,7 +180,7 @@ export default function RepositoriesMetrics({
           <MetricCard
             icon={<ChartArea className="h-4 w-4" />}
             title="Total Commits"
-            value={commitCount.toString()}
+            value={commitCount ? commitCount.toString() : undefined}
           />
           <MetricCard
             icon={<Code className="h-4 w-4" />}
