@@ -4,13 +4,17 @@ import React from "react";
 import { RepoAnalyser } from "../services/RepoAnalyser";
 import { RepoMetrics } from "shared/types";
 
+interface HighlightsPanelProps {
+  selectedDimension: string;
+  metrics: RepoMetrics | undefined;
+  targetUser: string | undefined;
+}
+
 export default function HighlightsPanel({
   metrics,
   selectedDimension,
-}: {
-  selectedDimension: string;
-  metrics: RepoMetrics | undefined;
-}) {
+  targetUser,
+}: HighlightsPanelProps) {
   const [commitCount, setCommitCount] = React.useState<number | undefined>(0);
   const [topLanguage, setTopLanguage] = React.useState<string | undefined>("");
   const [averageRepoSize, setAverageRepoSize] = React.useState<
@@ -19,6 +23,13 @@ export default function HighlightsPanel({
   const [topStargazers, setTopStargazers] = React.useState<string | undefined>(
     "",
   );
+  function resetHighlights() {
+    setCommitCount(undefined);
+    setTopLanguage(undefined);
+    setAverageRepoSize(undefined);
+    setTopStargazers(undefined);
+  }
+
   React.useEffect(() => {
     if (metrics) {
       const metricsValues = Object.values(metrics);
@@ -28,6 +39,12 @@ export default function HighlightsPanel({
       setTopStargazers(RepoAnalyser.findTopStargazer(metricsValues));
     }
   }, [metrics]);
+
+  React.useEffect(() => {
+    if (targetUser) {
+      resetHighlights();
+    }
+  }, [targetUser]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

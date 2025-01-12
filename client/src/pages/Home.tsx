@@ -1,15 +1,5 @@
 import React from "react";
-import { Settings, Github } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Github } from "lucide-react";
 import {
   Card,
   CardDescription,
@@ -22,9 +12,8 @@ import { Separator } from "@/components/ui/separator";
 import TopNav from "@/layouts/TopNav";
 
 export default function Home() {
-  const { data, status } = useUserInformation();
-
   const [username, setUsername] = React.useState<string>("");
+  const { data, status } = useUserInformation();
 
   React.useEffect(() => {
     if (status === "success") {

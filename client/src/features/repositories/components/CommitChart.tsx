@@ -31,7 +31,6 @@ export default function CommitChart({
     );
 
     const today = new Date();
-    const thirtyDaysAgo = subDays(today, 30);
 
     return Array.from({ length: 30 }, (_, i) => {
       const date = format(subDays(today, 29 - i), "yyyy-MM-dd");
