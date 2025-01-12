@@ -25,8 +25,11 @@ export class RepoManager {
    * @param token - The access token of the authenticated user.
    * @returns A list of repositories with partial details.
    */
-  async loadUserRepos(token: string): Promise<RecursivePartial<GithubRepo>[]> {
-    const userRepos = await this.githubApi.fetchUserRepos(token);
+  async loadUserRepos(
+    token: string,
+    username: string,
+  ): Promise<RecursivePartial<GithubRepo>[]> {
+    const userRepos = await this.githubApi.fetchUserRepos(token, username);
 
     return userRepos.map((repo) => ({
       id: repo.id,
@@ -82,7 +85,7 @@ export class RepoManager {
     this.logger.log(
       "Requesting Github Gateway for languages from user repositories",
     );
-    const userRepos = await this.loadUserRepos(token);
+    const userRepos = await this.loadUserRepos(token, repoOwner);
     const awaitableRequests = [];
     const parsedResponse: RepoLanguages = {};
 
@@ -152,7 +155,7 @@ export class RepoManager {
    * @returns A mapping of repositories to their metrics including languages and commits.
    */
   async loadUserRepositoriesMetrics(owner: string, token: string) {
-    const userRepos = await this.loadUserRepos(token);
+    const userRepos = await this.loadUserRepos(token, owner);
     const repositoriesLanguages = await this.loadUserReposLanguages(
       token,
       owner,

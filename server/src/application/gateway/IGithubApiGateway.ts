@@ -4,7 +4,7 @@ import { GithubRepo, RepoLanguageCount } from "../../utils/types/repository";
 
 export interface IGithubApiGateway {
   fetchAuthorizedUserInfo(userToken: string): Promise<GithubUser>;
-  fetchUserRepos(userToken: string): Promise<GithubRepo[]>;
+  fetchUserRepos(userToken: string, username: string): Promise<GithubRepo[]>;
   fetchRepoLanguages(
     repoOwner: string,
     repoName: string,
@@ -21,5 +21,4 @@ export interface IGithubApiGateway {
     token: string,
     id: string,
   ): Promise<CommitDetail>;
-  fetchSpecificUser(token: string, username: string): Promise<any>;
 }
