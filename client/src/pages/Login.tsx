@@ -7,16 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useNavigate } from "react-router";
-import React from "react";
 import { AuthService } from "@/services/AuthService";
 
 export default function Login() {
   const navigate = useNavigate();
-  React.useEffect(() => {
-    if (AuthService.isAuthorized()) {
-      navigate("/");
-    }
-  }, []);
+  if (AuthService.isAuthorized()) {
+    navigate("/");
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-background to-secondary">
       <Card className="w-full sm:w-[400px] shadow-xl rounded-2xl overflow-hidden bg-white">

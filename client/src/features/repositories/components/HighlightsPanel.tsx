@@ -10,63 +10,100 @@ interface HighlightsPanelProps {
   targetUser: string | undefined;
 }
 
+interface HighlightsReducerState {
+  commitCount: number | undefined;
+  topLanguage: string | undefined;
+  averageRepoSize: string | undefined;
+  topStargazers: string | undefined;
+}
+
+interface HighlightsReducerAction {
+  actionType: "SETUP" | "RESET";
+}
+
+const initialState: HighlightsReducerState = {
+  commitCount: undefined,
+  topLanguage: undefined,
+  averageRepoSize: undefined,
+  topStargazers: undefined,
+};
+
 export default function HighlightsPanel({
   metrics,
   selectedDimension,
   targetUser,
 }: HighlightsPanelProps) {
-  const [commitCount, setCommitCount] = React.useState<number | undefined>(0);
-  const [topLanguage, setTopLanguage] = React.useState<string | undefined>("");
-  const [averageRepoSize, setAverageRepoSize] = React.useState<
-    string | undefined
-  >("");
-  const [topStargazers, setTopStargazers] = React.useState<string | undefined>(
-    "",
-  );
-  function resetHighlights() {
-    setCommitCount(undefined);
-    setTopLanguage(undefined);
-    setAverageRepoSize(undefined);
-    setTopStargazers(undefined);
+  function highlightReducer(
+    state: HighlightsReducerState,
+    action: HighlightsReducerAction,
+  ) {
+    switch (action.actionType) {
+      case "SETUP": {
+        const metricsValues = Object.values(metrics!);
+        return {
+          commitCount: RepoAnalyser.sumCommits(metricsValues),
+          topLanguage: RepoAnalyser.findTopLanguage(metricsValues),
+          averageRepoSize: RepoAnalyser.calcAvgRepoSize(metricsValues),
+          topStargazers: RepoAnalyser.findTopStargazer(metricsValues),
+        };
+      }
+
+      case "RESET": {
+        return {
+          commitCount: undefined,
+          topLanguage: undefined,
+          averageRepoSize: undefined,
+          topStargazers: undefined,
+        };
+      }
+
+      default:
+        return state;
+    }
   }
+
+  const [highlightState, highlightDispatchFn] = React.useReducer(
+    highlightReducer,
+    initialState,
+  );
 
   React.useEffect(() => {
     if (metrics) {
-      const metricsValues = Object.values(metrics);
-      setCommitCount(RepoAnalyser.sumCommits(metricsValues));
-      setTopLanguage(RepoAnalyser.findTopLanguage(metricsValues));
-      setAverageRepoSize(RepoAnalyser.calcAvgRepoSize(metricsValues));
-      setTopStargazers(RepoAnalyser.findTopStargazer(metricsValues));
+      highlightDispatchFn({ actionType: "SETUP" });
     }
   }, [metrics]);
 
   React.useEffect(() => {
-    if (targetUser) {
-      resetHighlights();
+    if (targetUser && metrics) {
+      highlightDispatchFn({ actionType: "RESET" });
     }
-  }, [targetUser]);
+  }, [targetUser, metrics]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       <MetricCard
         icon={<ChartArea className="h-4 w-4" />}
         title="Total Commits"
-        value={commitCount ? commitCount.toString() : undefined}
+        value={
+          highlightState.commitCount
+            ? highlightState.commitCount.toString()
+            : undefined
+        }
       />
       <MetricCard
         icon={<Code className="h-4 w-4" />}
         title="Top Language"
-        value={topLanguage}
+        value={highlightState.topLanguage}
       />
       <MetricCard
         icon={<Database className="h-4 w-4" />}
         title={`Average Repo Size (${selectedDimension})`}
-        value={averageRepoSize}
+        value={highlightState.averageRepoSize}
       />
       <MetricCard
         icon={<Star className="h-4 w-4" color="#fad900" fill="#fad900" />}
         title={`Top stargazers`}
-        value={topStargazers}
+        value={highlightState.topStargazers}
       />
     </div>
   );

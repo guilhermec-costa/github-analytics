@@ -12,14 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import TopNav from "@/layouts/TopNav";
 
 export default function Home() {
-  const [username, setUsername] = React.useState<string>("");
   const { data, status } = useUserInformation();
-
-  React.useEffect(() => {
-    if (status === "success") {
-      setUsername(data.name);
-    }
-  }, [data, status]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background from-20% via-secondary via-50% to-card to-80%">
@@ -38,7 +31,7 @@ export default function Home() {
               Welcome to the Dashboard
               {status === "success" && (
                 <span className="bg-gradient-to-r from-cyan-500 via-purple-400 to-blue-500 bg-clip-text text-transparent">
-                  , {username}
+                  , {data.name}
                 </span>
               )}
             </CardTitle>
