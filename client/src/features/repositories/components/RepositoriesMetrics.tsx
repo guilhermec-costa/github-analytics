@@ -1,4 +1,4 @@
-import React, { SyntheticEvent } from "react";
+import React from "react";
 import { MetricUnit, RepoMeasureDimension } from "@/utils/types";
 import { DetailedRepoCommit } from "shared/types";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
@@ -33,18 +33,25 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { GithubUserService } from "@/services/githubUserService";
 import useUserInformation from "@/api/queries/useUserInformation";
-import MetricCard from "@/components/MetricCard";
+import HighlightsPanel from "./HighlightsPanel";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import RepositoriesMetricsSkeleton from "./MetricsLoadingSkeleton";
+import RepositoriesMetricsError from "./RepositoriesMetricsError";
 
 export default function RepositoriesMetrics({
   sectionId,
 }: {
   sectionId: string;
 }) {
+  const { toast } = useToast();
   const [searchUser, setSearchUser] = React.useState<string>("");
   const userInfo = useUserInformation();
-  const { data, isLoading, isError } = useRepositoriesMetrics(
-    searchUser || undefined,
-  );
+  const {
+    data: metrics,
+    isLoading,
+    isError,
+  } = useRepositoriesMetrics(searchUser || undefined);
 
   const queryClient = useQueryClient();
   const targetUserRef = React.useRef<HTMLInputElement>(null);
@@ -66,60 +73,68 @@ export default function RepositoriesMetrics({
     "",
   );
 
-  React.useEffect(() => {
-    if (userInfo.data?.login) {
-      setSearchUser(userInfo.data.login);
-    }
-  }, [userInfo.data]);
-
-  React.useEffect(() => {
-    if (data) {
-      const values = Object.values(data);
-      setCommitCount(RepoAnalyser.sumCommits(values));
-      setTopLanguage(RepoAnalyser.findTopLanguage(values));
-      setAverageRepoSize(RepoAnalyser.calcAvgRepoSize(values));
-      setTopStargazers(RepoAnalyser.findTopStargazer(values));
-    }
-  }, [data]);
-
-  React.useEffect(() => {
+  function resetDashboard() {
     setCommitCount(undefined);
     setTopLanguage(undefined);
     setAverageRepoSize(undefined);
     setTopStargazers(undefined);
     setSelectedRepository(undefined);
     setSelectedMetric(undefined);
-  }, [searchUser]);
-
-  async function handleUserSearch(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      if (targetUserRef.current?.value) {
-        const newUser = await GithubUserService.getSpecificUser(
-          targetUserRef.current?.value,
-          localStorage.getItem("accessToken")!,
-        );
-        if (newUser) {
-          setSearchUser(newUser.login);
-        }
-      }
-    }
   }
 
-  if (isLoading) return <RepositoriesMetricsSkeleton />;
-  if (isError) return <RepositoriesMetricsError />;
-
-  const repositoryCount = Object.keys(data || {}).length;
+  React.useEffect(() => {
+    if (userInfo.data?.login) {
+      setSearchUser(userInfo.data.login);
+    }
+  }, [userInfo.data]);
 
   function handleMetricChange(repo: string) {
-    setSelectedMetric(data![repo]);
+    setSelectedMetric(metrics![repo]);
     setDetailedCommitPeriod(undefined);
     setSelectedRepository(repo);
     setRepoSearchInputOpen(false);
   }
 
   function handleRefetch() {
-    queryClient.invalidateQueries({ queryKey: ["repoMetrics"] });
+    queryClient.invalidateQueries({ queryKey: ["repoMetrics", targetUserRef] });
   }
+  React.useEffect(() => {
+    if (metrics) {
+      const metricsValues = Object.values(metrics);
+      setCommitCount(RepoAnalyser.sumCommits(metricsValues));
+      setTopLanguage(RepoAnalyser.findTopLanguage(metricsValues));
+      setAverageRepoSize(RepoAnalyser.calcAvgRepoSize(metricsValues));
+      setTopStargazers(RepoAnalyser.findTopStargazer(metricsValues));
+    }
+  }, [metrics]);
+
+  async function handleUserSearch(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== "Enter") return;
+    if (!targetUserRef.current?.value.trim()) return;
+
+    try {
+      const newUser = await GithubUserService.getSpecificUser(
+        targetUserRef.current?.value,
+        localStorage.getItem("accessToken")!,
+      );
+      if (newUser) {
+        setSearchUser(newUser.login);
+        resetDashboard();
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to fetch user",
+        description: "The user does not exist",
+        action: <ToastAction altText="Try again">Dismiss</ToastAction>,
+      });
+    }
+  }
+
+  if (isLoading) return <RepositoriesMetricsSkeleton />;
+  if (isError) return <RepositoriesMetricsError />;
+
+  const repositoryCount = Object.keys(metrics || {}).length;
 
   return (
     <Card id={sectionId} className="w-full rounded-none">
@@ -163,9 +178,9 @@ export default function RepositoriesMetrics({
                 opacity="50%"
               />
             </div>
-            {data && (
+            {metrics && (
               <InputSelect
-                options={Object.keys(data)}
+                options={Object.keys(metrics)}
                 onSelectionChange={handleMetricChange}
                 openState={repoSearchInputOpen}
                 setOpenState={setRepoSearchInputOpen}
@@ -176,28 +191,10 @@ export default function RepositoriesMetrics({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <MetricCard
-            icon={<ChartArea className="h-4 w-4" />}
-            title="Total Commits"
-            value={commitCount ? commitCount.toString() : undefined}
-          />
-          <MetricCard
-            icon={<Code className="h-4 w-4" />}
-            title="Top Language"
-            value={topLanguage}
-          />
-          <MetricCard
-            icon={<Database className="h-4 w-4" />}
-            title={`Average Repo Size (${selectedDimension})`}
-            value={averageRepoSize}
-          />
-          <MetricCard
-            icon={<Star className="h-4 w-4" color="#fad900" fill="#fad900" />}
-            title={`Top stargazers`}
-            value={topStargazers}
-          />
-        </div>
+        <HighlightsPanel
+          metrics={metrics}
+          selectedDimension={selectedDimension}
+        />
 
         {selectedMetric ? (
           <Tabs defaultValue="languages" className="w-full">
@@ -248,6 +245,7 @@ export default function RepositoriesMetrics({
               <DetailedCommit
                 commitDetails={selectedDetailedCommitPeriod}
                 selectedRepository={selectedRepository}
+                username={searchUser}
               />
             </CardContent>
           </Card>
@@ -261,51 +259,5 @@ export default function RepositoriesMetrics({
         )}
       </CardContent>
     </Card>
-  );
-}
-
-function RepositoriesMetricsSkeleton() {
-  return (
-    <Card className="w-full max-w-7xl mx-auto">
-      <CardHeader>
-        <Skeleton className="h-8 w-[250px]" />
-        <Skeleton className="h-4 w-[300px]" />
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-4 w-[150px]" />
-          <div className="flex space-x-4">
-            <Skeleton className="h-10 w-[200px]" />
-            <Skeleton className="h-10 w-[200px]" />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[...Array(3)].map((_, i) => (
-            <Card key={i}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <Skeleton className="h-4 w-[100px]" />
-                <Skeleton className="h-4 w-4" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-8 w-[100px]" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        <Skeleton className="h-[300px] w-full" />
-      </CardContent>
-    </Card>
-  );
-}
-
-function RepositoriesMetricsError() {
-  return (
-    <Alert variant="destructive">
-      <AlertTitle>Error</AlertTitle>
-      <AlertDescription>
-        There was an error loading the repository metrics. Please try again
-        later.
-      </AlertDescription>
-    </Alert>
   );
 }

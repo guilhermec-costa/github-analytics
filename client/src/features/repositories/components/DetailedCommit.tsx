@@ -24,9 +24,11 @@ import { ParsedCommitDetails } from "../../../../../server/src/utils/types/commi
 export default function DetailedCommit({
   commitDetails,
   selectedRepository,
+  username,
 }: {
   commitDetails: DetailedRepoCommit;
   selectedRepository: string;
+  username: string;
 }) {
   const [deepViewCommit, setDeepViewCommit] =
     React.useState<DeepViewCommit | null>(null);
@@ -38,6 +40,7 @@ export default function DetailedCommit({
   const { data, isLoading } = useCommitDetails(
     selectedRepository,
     selectedCommit!,
+    username,
   );
 
   React.useEffect(() => {

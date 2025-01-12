@@ -56,6 +56,10 @@ export class UserService {
   }
 
   async loadSpecificUser(token: string, username: string) {
-    return await this.githubApi.fetchSpecificUser(token, username);
+    try {
+      return await this.githubApi.fetchSpecificUser(token, username);
+    } catch (error) {
+      throw new Error("Failed to get specific user");
+    }
   }
 }
