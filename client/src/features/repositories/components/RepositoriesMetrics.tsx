@@ -27,13 +27,14 @@ import RepositoriesMetricsSkeleton from "../layout/MetricsLoadingSkeleton";
 import RepositoriesMetricsError from "../layout/RepositoriesMetricsError";
 import SearchInput from "@/components/SearchInput";
 import LanguageSection from "@/features/languageSection";
-import CommitSection from "@/features/commitSection";
+import { CommitSection } from "@/features/commitSection";
 
 export default function RepositoriesMetrics({
   sectionId,
 }: {
   sectionId: string;
 }) {
+  console.log("Loading repositories metrics");
   const { toast } = useToast();
   const [searchUser, setSearchUser] = React.useState<string>("");
   const userInfo = useUserInformation();
@@ -49,8 +50,6 @@ export default function RepositoriesMetrics({
   const [selectedDimension, setSelectedDimension] = React.useState<string>(
     RepoMeasureDimension.bytes,
   );
-  const [selectedDetailedCommitPeriod, setDetailedCommitPeriod] =
-    React.useState<DetailedRepoCommit>();
   const [selectedRepository, setSelectedRepository] = React.useState<string>();
   const [repoSearchInputOpen, setRepoSearchInputOpen] =
     React.useState<boolean>(false);
@@ -68,7 +67,6 @@ export default function RepositoriesMetrics({
 
   function handleMetricChange(repo: string) {
     setSelectedMetric(metrics![repo]);
-    setDetailedCommitPeriod(undefined);
     setSelectedRepository(repo);
     setRepoSearchInputOpen(false);
   }
@@ -176,33 +174,19 @@ export default function RepositoriesMetrics({
               />
             </TabsContent>
             <TabsContent value="commits">
-              <CommitSection
-                metric={selectedMetric}
-                setDetailedCommitPeriod={setDetailedCommitPeriod}
-              />
+              {selectedRepository && (
+                <CommitSection
+                  metric={selectedMetric}
+                  selectedRepository={selectedRepository}
+                  searchUser={searchUser}
+                />
+              )}
             </TabsContent>
           </Tabs>
         ) : (
           <Card>
             <CardContent className="text-center py-6">
               Please select a repository to view its data.
-            </CardContent>
-          </Card>
-        )}
-
-        {selectedDetailedCommitPeriod && selectedRepository && (
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                Detailed Commits on {selectedDetailedCommitPeriod.date}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <DetailedCommit
-                commitDetails={selectedDetailedCommitPeriod}
-                selectedRepository={selectedRepository}
-                username={searchUser}
-              />
             </CardContent>
           </Card>
         )}
