@@ -82,7 +82,7 @@ export default function HighlightsPanel({
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       <MetricCard
-        icon={<ChartArea className="h-4 w-4" />}
+        icon={<ChartArea className="h-4 w-4" color="hsl(var(--primary)" />}
         title="Total Commits"
         value={
           highlightState.commitCount
@@ -91,17 +91,17 @@ export default function HighlightsPanel({
         }
       />
       <MetricCard
-        icon={<Code className="h-4 w-4" />}
+        icon={<Code className="h-4 w-4" color="hsl(var(--primary)" />}
         title="Top Language"
         value={highlightState.topLanguage}
       />
       <MetricCard
-        icon={<Database className="h-4 w-4" />}
+        icon={<Database className="h-4 w-4" color="hsl(var(--primary)" />}
         title={`Average Repo Size (${selectedDimension})`}
         value={highlightState.averageRepoSize}
       />
       <MetricCard
-        icon={<Star className="h-4 w-4" color="#fad900" fill="#fad900" />}
+        icon={<Star className="h-4 w-4" color="hsl(var(--primary)" />}
         title={`Top stargazers`}
         value={highlightState.topStargazers}
       />

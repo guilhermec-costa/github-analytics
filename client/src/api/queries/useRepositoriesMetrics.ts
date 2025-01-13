@@ -7,5 +7,6 @@ export default function useRepositoriesMetrics(username: string | undefined) {
     queryFn: () => GithubUserService.getRepositoryMetrics(username!),
     enabled: !!username,
     refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
   });
 }

@@ -8,5 +8,6 @@ export default function useUserInformation() {
     queryKey: ["userInformation"],
     queryFn: () => GithubUserService.getLoggedUserInfo(token!),
     enabled: !!token,
+    refetchOnWindowFocus: false,
   });
 }

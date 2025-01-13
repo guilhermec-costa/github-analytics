@@ -19,5 +19,6 @@ export default function useCommitDetails(
         token!,
       ),
     enabled: !!commitDetail && !!repo && !!username,
+    refetchOnWindowFocus: false,
   });
 }
