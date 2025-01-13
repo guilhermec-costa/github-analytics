@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function RepositoriesMetricsSkeleton() {
   return (
-    <Card className="w-full max-w-7xl mx-auto">
+    <Card className="w-full mx-auto">
       <CardHeader>
         <Skeleton className="h-8 w-[250px]" />
         <Skeleton className="h-4 w-[300px]" />

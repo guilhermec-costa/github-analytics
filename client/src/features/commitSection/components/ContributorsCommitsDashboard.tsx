@@ -17,7 +17,7 @@ import {
   Cell,
 } from "recharts";
 
-export default function ContributorsDashboard({
+export default function ContributorsCommitDashboard({
   selectedRepo,
   user,
 }: {

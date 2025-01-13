@@ -14,7 +14,12 @@ interface HighlightsReducerState {
   commitCount: number | undefined;
   topLanguage: string | undefined;
   averageRepoSize: string | undefined;
-  topStargazers: string | undefined;
+  topStargazers:
+    | {
+        repo: string | undefined;
+        count: number | undefined;
+      }
+    | undefined;
 }
 
 interface HighlightsReducerAction {
@@ -25,7 +30,10 @@ const initialState: HighlightsReducerState = {
   commitCount: undefined,
   topLanguage: undefined,
   averageRepoSize: undefined,
-  topStargazers: undefined,
+  topStargazers: {
+    count: undefined,
+    repo: undefined,
+  },
 };
 
 export default function HighlightsPanel({
@@ -103,7 +111,7 @@ export default function HighlightsPanel({
       <MetricCard
         icon={<Star className="h-4 w-4" color="hsl(var(--primary)" />}
         title={`Top stargazers`}
-        value={highlightState.topStargazers}
+        value={`${highlightState.topStargazers?.repo} ( ${highlightState.topStargazers?.count?.toString()} )`}
       />
     </div>
   );

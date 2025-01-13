@@ -21,7 +21,7 @@ export default function Home() {
           <TopNav />
         </div>
       </header>
-      <main className="container mx-auto py-6 border-2 border-secondary mt-5 rounded-md">
+      <main className="container mx-auto border-2 border-secondary mt-5 rounded-md">
         <Card className="rounded-md">
           <CardHeader>
             <CardTitle className="text-4xl font-bold">

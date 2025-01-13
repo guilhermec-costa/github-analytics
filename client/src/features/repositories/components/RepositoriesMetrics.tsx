@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ContributorsDashboard from "./ContributorsDashboard";
 import InputSelect from "@/components/InputSelect";
 import DimensionSelect from "./DimensionSelect";
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,6 @@ export default function RepositoriesMetrics({
 }: {
   sectionId: string;
 }) {
-  console.log("Loading repositories metrics");
   const { toast } = useToast();
   const [searchUser, setSearchUser] = React.useState<string>("");
   const userInfo = useUserInformation();
@@ -173,11 +171,13 @@ export default function RepositoriesMetrics({
             </TabsContent>
             <TabsContent value="commits">
               {selectedRepository && (
-                <CommitSection
-                  metric={selectedMetric}
-                  selectedRepository={selectedRepository}
-                  searchUser={searchUser}
-                />
+                <>
+                  <CommitSection
+                    metric={selectedMetric}
+                    selectedRepository={selectedRepository}
+                    searchUser={searchUser}
+                  />
+                </>
               )}
             </TabsContent>
           </Tabs>
@@ -187,13 +187,6 @@ export default function RepositoriesMetrics({
               Please select a repository to view its data.
             </CardContent>
           </Card>
-        )}
-
-        {selectedRepository && (
-          <ContributorsDashboard
-            selectedRepo={selectedRepository}
-            user={searchUser}
-          />
         )}
       </CardContent>
     </Card>

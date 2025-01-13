@@ -39,31 +39,34 @@ export default function CommitSliderPresentation({
 
   const { data, isLoading } = useCommitDetails(
     selectedRepository,
-    selectedCommit!,
     username,
+    selectedCommit?.sha,
   );
 
   React.useEffect(() => {
-    if (selectedCommit && !isLoading && data) {
+    if (!isLoading) {
+      setLoadingCommit("");
+    }
+  }, [isLoading]);
+
+  React.useEffect(() => {
+    if (selectedCommit && data) {
       setDeepViewCommit({
         author: selectedCommit.author,
         date: selectedCommit.date,
         email: selectedCommit.email,
-        files: data?.files || [],
+        files: data.files || [],
         message: selectedCommit.message,
         sha: selectedCommit.sha,
-        stats: data?.stats || null,
+        stats: data.stats,
       });
-      setModalOpen(true);
-      setLoadingCommit(null);
     }
-  }, [isLoading, selectedCommit, data]);
+  }, [selectedCommit, data]);
 
   const handleCommitClick = (commit: ParsedCommitDetails) => {
     setSelectedCommit(commit);
     setLoadingCommit(commit.sha);
-    setDeepViewCommit(null);
-    setModalOpen(false);
+    setModalOpen(true);
   };
 
   return (

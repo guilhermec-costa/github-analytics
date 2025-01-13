@@ -67,8 +67,11 @@ export class RepoAnalyser {
   static findTopStargazer(metrics: Metric[]) {
     const topStargazer = metrics.sort(
       (mA, mB) => mB.StargazersCount! - mA.StargazersCount!,
-    )[0].repo;
+    )[0];
 
-    return topStargazer;
+    return {
+      repo: topStargazer.repo,
+      count: topStargazer.StargazersCount,
+    };
   }
 }

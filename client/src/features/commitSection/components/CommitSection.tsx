@@ -4,6 +4,7 @@ import { DetailedRepoCommit } from "shared/types";
 import React from "react";
 import CommitOvertimeDashboard from "./CommitOvertimeDashboard";
 import CommitSliderPresentation from "./CommitsSliderPresentation";
+import ContributorsCommitDashboard from "./ContributorsCommitsDashboard";
 
 export default function CommitSection({
   metric,
@@ -48,6 +49,10 @@ export default function CommitSection({
           </CardContent>
         </Card>
       )}
+      <ContributorsCommitDashboard
+        selectedRepo={selectedRepository}
+        user={searchUser}
+      />
     </Card>
   );
 }
