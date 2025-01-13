@@ -1,7 +1,7 @@
 import React from "react";
-import { MetricUnit, RepoMeasureDimension } from "@/utils/types";
+import { MetricUnit } from "@/utils/types";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, User } from "lucide-react";
 
 import {
   Card,
@@ -12,9 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import InputSelect from "@/components/InputSelect";
-import DimensionSelect from "./DimensionSelect";
 import { Button } from "@/components/ui/button";
-import { useQueryClient } from "@tanstack/react-query";
 import { GithubUserService } from "@/services/githubUserService";
 import useUserInformation from "@/api/queries/useUserInformation";
 import HighlightsPanel from "./HighlightsPanel";
@@ -38,17 +36,13 @@ export default function RepositoriesMetrics({
     data: metrics,
     isLoading,
     isError,
+    refetch,
+    dataUpdatedAt,
   } = useRepositoriesMetrics(searchUser || undefined);
 
-  const queryClient = useQueryClient();
   const targetUserRef = React.useRef<HTMLInputElement>(null);
   const [selectedMetric, setSelectedMetric] = React.useState<MetricUnit>();
-  const [selectedDimension, setSelectedDimension] = React.useState<string>(
-    RepoMeasureDimension.bytes,
-  );
   const [selectedRepository, setSelectedRepository] = React.useState<string>();
-  const [repoSearchInputOpen, setRepoSearchInputOpen] =
-    React.useState<boolean>(false);
 
   function resetMetric() {
     setSelectedRepository(undefined);
@@ -64,11 +58,22 @@ export default function RepositoriesMetrics({
   function handleMetricChange(repo: string) {
     setSelectedMetric(metrics![repo]);
     setSelectedRepository(repo);
-    setRepoSearchInputOpen(false);
+  }
+
+  function viewAuthUserData() {
+    if (userInfo.data.login) {
+      setSearchUser(userInfo.data.login);
+      resetMetric();
+    }
   }
 
   function handleRefetch() {
-    queryClient.invalidateQueries({ queryKey: ["repoMetrics", targetUserRef] });
+    refetch({});
+    toast({
+      title: "Refetch in progress",
+      description: `Fetching the latest data for "${searchUser}". Please wait...`,
+      duration: 5000,
+    });
   }
 
   async function handleUserSearch(username: string) {
@@ -112,9 +117,10 @@ export default function RepositoriesMetrics({
           <Button
             variant={"secondary"}
             className="flex w-fit"
-            onClick={handleRefetch}
+            onClick={viewAuthUserData}
           >
-            <p>Change to my data</p>
+            <p>View my data</p>
+            <User />
           </Button>
           <Button
             variant={"secondary"}
@@ -128,10 +134,16 @@ export default function RepositoriesMetrics({
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col md:flex md:flex-row md:justify-between md:items-center">
-          <section id="resume">
+          <section id="resume" className="space-y-2 flex flex-col">
             <p className="text-sm text-muted-foreground">
               Visualising metrics for :{" "}
               <span className="font-medium text-foreground">{searchUser}</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Last fetch time:{" "}
+              <span className="font-medium text-foreground">
+                {new Date(dataUpdatedAt).toLocaleString()}
+              </span>
             </p>
             <p className="text-sm text-muted-foreground">
               Total repositories:{" "}
@@ -149,19 +161,15 @@ export default function RepositoriesMetrics({
               <InputSelect
                 options={Object.keys(metrics)}
                 onSelectionChange={handleMetricChange}
-                openState={repoSearchInputOpen}
-                setOpenState={setRepoSearchInputOpen}
                 selectedOption={selectedRepository}
                 placeholder="Select a repository"
               />
             )}
-            <DimensionSelect setSelectedDimension={setSelectedDimension} />
           </div>
         </div>
 
         <HighlightsPanel
           metrics={metrics}
-          selectedDimension={selectedDimension}
           targetUser={targetUserRef.current?.value}
         />
 
@@ -172,10 +180,7 @@ export default function RepositoriesMetrics({
               <TabsTrigger value="commits">Commit Activity</TabsTrigger>
             </TabsList>
             <TabsContent value="languages">
-              <LanguageSection
-                metric={selectedMetric}
-                dimension={selectedDimension}
-              />
+              <LanguageSection metric={selectedMetric} />
             </TabsContent>
             <TabsContent value="commits">
               {selectedRepository && (

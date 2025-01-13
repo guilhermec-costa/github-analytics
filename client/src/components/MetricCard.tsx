@@ -1,16 +1,19 @@
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 export default function MetricCard({
   icon,
   title,
   value,
+  className,
 }: {
   icon: React.ReactNode;
   title: string;
-  value: string | undefined;
+  value?: string;
+  className?: string;
 }) {
   return (
-    <Card>
+    <Card className={cn(className)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon}

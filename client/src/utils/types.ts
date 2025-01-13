@@ -18,9 +18,3 @@ export type MetricUnit = {
   LanguageDetails: LanguageCount[];
   CommitDetails: DetailedRepoCommit[];
 };
-
-export enum RepoMeasureDimension {
-  bytes = "bytes",
-  megabytes = "megabytes",
-  gigabytes = "gigabytes",
-}

@@ -3,7 +3,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -13,23 +13,30 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
+import React from "react";
+import { cn } from "@/lib/utils";
 
 interface InputSelectProps {
   options: string[];
   onSelectionChange: (value: any) => void;
   selectedOption?: string;
-  openState: boolean;
-  setOpenState: (state: boolean) => void;
   placeholder: string;
+  highlightSelected?: boolean;
 }
 export default function InputSelect({
   options,
   onSelectionChange,
   selectedOption,
-  openState,
-  setOpenState,
   placeholder,
+  highlightSelected = true,
 }: InputSelectProps) {
+  const [openState, setOpenState] = React.useState<boolean>(false);
+
+  function handleSelectionChange(value: unknown) {
+    setOpenState(false);
+    onSelectionChange(value);
+  }
+
   return (
     <Popover open={openState} onOpenChange={setOpenState}>
       <PopoverTrigger>
@@ -48,15 +55,21 @@ export default function InputSelect({
         <Command>
           <CommandInput placeholder="Search repository..." className="h-9" />
           <CommandList>
-            <CommandEmpty>No repository found.</CommandEmpty>
+            <CommandEmpty>No {placeholder} found.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem
                   key={option}
                   value={option}
-                  onSelect={onSelectionChange}
+                  onSelect={handleSelectionChange}
+                  className={cn({
+                    "bg-primary":
+                      highlightSelected && option === selectedOption,
+                    "flex items-center": true,
+                  })}
                 >
-                  {option}
+                  <p>{option}</p>
+                  {option === selectedOption && <Check />}
                 </CommandItem>
               ))}
             </CommandGroup>

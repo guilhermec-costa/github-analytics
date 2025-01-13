@@ -3,9 +3,9 @@ import { ChartArea, Code, Database, Star } from "lucide-react";
 import React from "react";
 import { RepoAnalyser } from "../services/RepoAnalyser";
 import { RepoMetrics } from "shared/types";
+import { formatBytes } from "@/utils/bytes";
 
 interface HighlightsPanelProps {
-  selectedDimension: string;
   metrics: RepoMetrics | undefined;
   targetUser: string | undefined;
 }
@@ -38,7 +38,6 @@ const initialState: HighlightsReducerState = {
 
 export default function HighlightsPanel({
   metrics,
-  selectedDimension,
   targetUser,
 }: HighlightsPanelProps) {
   function highlightReducer(
@@ -105,8 +104,11 @@ export default function HighlightsPanel({
       />
       <MetricCard
         icon={<Database className="h-4 w-4" color="hsl(var(--primary)" />}
-        title={`Average Repo Size (${selectedDimension})`}
-        value={highlightState.averageRepoSize}
+        title={`Average Repo Size`}
+        value={
+          highlightState.averageRepoSize &&
+          formatBytes(parseInt(highlightState.averageRepoSize))
+        }
       />
       <MetricCard
         icon={<Star className="h-4 w-4" color="hsl(var(--primary)" />}

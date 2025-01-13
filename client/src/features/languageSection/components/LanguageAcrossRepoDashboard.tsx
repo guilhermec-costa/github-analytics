@@ -16,21 +16,14 @@ import {
   Cell,
 } from "recharts";
 import { MetricUnit } from "@/utils/types";
+import { formatBytes } from "@/utils/bytes";
 
-const COLORS = [
-  "hsl(var(--primary))",
-  "hsl(var(--secondary))",
-  "hsl(var(--accent))",
-  "hsl(var(--muted))",
-  "hsl(var(--card))",
-];
+const COLORS = ["hsl(var(--primary))", "hsl(var(--secondary))"];
 
 export default function LanguageAcrossRepoDashboard({
   metric,
-  dimension,
 }: {
   metric: MetricUnit;
-  dimension: string;
 }) {
   const data = React.useMemo(() => {
     return metric.LanguageDetails.sort((a, b) => b.count - a.count).slice(
@@ -77,9 +70,11 @@ export default function LanguageAcrossRepoDashboard({
                           {payload[0].payload.language}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {dimension} Count:{" "}
+                          Count:{" "}
                           <span className="font-medium">
-                            {payload[0].value}
+                            {formatBytes(
+                              parseInt(payload[0].value?.toString() || ""),
+                            )}
                           </span>
                         </p>
                       </div>

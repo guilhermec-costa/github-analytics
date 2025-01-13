@@ -38,7 +38,7 @@ const SocialIcon = ({
 
 export function Footer() {
   return (
-    <footer className="bg-background border-t w-full md:fixed md:bottom-0 md:left-0">
+    <footer className="bg-background border-t left-0 bottom-0 relative">
       <div className="container px-4 py-8 mx-auto">
         <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
           <div className="text-sm text-muted-foreground flex space-x-3 items-center">
