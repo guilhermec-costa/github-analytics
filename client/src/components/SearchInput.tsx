@@ -1,15 +1,18 @@
 import React, { useRef } from "react";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface UserSearchInputProps {
   placeholder?: string;
   onSearch: (username: string) => void;
+  className?: string;
 }
 
 export default function SearchInput({
   placeholder,
   onSearch,
+  className,
 }: UserSearchInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -20,7 +23,7 @@ export default function SearchInput({
   };
 
   return (
-    <div className="relative">
+    <div className={cn("relative", className)}>
       <Input
         placeholder={placeholder}
         type="text"

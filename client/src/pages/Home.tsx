@@ -21,10 +21,10 @@ export default function Home() {
           <TopNav />
         </div>
       </header>
-      <main className="container mx-auto border-2 border-secondary mt-5 rounded-md">
+      <main className="container mx-auto border-2 border-secondary my-5 rounded-md">
         <Card className="rounded-md">
           <CardHeader>
-            <CardTitle className="text-4xl font-bold">
+            <CardTitle className="text-4xl font-bold break-words">
               Welcome to the Dashboard,
               {status === "success" && (
                 <span className="bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-400 bg-clip-text text-transparent">

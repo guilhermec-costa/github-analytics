@@ -127,12 +127,20 @@ export default function RepositoriesMetrics({
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex justify-between items-center">
-          <p className="text-sm text-muted-foreground">
-            Total repositories:{" "}
-            <span className="font-medium">{repositoryCount}</span>
-          </p>
-          <div className="flex space-x-4">
+        <div className="flex flex-col md:flex md:flex-row md:justify-between md:items-center">
+          <section id="resume">
+            <p className="text-sm text-muted-foreground">
+              Visualising metrics for :{" "}
+              <span className="font-medium text-foreground">{searchUser}</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Total repositories:{" "}
+              <span className="font-medium text-foreground">
+                {repositoryCount}
+              </span>
+            </p>
+          </section>
+          <div className="md:flex md:space-x-4 md:items-center">
             <SearchInput
               onSearch={handleUserSearch}
               placeholder={"Type username"}
