@@ -1,6 +1,5 @@
 import React from "react";
 import { MetricUnit, RepoMeasureDimension } from "@/utils/types";
-import { DetailedRepoCommit } from "shared/types";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
 import { RefreshCcw } from "lucide-react";
 
@@ -12,7 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import DetailedCommit from "./DetailedCommit";
 import ContributorsDashboard from "./ContributorsDashboard";
 import InputSelect from "@/components/InputSelect";
 import DimensionSelect from "./DimensionSelect";
