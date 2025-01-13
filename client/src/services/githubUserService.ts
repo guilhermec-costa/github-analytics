@@ -26,11 +26,21 @@ export class GithubUserService {
   }
 
   static async getLoggedUserInfo(token: string) {
+    const useInfoCacheKey = "userInfo";
+    const userCacheInfo = localStorage.getItem(useInfoCacheKey);
+    if (userCacheInfo) {
+      return JSON.parse(userCacheInfo);
+    }
+
     const data = await BackendHttpClient.get("user/authorized", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+
+    if (!userCacheInfo) {
+      localStorage.setItem(useInfoCacheKey, JSON.stringify(data.data));
+    }
 
     return data.data;
   }

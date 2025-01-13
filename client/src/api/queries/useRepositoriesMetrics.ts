@@ -6,5 +6,6 @@ export default function useRepositoriesMetrics(username: string | undefined) {
     queryKey: ["repoMetrics", username!],
     queryFn: () => GithubUserService.getRepositoryMetrics(username!),
     enabled: !!username,
+    refetchOnWindowFocus: false,
   });
 }
