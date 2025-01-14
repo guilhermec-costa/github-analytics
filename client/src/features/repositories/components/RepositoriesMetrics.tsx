@@ -24,6 +24,7 @@ import SearchInput from "@/components/SearchInput";
 import LanguageSection from "@/features/languageSection";
 import { CommitSection } from "@/features/commitSection";
 import SummaryDatatable from "../../summaryTable/components/SummaryDatatable";
+import { Separator } from "@/components/ui/separator";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -158,28 +159,33 @@ export default function RepositoriesMetrics({
               </span>
             </p>
           </section>
-          <div className="md:flex md:space-x-4 md:items-center">
-            <SearchInput
-              onSearch={handleUserSearch}
-              placeholder={"Type username"}
-            />
-            {metrics && (
-              <InputSelect
-                options={Object.keys(metrics)}
-                onSelectionChange={handleMetricChange}
-                selectedOption={selectedRepository}
-                placeholder="Select a repository"
-              />
-            )}
-          </div>
+          <SearchInput
+            onSearch={handleUserSearch}
+            placeholder={"Search other user"}
+            className="min-w-[250px]"
+          />
         </div>
 
         <HighlightsPanel
           metrics={metrics}
           targetUser={targetUserRef.current?.value}
         />
+        <Separator />
 
         <SummaryDatatable metrics={metrics} />
+
+        <Separator />
+
+        <div className="md:flex md:space-x-4 md:items-center">
+          {metrics && (
+            <InputSelect
+              options={Object.keys(metrics)}
+              onSelectionChange={handleMetricChange}
+              selectedOption={selectedRepository}
+              placeholder="Select a repository"
+            />
+          )}
+        </div>
 
         {selectedMetric ? (
           <Tabs defaultValue="languages" className="w-full">
