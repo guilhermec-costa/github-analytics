@@ -6,7 +6,6 @@ export default function useClickOutside<T extends HTMLElement>(cb: () => void) {
   React.useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (EleRef.current && !EleRef.current.contains(e.target as Node)) {
-        console.log("outside");
         cb();
       }
     };

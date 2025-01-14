@@ -15,10 +15,17 @@ export class RepoAnalyser {
     let commitSum = 0;
 
     for (const { CommitDetails } of metrics) {
-      commitSum += CommitDetails.reduce((acc: number, curValue) => {
-        return (acc += curValue.commits);
-      }, 0);
+      commitSum += this.sumCommitsForPeriod(CommitDetails);
     }
+
+    return commitSum;
+  }
+
+  static sumCommitsForPeriod(commitPeriod: DetailedRepoCommit[]) {
+    let commitSum = 0;
+    commitSum += commitPeriod.reduce((acc: number, curValue) => {
+      return (acc += curValue.commits);
+    }, 0);
 
     return commitSum;
   }

@@ -23,7 +23,7 @@ import RepositoriesMetricsError from "../layout/RepositoriesMetricsError";
 import SearchInput from "@/components/SearchInput";
 import LanguageSection from "@/features/languageSection";
 import { CommitSection } from "@/features/commitSection";
-import SummaryDatatable from "./SummaryDatatable";
+import SummaryDatatable from "../../summaryTable/components/SummaryDatatable";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -179,7 +179,7 @@ export default function RepositoriesMetrics({
           targetUser={targetUserRef.current?.value}
         />
 
-        <SummaryDatatable />
+        <SummaryDatatable metrics={metrics} />
 
         {selectedMetric ? (
           <Tabs defaultValue="languages" className="w-full">
