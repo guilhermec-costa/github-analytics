@@ -18,7 +18,13 @@ import {
 import { MetricUnit } from "@/utils/types";
 import { formatBytes } from "@/utils/bytes";
 
-const COLORS = ["hsl(var(--primary))", "hsl(var(--secondary))"];
+const COLORS = [
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+];
 
 export default function LanguageAcrossRepoDashboard({
   metric,

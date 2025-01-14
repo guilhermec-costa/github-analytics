@@ -16,7 +16,7 @@ export abstract class GithubGateway {
   constructor(readonly url: string) {
     this.client = axios.create({
       baseURL: url,
-      headers: { Accept: "application/json" },
+      headers: { Accept: "application/json, application/vnd.github.v3+json" },
     });
 
     this.client.interceptors.response.use(

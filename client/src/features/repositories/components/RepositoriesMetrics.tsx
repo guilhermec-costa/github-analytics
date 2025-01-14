@@ -56,12 +56,17 @@ export default function RepositoriesMetrics({
   }, [userInfo.data]);
 
   function handleMetricChange(repo: string) {
-    setSelectedMetric(metrics![repo]);
-    setSelectedRepository(repo);
+    if (repo !== selectedRepository) {
+      setSelectedMetric(metrics![repo]);
+      setSelectedRepository(repo);
+      return;
+    }
+    setSelectedMetric(undefined);
+    setSelectedRepository("");
   }
 
   function viewAuthUserData() {
-    if (userInfo.data.login) {
+    if (userInfo.data?.login) {
       setSearchUser(userInfo.data.login);
       resetMetric();
     }
@@ -108,7 +113,7 @@ export default function RepositoriesMetrics({
           <CardTitle className="text-3xl font-bold">
             Repository Metrics
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="mt-2">
             Gain insights into your repositories with detailed metrics and data
             visualizations
           </CardDescription>

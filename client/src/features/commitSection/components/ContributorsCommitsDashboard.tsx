@@ -50,10 +50,10 @@ export default function ContributorsCommitDashboard({
   );
 
   const colors = [
-    "hsl(var(--primary))",
-    "hsl(var(--secondary))",
-    "hsl(var(--accent))",
-    "hsl(var(--muted))",
+    "hsl(var(--chart-1))",
+    "hsl(var(--chart-2))",
+    "hsl(var(--chart-3))",
+    "hsl(var(--chart-4))",
   ];
 
   const handleMouseEnter = (_: any, index: number) => setActiveIndex(index);

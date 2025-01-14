@@ -48,7 +48,7 @@ export default function TopNav() {
                 <span className="sr-only">Toggle theme</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-20">
+            <DropdownMenuContent className="w-20 bg-popover">
               <DropdownMenuItem onClick={() => setTheme("light")}>
                 <Sun className="mr-2 h-4 w-4" />
                 Light

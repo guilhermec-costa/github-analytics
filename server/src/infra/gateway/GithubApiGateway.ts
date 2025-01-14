@@ -12,20 +12,6 @@ export class GithubApiGateway
     super("https://api.github.com");
   }
 
-  async fetchSpecificUserRepos(
-    token: string,
-    username: string,
-  ): Promise<GithubRepo[]> {
-    const url = `/users/${username}/repos`;
-    const res = await this.httpClient().get<GithubRepo[]>(url, {
-      headers: {
-        Authorization: token,
-      },
-    });
-
-    return res.data;
-  }
-
   async fetchSpecificUser(token: string, username: string): Promise<any> {
     const url = `/users/${username}`;
     const response = await this.httpClient().get<CommitDetail>(url, {
@@ -58,7 +44,11 @@ export class GithubApiGateway
     repoName: string,
     token: string,
   ): Promise<RepoCommit[]> {
-    const url = `/repos/${repoOwner}/${repoName}/commits?per_page=20`;
+    let page = 1;
+    let url = `/repos/${repoOwner}/${repoName}/commits?per_page=30&page=${page}`;
+    let pagesRemaining: boolean = true;
+    let data: RepoCommit[] = [];
+
     const response = await this.httpClient().get<RepoCommit[]>(url, {
       headers: {
         Authorization: token,
@@ -66,6 +56,26 @@ export class GithubApiGateway
     });
 
     return response.data;
+
+    while (pagesRemaining) {
+      const response = await this.httpClient().get<RepoCommit[]>(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      data = [...data, ...response.data];
+
+      const linkHeader: string = response.headers.link;
+      pagesRemaining = !!linkHeader && linkHeader.includes(`rel=\"next\"`);
+
+      if (pagesRemaining) {
+        page += 1;
+        url = `/repos/${repoOwner}/${repoName}/commits?per_page=1&page=${page}`;
+      }
+    }
+
+    return data;
   }
 
   async fetchRepoLanguages(
@@ -83,14 +93,30 @@ export class GithubApiGateway
   }
 
   async fetchUserRepos(token: string, username: string): Promise<GithubRepo[]> {
-    const url = `/users/${username}/repos`;
-    const response = await this.httpClient().get<GithubRepo[]>(url, {
-      headers: {
-        Authorization: token,
-      },
-    });
+    let page = 1;
+    let url = `/users/${username}/repos?per_page=100&page=${page}`;
+    let pagesRemaining: boolean = true;
+    let data: GithubRepo[] = [];
 
-    return response.data;
+    while (pagesRemaining) {
+      const response = await this.httpClient().get<GithubRepo[]>(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      data = [...data, ...response.data];
+
+      const linkHeader: string = response.headers.link;
+      pagesRemaining = !!linkHeader && linkHeader.includes(`rel=\"next\"`);
+
+      if (pagesRemaining) {
+        page += 1;
+        url = `/users/${username}/repos?per_page=100&page=${page}`;
+      }
+    }
+
+    return data;
   }
 
   async fetchAuthorizedUserInfo(userToken: string): Promise<GithubUser> {

@@ -1,5 +1,5 @@
 import { BackendHttpClient } from "@/lib/http/BackendClient";
-import { RepoMetrics } from "shared/types";
+import { GithubUser, RepoMetrics } from "shared/types";
 import { CommitDetail } from "../../../server/src/utils/types/commit";
 
 export class GithubUserService {
@@ -25,14 +25,14 @@ export class GithubUserService {
     return data.data;
   }
 
-  static async getLoggedUserInfo(token: string) {
+  static async getLoggedUserInfo(token: string): Promise<GithubUser> {
     const useInfoCacheKey = "userInfo";
     const userCacheInfo = localStorage.getItem(useInfoCacheKey);
     if (userCacheInfo) {
       return JSON.parse(userCacheInfo);
     }
 
-    const data = await BackendHttpClient.get("user/authorized", {
+    const data = await BackendHttpClient.get<GithubUser>("user/authorized", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
