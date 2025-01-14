@@ -9,15 +9,23 @@ export default function WelcomeMessage() {
     <Card className="rounded-md">
       <CardHeader className="bg-secondary">
         <CardTitle className="text-4xl font-bold break-words">
-          <div className="flex space-x-4 items-center">
-            Welcome to the Dashboard,
-            <span className="bg-gradient-to-r from-red-600 to-orange-400 bg-clip-text text-transparent">
-              {data && data.name}
-            </span>
-            <Avatar>
-              <AvatarImage src={data?.avatar_url} alt="@shadcn" className="" />
-              <AvatarFallback>User Avatar</AvatarFallback>
-            </Avatar>
+          <div className="md:flex md:space-x-4 md:items-center">
+            <h2>
+              Welcome to the Dashboard,
+              <span className="bg-gradient-to-r from-red-600 to-orange-400 bg-clip-text text-transparent">
+                {data && data.name}
+              </span>
+            </h2>
+            <figure className="hidden lg:block">
+              <Avatar>
+                <AvatarImage
+                  src={data?.avatar_url}
+                  alt="@shadcn"
+                  className=""
+                />
+                <AvatarFallback>User Avatar</AvatarFallback>
+              </Avatar>
+            </figure>
           </div>
         </CardTitle>
         <CardDescription>

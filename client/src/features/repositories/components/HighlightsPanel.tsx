@@ -11,15 +11,13 @@ interface HighlightsPanelProps {
 }
 
 interface HighlightsReducerState {
-  commitCount: number | undefined;
-  topLanguage: string | undefined;
-  averageRepoSize: string | undefined;
-  topStargazers:
-    | {
-        repo: string | undefined;
-        count: number | undefined;
-      }
-    | undefined;
+  commitCount?: number;
+  topLanguage?: string;
+  averageRepoSize?: string;
+  topStargazers?: {
+    repo?: string | undefined;
+    count?: number | undefined;
+  };
 }
 
 interface HighlightsReducerAction {

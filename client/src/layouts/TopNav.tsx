@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { Moon, Settings, Sun, Menu } from "lucide-react";
+import useClickOutside from "@/hooks/useClickOutside";
 
 const NavItem = ({
   href,
@@ -30,6 +31,9 @@ const NavItem = ({
 export default function TopNav() {
   const { setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const mobileMenuToggleRef = useClickOutside<HTMLButtonElement>(() =>
+    setIsMobileMenuOpen(false),
+  );
 
   return (
     <header className="sticky top-0 right-0 left-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pr-10 pl-10">
@@ -96,6 +100,7 @@ export default function TopNav() {
             size="icon"
             className="h-8 w-8 md:hidden"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            ref={mobileMenuToggleRef}
           >
             <Menu className="h-4 w-4" color="hsl(var(--muted-foreground))" />
             <span className="sr-only">Toggle mobile menu</span>
