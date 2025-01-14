@@ -22,12 +22,23 @@ export default function SummaryDatatable({
     if (!metrics) return [];
 
     const dataset: SummaryUnit[] = Object.values(metrics).map(
-      ({ repo, CommitDetails, LanguageDetails, StargazersCount }) => {
+      ({
+        repo,
+        CommitDetails,
+        LanguageDetails,
+        StargazersCount,
+        watchersCount,
+        size,
+        licenseName,
+      }) => {
         return {
           repo,
           commits: RepoAnalyser.sumCommitsForPeriod(CommitDetails),
           contributors: 0,
           stargazers: StargazersCount,
+          watchers: watchersCount,
+          size,
+          license: licenseName,
         };
       },
     );

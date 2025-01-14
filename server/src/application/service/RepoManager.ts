@@ -148,6 +148,9 @@ export class RepoManager {
         CommitDetails: await this.getUserRepoCommits(owner, repo.name!, token),
         StargazersCount: repo.stargazers_count,
         repo: repo.name!,
+        watchersCount: repo.watchers_count,
+        size: repo.size,
+        licenseName: repo.license?.name,
       };
     }
 

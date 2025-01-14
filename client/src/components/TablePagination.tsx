@@ -11,7 +11,7 @@ export default function TablePagination<TData>({
 }: PaginationProps<TData>) {
   const { pageIndex } = React.useMemo(
     () => table.getState().pagination,
-    [table],
+    [table.getState().pagination],
   );
   const pageCount = React.useMemo(
     () => table.getPageCount(),

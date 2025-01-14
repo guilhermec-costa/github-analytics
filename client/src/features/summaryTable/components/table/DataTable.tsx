@@ -99,9 +99,9 @@ export default function DataTable<TData, TValue>({
           </SelectContent>
         </Select>
       </div>
-      <div className="rounded-md border">
+      <div className="w-full rounded-md border mt-1 border-secondary border-solid border-opacity-[0.5] pb-3">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-secondary">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-secondary">
                 {headerGroup.headers.map((header) => {
@@ -143,6 +143,7 @@ export default function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="border-solid border-b-secondary"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
