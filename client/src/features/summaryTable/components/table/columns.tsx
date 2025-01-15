@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -5,11 +6,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import { formatBytes } from "@/utils/bytes";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
 export type SummaryUnit = {
+  createdAt: string;
+  updatedAt: string;
   repo: string;
   commits?: number;
   contributors?: number;
@@ -21,8 +25,25 @@ export type SummaryUnit = {
 
 export const columns: ColumnDef<SummaryUnit>[] = [
   {
+    accessorKey: "createdAt",
+    header: "Created At",
+    accessorFn: ({ createdAt }) => {
+      return new Date(createdAt).toLocaleString();
+    },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "Last Update",
+    accessorFn: ({ updatedAt }) => {
+      return new Date(updatedAt).toLocaleString();
+    },
+  },
+  {
     accessorKey: "repo",
     header: "Repository",
+    cell: ({ getValue }) => {
+      return <Badge variant="secondary">{getValue() as React.ReactNode}</Badge>;
+    },
   },
   {
     accessorKey: "commits",
@@ -52,6 +73,17 @@ export const columns: ColumnDef<SummaryUnit>[] = [
     header: "License",
     accessorFn: ({ license }) => {
       return license ?? "-";
+    },
+    cell: ({ getValue }) => {
+      return (
+        <div
+          className={cn({
+            "text-chart-3": getValue() !== "-",
+          })}
+        >
+          {getValue() as React.ReactNode}
+        </div>
+      );
     },
   },
   {

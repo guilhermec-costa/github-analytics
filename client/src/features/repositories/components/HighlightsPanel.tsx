@@ -1,5 +1,5 @@
 import MetricCard from "@/components/MetricCard";
-import { ChartArea, Code, Database, Star } from "lucide-react";
+import { ChartArea, Code, Database, FolderCode, Star } from "lucide-react";
 import React from "react";
 import { RepoAnalyser } from "../services/RepoAnalyser";
 import { RepoMetrics } from "shared/types";
@@ -18,6 +18,7 @@ interface HighlightsReducerState {
     repo?: string | undefined;
     count?: number | undefined;
   };
+  repoCount?: number;
 }
 
 interface HighlightsReducerAction {
@@ -32,6 +33,7 @@ const initialState: HighlightsReducerState = {
     count: undefined,
     repo: undefined,
   },
+  repoCount: undefined,
 };
 
 export default function HighlightsPanel({
@@ -50,6 +52,7 @@ export default function HighlightsPanel({
           topLanguage: RepoAnalyser.findTopLanguage(metricsValues),
           averageRepoSize: RepoAnalyser.calcAvgRepoSize(metricsValues),
           topStargazers: RepoAnalyser.findTopStargazer(metricsValues),
+          repoCount: metricsValues.length,
         };
       }
 
@@ -59,6 +62,7 @@ export default function HighlightsPanel({
           topLanguage: undefined,
           averageRepoSize: undefined,
           topStargazers: undefined,
+          repoCount: undefined,
         };
       }
 
@@ -85,7 +89,12 @@ export default function HighlightsPanel({
   }, [targetUser, metrics]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 xl:grid-rows-1 xl:grid-cols-5 gap-4">
+      <MetricCard
+        icon={<FolderCode className="h-4 w-4" color="hsl(var(--primary)" />}
+        title="Repositories"
+        value={highlightState.repoCount?.toString()}
+      />
       <MetricCard
         icon={<ChartArea className="h-4 w-4" color="hsl(var(--primary)" />}
         title="Total Commits"

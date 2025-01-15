@@ -45,6 +45,6 @@ export type AuthCredentials = {
 export type DetailedRepoCommit = {
   date: string;
   commits: number;
-  pctTotal: string;
+  pctTotal?: string;
   details: Array<ParsedCommitDetails>;
 };

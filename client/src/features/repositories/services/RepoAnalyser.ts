@@ -1,3 +1,4 @@
+import { formatBytes } from "@/utils/bytes";
 import { DetailedRepoCommit } from "shared/types";
 
 export type Metric = {
@@ -8,6 +9,12 @@ export type Metric = {
   CommitDetails: DetailedRepoCommit[];
   StargazersCount?: number;
   repo?: string;
+  watchersCount: number;
+  size: number;
+  licenseName?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  topLanguage: string;
 };
 
 export class RepoAnalyser {
@@ -31,44 +38,29 @@ export class RepoAnalyser {
   }
 
   static findTopLanguage(metrics: Metric[]): string {
-    const languageBytes: Record<string, number> = {};
-    for (const { LanguageDetails } of metrics) {
-      for (const { language, count } of LanguageDetails) {
-        if (!languageBytes[language]) {
-          languageBytes[language] = count;
-          continue;
+    const languageRank = metrics.reduce(
+      (acc, curValue) => {
+        const lang = curValue.topLanguage;
+        if (!acc[lang]) {
+          acc[lang] = 1;
         }
 
-        languageBytes[language] += count;
-      }
-    }
+        acc[lang] += 1;
 
-    const sortedLanguages = Object.entries(languageBytes).sort(
-      (objA, objB) => objB[1] - objA[1],
+        return acc;
+      },
+      {} as Record<string, number>,
     );
 
-    return sortedLanguages[0][0] ?? "Not language";
+    return Object.entries(languageRank).sort(
+      (langA, langB) => langB[1] - langA[1],
+    )[0][0];
   }
 
   static calcAvgRepoSize(metrics: Metric[]) {
-    const languageBytes: Record<string, number> = {};
-    for (const { LanguageDetails } of metrics) {
-      for (const { language, count } of LanguageDetails) {
-        if (!languageBytes[language]) {
-          languageBytes[language] = count;
-          continue;
-        }
-
-        languageBytes[language] += count;
-      }
-    }
-
-    const languageCounts = Object.entries(languageBytes);
-    const bytesSum = languageCounts.reduce((acc, currValue) => {
-      return (acc += currValue[1]);
-    }, 0);
-
-    return (bytesSum / languageCounts.length).toFixed(2);
+    return formatBytes(
+      metrics.reduce((acc, curValue) => (acc += curValue.size), 0),
+    );
   }
 
   static findTopStargazer(metrics: Metric[]) {

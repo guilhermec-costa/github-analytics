@@ -140,5 +140,8 @@ export type RepoMetrics = Record<
     watchersCount: number;
     size: number;
     licenseName?: string | null;
+    updatedAt: string;
+    createdAt: string;
+    topLanguage: string;
   }
 >;

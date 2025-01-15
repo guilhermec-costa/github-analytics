@@ -7,7 +7,7 @@ import {
   RepoLanguages,
   RepoMetrics,
 } from "../../utils/types/repository";
-import { CommitDetail } from "../../utils/types/commit";
+import { CommitDetail, ParsedCommitDetails } from "../../utils/types/commit";
 import { CommitDataTransformer } from "./CommitDataTransformer";
 import { DetailedRepoCommit } from "../../utils/types/githubUser";
 
@@ -64,29 +64,18 @@ export class RepoManager {
     this.logger.log(
       "Requesting Github Gateway for languages from user repositories",
     );
-    const awaitableRequests = [];
-    const parsedResponse: RepoLanguages = {};
 
-    for (const repo of repos) {
-      awaitableRequests.push(
-        this.loadRepoLanguages(repoOwner, repo?.name!, token),
+    const resolvedRequests = await Promise.all(
+      repos.map((repo) => this.loadRepoLanguages(repoOwner, repo.name, token)),
+    );
+
+    return repos.reduce<RepoLanguages>((acc, repo, idx) => {
+      acc[repo.name] = Object.entries(resolvedRequests[idx]).map(
+        ([language, count]) => ({ language, count }),
       );
-    }
 
-    const resolvedRequests = await Promise.all(awaitableRequests);
-
-    for (const [idx, item] of resolvedRequests.entries()) {
-      const repoName = repos[idx].name!;
-
-      parsedResponse[repoName] = Object.entries(item).map(
-        ([language, count]) => ({
-          language,
-          count,
-        }),
-      );
-    }
-
-    return parsedResponse;
+      return acc;
+    }, {});
   }
 
   /**
@@ -111,18 +100,11 @@ export class RepoManager {
     const groupedCommitDetails =
       this.commitTransformer.groupRepoCommitsByDate(repoCommits);
 
-    const parsedGroupedData = [];
-    for (const date of Object.keys(groupedCommitDetails)) {
-      const nrCommits = groupedCommitDetails[date].count;
-      parsedGroupedData.push({
-        date,
-        commits: nrCommits,
-        pctTotal: ((nrCommits / repoCommits.length) * 100).toFixed(2),
-        details: groupedCommitDetails[date].details,
-      });
-    }
-
-    return parsedGroupedData;
+    return Object.entries(groupedCommitDetails).map(([date, details]) => ({
+      date,
+      commits: details.count,
+      details: details.details,
+    }));
   }
 
   /**
@@ -151,6 +133,9 @@ export class RepoManager {
         watchersCount: repo.watchers_count,
         size: repo.size,
         licenseName: repo.license?.name,
+        updatedAt: repo.updated_at,
+        createdAt: repo.created_at,
+        topLanguage: repo.language || "",
       };
     }
 

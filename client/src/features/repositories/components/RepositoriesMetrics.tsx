@@ -25,6 +25,8 @@ import LanguageSection from "@/features/languageSection";
 import { CommitSection } from "@/features/commitSection";
 import SummaryDatatable from "../../summaryTable/components/SummaryDatatable";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { GithubUser } from "shared/types";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -32,7 +34,9 @@ export default function RepositoriesMetrics({
   sectionId: string;
 }) {
   const { toast } = useToast();
-  const [searchUser, setSearchUser] = React.useState<string>("");
+  const [searchUser, setSearchUser] = React.useState<GithubUser | undefined>(
+    undefined,
+  );
   const userInfo = useUserInformation();
   const {
     data: metrics,
@@ -40,7 +44,7 @@ export default function RepositoriesMetrics({
     isError,
     refetch,
     dataUpdatedAt,
-  } = useRepositoriesMetrics(searchUser || undefined);
+  } = useRepositoriesMetrics(searchUser?.login || undefined);
 
   const targetUserRef = React.useRef<HTMLInputElement>(null);
   const [selectedMetric, setSelectedMetric] = React.useState<MetricUnit>();
@@ -52,8 +56,13 @@ export default function RepositoriesMetrics({
   }
 
   React.useEffect(() => {
+    console.log(searchUser);
+  }, [searchUser]);
+
+  React.useEffect(() => {
     if (userInfo.data?.login) {
-      setSearchUser(userInfo.data.login);
+      console.log(userInfo.data);
+      setSearchUser(userInfo.data);
     }
   }, [userInfo.data]);
 
@@ -69,7 +78,7 @@ export default function RepositoriesMetrics({
 
   function viewAuthUserData() {
     if (userInfo.data?.login) {
-      setSearchUser(userInfo.data.login);
+      setSearchUser(userInfo.data);
       resetMetric();
     }
   }
@@ -78,7 +87,7 @@ export default function RepositoriesMetrics({
     refetch({});
     toast({
       title: "Refetch in progress",
-      description: `Fetching the latest data for "${searchUser}". Please wait...`,
+      description: `Fetching the latest data for "${searchUser?.login}". Please wait...`,
       duration: 5000,
     });
   }
@@ -90,7 +99,7 @@ export default function RepositoriesMetrics({
         localStorage.getItem("accessToken")!,
       );
       if (newUser) {
-        setSearchUser(newUser.login);
+        setSearchUser(newUser);
         resetMetric();
       }
     } catch (error) {
@@ -105,8 +114,6 @@ export default function RepositoriesMetrics({
 
   if (isLoading) return <RepositoriesMetricsSkeleton />;
   if (isError) return <RepositoriesMetricsError />;
-
-  const repositoryCount = Object.keys(metrics || {}).length;
 
   return (
     <Card id={sectionId} className="w-full rounded-none">
@@ -142,20 +149,24 @@ export default function RepositoriesMetrics({
       <CardContent className="space-y-6">
         <div className="flex flex-col md:flex md:flex-row md:justify-between md:items-center">
           <section id="resume" className="space-y-2 flex flex-col">
-            <p className="text-sm text-muted-foreground">
-              Visualising metrics for :{" "}
-              <span className="font-medium text-foreground">{searchUser}</span>
-            </p>
+            <section className="relative">
+              <p className="text-sm text-muted-foreground flex items-center">
+                Visualising metrics for:{" "}
+                <span className="font-medium text-foreground">
+                  {searchUser?.name}
+                </span>
+                <figure className="ml-3">
+                  <Avatar>
+                    <AvatarImage src={searchUser?.avatar_url} alt="@shadcn" />
+                    <AvatarFallback>User Avatar</AvatarFallback>
+                  </Avatar>
+                </figure>
+              </p>
+            </section>
             <p className="text-sm text-muted-foreground">
               Last fetch time:{" "}
               <span className="font-medium text-foreground">
                 {new Date(dataUpdatedAt).toLocaleString()}
-              </span>
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Total repositories:{" "}
-              <span className="font-medium text-foreground">
-                {repositoryCount}
               </span>
             </p>
           </section>
@@ -170,7 +181,6 @@ export default function RepositoriesMetrics({
           metrics={metrics}
           targetUser={targetUserRef.current?.value}
         />
-        <Separator />
 
         <SummaryDatatable metrics={metrics} />
 
@@ -202,7 +212,7 @@ export default function RepositoriesMetrics({
                   <CommitSection
                     metric={selectedMetric}
                     selectedRepository={selectedRepository}
-                    searchUser={searchUser}
+                    searchUser={searchUser?.login || ""}
                   />
                 </>
               )}

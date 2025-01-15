@@ -29,10 +29,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
+import { ChevronDown, ChevronUp, ChevronsUpDown, FilterX } from "lucide-react";
 import TablePagination from "@/components/TablePagination";
 import { cn } from "@/lib/utils";
 import TablePaginationSummary from "@/components/TablePaginationSummary";
+import { Button } from "@/components/ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -72,15 +73,32 @@ export default function DataTable<TData, TValue>({
     },
   });
 
+  function resetFilters() {
+    setGlobalFilter("");
+    setSorting([]);
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Input
-          placeholder="Search all columns..."
-          value={globalFilter ?? ""}
-          onChange={(event) => setGlobalFilter(event.target.value)}
-          className="max-w-sm"
-        />
+        <section className="flex space-x-4">
+          <Input
+            placeholder="Search all columns..."
+            value={globalFilter ?? ""}
+            onChange={(event) => setGlobalFilter(event.target.value)}
+            className="max-w-sm"
+          />
+          <Button
+            onClick={resetFilters}
+            disabled={!globalFilter && !sorting.length}
+            className={cn({
+              "hover:cursor-pointer": globalFilter || sorting.length,
+              "hover:cursor-not-allowed": !globalFilter && !sorting.length,
+            })}
+          >
+            <FilterX />
+          </Button>
+        </section>
         <Select
           value={`${table.getState().pagination.pageSize}`}
           onValueChange={(value) => {
@@ -99,7 +117,7 @@ export default function DataTable<TData, TValue>({
           </SelectContent>
         </Select>
       </div>
-      <div className="w-full rounded-md border mt-1 border-secondary border-solid border-opacity-[0.5] pb-3">
+      <div className="w-full rounded-md border mt-1 border-secondary border-solid border-opacity-[0.5]">
         <Table>
           <TableHeader className="bg-secondary">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -168,7 +186,7 @@ export default function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between space-x-2 py-4">
+      <div className="flex items-center justify-between space-x-2">
         <div className="flex-1 text-sm text-muted-foreground">
           <TablePaginationSummary table={table} />
         </div>

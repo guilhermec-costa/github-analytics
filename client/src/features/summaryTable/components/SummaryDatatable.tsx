@@ -21,39 +21,48 @@ export default function SummaryDatatable({
   const data = React.useMemo(() => {
     if (!metrics) return [];
 
-    const dataset: SummaryUnit[] = Object.values(metrics).map(
-      ({
-        repo,
-        CommitDetails,
-        LanguageDetails,
-        StargazersCount,
-        watchersCount,
-        size,
-        licenseName,
-      }) => {
-        return {
+    const dataset: SummaryUnit[] = Object.values(metrics)
+      .map(
+        ({
           repo,
-          commits: RepoAnalyser.sumCommitsForPeriod(CommitDetails),
-          contributors: 0,
-          stargazers: StargazersCount,
-          watchers: watchersCount,
+          CommitDetails,
+          LanguageDetails,
+          StargazersCount,
+          watchersCount,
           size,
-          license: licenseName,
-        };
-      },
-    );
+          licenseName,
+          createdAt,
+          updatedAt,
+        }) => {
+          return {
+            repo,
+            commits: RepoAnalyser.sumCommitsForPeriod(CommitDetails),
+            contributors: 0,
+            stargazers: StargazersCount,
+            watchers: watchersCount,
+            size,
+            license: licenseName,
+            createdAt,
+            updatedAt,
+          };
+        },
+      )
+      .sort(
+        (mA, mB) =>
+          new Date(mB.updatedAt).getTime() - new Date(mA.updatedAt).getTime(),
+      );
     return dataset;
   }, [metrics]);
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="p-0">
         <CardTitle className="text-3xl font-bold">Summary</CardTitle>
         <CardDescription className="mt-2">
           A summary about all repositories
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0 pt-6">
         <DataTable columns={columns} data={data} />
       </CardContent>
     </Card>

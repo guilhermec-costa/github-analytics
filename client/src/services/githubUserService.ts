@@ -64,7 +64,7 @@ export class GithubUserService {
   }
 
   static async getSpecificUser(username: string, token: string) {
-    const data = await BackendHttpClient.get<any>(
+    const data = await BackendHttpClient.get<GithubUser>(
       `user/specific?username=${username}`,
       {
         headers: {
