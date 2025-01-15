@@ -39,28 +39,33 @@ export class GithubApiGateway
     return response.data;
   }
 
-  async fetchUserRepoCommits(
+  async fetchUserRepoCommitsSinceUntil(
     repoOwner: string,
     repoName: string,
     token: string,
+    since: string,
+    until: string = new Date().toISOString(),
   ): Promise<RepoCommit[]> {
     let page = 1;
-    let url = `/repos/${repoOwner}/${repoName}/commits?per_page=30&page=${page}`;
+    const today = new Date();
+    if (!since) {
+      since = new Date(today.setDate(today.getDate() - 60)).toISOString();
+    }
+
+    let url = `/repos/${repoOwner}/${repoName}/commits`;
     let pagesRemaining: boolean = true;
     let data: RepoCommit[] = [];
-
-    const response = await this.httpClient().get<RepoCommit[]>(url, {
-      headers: {
-        Authorization: token,
-      },
-    });
-
-    return response.data;
 
     while (pagesRemaining) {
       const response = await this.httpClient().get<RepoCommit[]>(url, {
         headers: {
           Authorization: token,
+        },
+        params: {
+          per_page: 100,
+          page,
+          since,
+          until,
         },
       });
 
@@ -71,7 +76,6 @@ export class GithubApiGateway
 
       if (pagesRemaining) {
         page += 1;
-        url = `/repos/${repoOwner}/${repoName}/commits?per_page=1&page=${page}`;
       }
     }
 

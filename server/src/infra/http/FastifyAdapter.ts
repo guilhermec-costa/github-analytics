@@ -19,6 +19,7 @@ export class FastifyAdapter implements IHttpServer {
   private app: FastifyInstance;
   private routePrefix: string;
   private logger!: ILogger;
+  routes: string[];
 
   constructor() {
     this.app = fastify();
@@ -28,6 +29,7 @@ export class FastifyAdapter implements IHttpServer {
     this.routePrefix = "";
     this.setErrorMiddleware();
     this.logger = new WinstonLogger();
+    this.routes = [];
   }
 
   getServer() {
@@ -78,6 +80,13 @@ export class FastifyAdapter implements IHttpServer {
     callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
   ) {
     const fullUrl = `/${this.routePrefix}/${url}`;
+    if (this.routes.includes(fullUrl)) {
+      this.logger.error(
+        `Failed to bind route "${fullUrl}". Route is already binded`,
+      );
+      return;
+    }
+
     this.app.route({
       method: method as HTTPMethods,
       url: fullUrl,
@@ -91,6 +100,8 @@ export class FastifyAdapter implements IHttpServer {
         reply.status(output.status).send(output.data && output.data);
       },
     });
+
+    this.routes.push(fullUrl);
     this.logger.log(
       `[${method.toUpperCase()}] Route ${fullUrl} successfully registered`,
     );

@@ -97,7 +97,7 @@ export default function HighlightsPanel({
       />
       <MetricCard
         icon={<ChartArea className="h-4 w-4" color="hsl(var(--primary)" />}
-        title="Total Commits"
+        title="Commits last 30 days"
         value={
           highlightState.commitCount
             ? highlightState.commitCount.toString()

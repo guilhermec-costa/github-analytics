@@ -1,4 +1,4 @@
-import { GithubUserService } from "@/services/githubUserService";
+import { GithubUserService } from "@/services/GithubUserService";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useRepositoriesMetrics(username: string | undefined) {

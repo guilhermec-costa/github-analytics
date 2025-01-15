@@ -12,6 +12,7 @@ export interface IHttpServer {
   delete(url: string, callback: HandlerCallback): void;
   register(method: HttpMethod, url: string, callback: HandlerCallback): void;
   addRoutePrefix(prefix: string): void;
+  routes: string[];
 }
 
 export type ControllerResponse = {

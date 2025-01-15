@@ -90,11 +90,15 @@ export class RepoManager {
     repoOwner: string,
     repoName: string,
     token: string,
+    since: string,
+    until: string = new Date().toISOString(),
   ): Promise<DetailedRepoCommit[]> {
-    const repoCommits = await this.githubApi.fetchUserRepoCommits(
+    const repoCommits = await this.githubApi.fetchUserRepoCommitsSinceUntil(
       repoOwner,
       repoName,
       token,
+      since,
+      until,
     );
 
     const groupedCommitDetails =
@@ -121,25 +125,38 @@ export class RepoManager {
       owner,
       repos,
     );
-    const parsedMetrics: RepoMetrics = {};
 
-    for (const repo of repos) {
-      if (!repositoriesLanguages[repo.name!].length) continue;
-      parsedMetrics[repo.name!] = {
-        LanguageDetails: repositoriesLanguages[repo.name!],
-        CommitDetails: await this.getUserRepoCommits(owner, repo.name!, token),
-        StargazersCount: repo.stargazers_count,
-        repo: repo.name!,
-        watchersCount: repo.watchers_count,
-        size: repo.size,
-        licenseName: repo.license?.name,
-        updatedAt: repo.updated_at,
-        createdAt: repo.created_at,
-        topLanguage: repo.language || "",
-      };
-    }
+    const today = new Date();
+    const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 30));
 
-    return parsedMetrics;
+    const commitRequests = await Promise.all(
+      repos.map((repo) =>
+        this.getUserRepoCommits(
+          owner,
+          repo.name,
+          token,
+          thirtyDaysAgo.toISOString(),
+        ),
+      ),
+    );
+
+    return repos.reduce<RepoMetrics>((acc, repo, idx) => {
+      if (repositoriesLanguages[repo.name].length) {
+        acc[repo.name] = {
+          LanguageDetails: repositoriesLanguages[repo.name!],
+          CommitDetails: commitRequests[idx],
+          StargazersCount: repo.stargazers_count,
+          repo: repo.name!,
+          watchersCount: repo.watchers_count,
+          size: repo.size,
+          licenseName: repo.license?.name,
+          updatedAt: repo.updated_at,
+          createdAt: repo.created_at,
+          topLanguage: repo.language || "",
+        };
+      }
+      return acc;
+    }, {});
   }
 
   /**
@@ -165,5 +182,21 @@ export class RepoManager {
       files: extractedFiles,
       stats: data.stats,
     };
+  }
+
+  async loadCommitPeriod(
+    repoOwner: string,
+    repoName: string,
+    token: string,
+    since: string,
+    until: string,
+  ) {
+    return await this.getUserRepoCommits(
+      repoOwner,
+      repoName,
+      token,
+      since,
+      until,
+    );
   }
 }

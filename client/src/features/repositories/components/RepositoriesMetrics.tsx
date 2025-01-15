@@ -13,7 +13,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import InputSelect from "@/components/InputSelect";
 import { Button } from "@/components/ui/button";
-import { GithubUserService } from "@/services/githubUserService";
+import { GithubUserService } from "@/services/GithubUserService";
 import useUserInformation from "@/api/queries/useUserInformation";
 import HighlightsPanel from "./HighlightsPanel";
 import { useToast } from "@/hooks/use-toast";

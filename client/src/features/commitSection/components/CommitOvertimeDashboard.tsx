@@ -2,7 +2,6 @@ import React from "react";
 import {
   Card,
   CardHeader,
-  CardTitle,
   CardContent,
   CardDescription,
 } from "@/components/ui/card";
@@ -14,32 +13,59 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-import { MetricUnit } from "@/utils/types";
 import { DetailedRepoCommit } from "shared/types";
-import { format, parseISO, subDays } from "date-fns";
+import { differenceInDays, format, parseISO, subDays } from "date-fns";
+import CommitPeriodPicker from "./CommitPeriodPicker";
+import { GithubUserService } from "@/services/GithubUserService";
+import useUserInformation from "@/api/queries/useUserInformation";
+import { Button } from "@/components/ui/button";
+
+export interface CommitPeriodProps {
+  since: Date;
+  until: Date;
+}
+
+interface CommitOvertimeDashboardProps {
+  commitsDetails: DetailedRepoCommit[];
+  setDetailedCommitPeriod: (period: DetailedRepoCommit) => void;
+  selectedRepository: string;
+}
+
+const periodInitialValue = {
+  since: subDays(new Date(), 30),
+  until: new Date(),
+};
 
 export default function CommitOvertimeDashboard({
-  metric,
+  commitsDetails,
   setDetailedCommitPeriod,
-}: {
-  metric: MetricUnit;
-  setDetailedCommitPeriod: (period: DetailedRepoCommit) => void;
-}) {
+  selectedRepository,
+}: CommitOvertimeDashboardProps) {
+  const userInfo = useUserInformation();
+  const [commitPeriod, setCommitPeriod] =
+    React.useState<CommitPeriodProps>(periodInitialValue);
+
+  const [presentCommits, setPresentCommits] =
+    React.useState<DetailedRepoCommit[]>(commitsDetails);
+
   const data = React.useMemo(() => {
-    const sortedCommits = [...metric.CommitDetails].sort(
+    const sortedCommits = presentCommits.sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     );
 
-    const today = new Date();
-
-    return Array.from({ length: 30 }, (_, i) => {
-      const date = format(subDays(today, 29 - i), "yyyy-MM-dd");
+    const datesLength =
+      differenceInDays(commitPeriod.until, commitPeriod.since) + 10;
+    return Array.from({ length: datesLength }, (_, i) => {
+      const date = format(
+        subDays(commitPeriod.until, datesLength - 1 - i),
+        "yyyy-MM-dd",
+      );
       const existingCommit = sortedCommits.find(
         (commit) => format(parseISO(commit.date), "yyyy-MM-dd") === date,
       );
       return existingCommit || { date, commits: 0 };
     });
-  }, [metric.CommitDetails]);
+  }, [presentCommits]);
 
   const maxCommits = Math.max(...data.map((d) => d.commits));
 
@@ -54,14 +80,38 @@ export default function CommitOvertimeDashboard({
     [setDetailedCommitPeriod],
   );
 
+  function resetPeriod() {
+    setCommitPeriod(periodInitialValue);
+  }
+
+  React.useEffect(() => {
+    const fetchCommitPeriod = async () => {
+      if (userInfo.data?.login && commitPeriod) {
+        const commitData = await GithubUserService.getCommitSinceUntil(
+          userInfo.data?.login,
+          selectedRepository,
+          commitPeriod.since,
+          commitPeriod.until,
+        );
+        setPresentCommits(commitData);
+      }
+    };
+
+    fetchCommitPeriod();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [commitPeriod]);
+
   return (
     <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Commit Activity</CardTitle>
-        <CardDescription>
-          Daily commit activity over the last 30 days
-        </CardDescription>
-      </CardHeader>
+      <section className="flex justify-between">
+        <CardHeader>
+          <CardDescription>
+            Daily commit activity over the last 60 days
+          </CardDescription>
+        </CardHeader>
+        <Button onClick={resetPeriod}>Reset period</Button>
+        <CommitPeriodPicker setCommitPeriod={setCommitPeriod} />
+      </section>
 
       <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">

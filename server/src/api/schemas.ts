@@ -30,3 +30,8 @@ export const CommitReferenceSchema = z
 export const SpecificUsernameQuery = z.object({
   username: z.string().nonempty(),
 });
+
+export const CommitPeriodSchema = z.object({
+  since: z.string(),
+  until: z.string().default(new Date().toISOString()),
+});

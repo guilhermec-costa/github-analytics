@@ -1,5 +1,5 @@
 import { BackendHttpClient } from "@/lib/http/BackendClient";
-import { GithubUser, RepoMetrics } from "shared/types";
+import { DetailedRepoCommit, GithubUser, RepoMetrics } from "shared/types";
 import { CommitDetail } from "../../../server/src/utils/types/commit";
 
 export class GithubUserService {
@@ -69,6 +69,27 @@ export class GithubUserService {
       {
         headers: {
           Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return data.data;
+  }
+
+  static async getCommitSinceUntil(
+    user: string,
+    repo: string,
+    since: Date,
+    until: Date = new Date(),
+  ) {
+    const formmatedSince = since.toISOString();
+    const formmatedUntil = until.toISOString();
+
+    const data = await BackendHttpClient.get<DetailedRepoCommit[]>(
+      `commits/owner/${user}/repo/${repo}?since=${formmatedSince}&until=${formmatedUntil}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       },
     );

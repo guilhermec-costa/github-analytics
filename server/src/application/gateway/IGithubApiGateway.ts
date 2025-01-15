@@ -10,10 +10,12 @@ export interface IGithubApiGateway {
     repoName: string,
     token: string,
   ): Promise<RepoLanguageCount>;
-  fetchUserRepoCommits(
+  fetchUserRepoCommitsSinceUntil(
     repoOwner: string,
     repoName: string,
     token: string,
+    since: string,
+    until: string,
   ): Promise<RepoCommit[]>;
   fetchCommitDetail(
     owner: string,

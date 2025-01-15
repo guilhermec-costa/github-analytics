@@ -29,8 +29,9 @@ export default function CommitSection({
       </CardHeader>
       <CardContent>
         <CommitOvertimeDashboard
-          metric={metric}
+          commitsDetails={metric.CommitDetails}
           setDetailedCommitPeriod={setDetailedCommitPeriod}
+          selectedRepository={selectedRepository}
         />
       </CardContent>
       {selectedDetailedCommitPeriod && selectedRepository && (

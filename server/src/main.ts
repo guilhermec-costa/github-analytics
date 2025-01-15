@@ -9,6 +9,7 @@ import { FastifyAdapter } from "./infra/http/FastifyAdapter";
 import { RepositoryController } from "./api/controllers/RepositoryController";
 import { UserController } from "./api/controllers/UserController";
 import { RepoManager } from "./application/service/RepoManager";
+import { CommitController } from "./api/controllers/CommitController";
 
 const httpServer = new FastifyAdapter();
 httpServer.addRoutePrefix("api/v1");
@@ -32,5 +33,8 @@ new RepositoryController(httpServer, repositoryService)
   .mapRoutes();
 
 new UserController(httpServer, userService).setPrefix("user").mapRoutes();
+new CommitController(httpServer, repositoryService)
+  .setPrefix("commits")
+  .mapRoutes();
 
 httpServer.listen(env.PORT);
