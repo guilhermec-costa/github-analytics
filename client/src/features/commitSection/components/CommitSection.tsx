@@ -1,4 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { MetricUnit } from "@/utils/types";
 import { DetailedRepoCommit } from "shared/types";
 import React from "react";
@@ -25,7 +31,12 @@ export default function CommitSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Commit Activity</CardTitle>
+        <CardTitle>Commit Activity Overview</CardTitle>
+        <CardDescription>
+          Explore the commit activity over time for the selected repository.
+          Click on a point in the chart to view more detailed information about
+          the commits made on that day.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <CommitOvertimeDashboard
@@ -38,8 +49,13 @@ export default function CommitSection({
         <Card>
           <CardHeader>
             <CardTitle>
-              Detailed Commits on {selectedDetailedCommitPeriod.date}
+              Detailed Commit Insights for {selectedDetailedCommitPeriod.date}
             </CardTitle>
+            <CardDescription>
+              View detailed information about the commits made on{" "}
+              {selectedDetailedCommitPeriod.date} in the repository{" "}
+              <strong>{selectedRepository}</strong>.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <CommitSliderPresentation
@@ -50,10 +66,21 @@ export default function CommitSection({
           </CardContent>
         </Card>
       )}
-      <ContributorsCommitDashboard
-        selectedRepo={selectedRepository}
-        user={searchUser}
-      />
+      <Card>
+        <CardHeader>
+          <CardTitle>Contributors' Commit Contributions</CardTitle>
+          <CardDescription>
+            Analyze the commit contributions of all contributors for the
+            selected repository.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ContributorsCommitDashboard
+            selectedRepo={selectedRepository}
+            user={searchUser}
+          />
+        </CardContent>
+      </Card>
     </Card>
   );
 }

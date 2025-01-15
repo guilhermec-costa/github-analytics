@@ -18,7 +18,10 @@ import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { CommitPeriodProps } from "./CommitOvertimeDashboard";
+import {
+  CommitPeriodProps,
+  periodInitialValue,
+} from "./CommitOvertimeDashboard";
 
 const DatePickerFormSchema = z.object({
   dateRange: z
@@ -26,7 +29,7 @@ const DatePickerFormSchema = z.object({
       from: z.date({
         required_error: "Start date is required",
       }),
-      to: z.date().optional(),
+      to: z.date(),
     })
     .refine(
       (range) => range.from && range.to,
@@ -37,10 +40,12 @@ type DatePickerProps = z.infer<typeof DatePickerFormSchema>;
 
 interface CommitPeriodPickerProps {
   setCommitPeriod: (commitPeriod: CommitPeriodProps) => void;
+  className?: string;
 }
 
 export default function CommitPeriodPicker({
   setCommitPeriod,
+  className,
 }: CommitPeriodPickerProps) {
   const form = useForm<DatePickerProps>({
     resolver: zodResolver(DatePickerFormSchema),
@@ -57,14 +62,14 @@ export default function CommitPeriodPicker({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex items-end space-x-3"
+        className={cn("flex flex-col items-end space-x-3", className)}
       >
         <FormField
           name="dateRange"
           control={form.control}
           render={({ field }) => {
             return (
-              <FormItem className="flex flex-col">
+              <FormItem className="flex flex-col items-start w-full">
                 <FormLabel>Commit period</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -72,7 +77,7 @@ export default function CommitPeriodPicker({
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-fit pl-3 text-left font-normal",
+                          "w-full pl-3 text-left font-normal",
                           !field.value && "text-muted-foreground",
                         )}
                       >
@@ -104,9 +109,17 @@ export default function CommitPeriodPicker({
             );
           }}
         />
-        <Button type="submit" className="bg-primary">
-          Search
-        </Button>
+        <div className="flex space-x-3 mt-3 mx-auto w-full">
+          <Button type="submit" className="bg-primary w-1/2 !px-3 !py-2">
+            Search
+          </Button>
+          <Button
+            onClick={() => setCommitPeriod(periodInitialValue)}
+            className="w-1/2 !px-3 !py-2"
+          >
+            Reset period
+          </Button>
+        </div>
       </form>
     </Form>
   );

@@ -62,10 +62,7 @@ export default function ContributorsCommitDashboard({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Contribution Distribution</CardTitle>
-        <CardDescription>
-          Top 10 contributors for {selectedRepo}
-        </CardDescription>
+        <CardDescription></CardDescription>
       </CardHeader>
       <CardContent className="h-[450px]">
         <ResponsiveContainer width="100%" height="100%">
