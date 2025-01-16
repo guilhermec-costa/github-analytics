@@ -122,7 +122,7 @@ export default function RepositoriesMetrics({
             visualizations
           </CardDescription>
         </section>
-        <div className="flex space-x-4 justify-self-end">
+        <div className="flex space-x-4 justify-self-end max-md:justify-self-center max-md:pt-4">
           <Button
             variant={"secondary"}
             className="flex w-fit"
@@ -168,7 +168,7 @@ export default function RepositoriesMetrics({
           <SearchInput
             onSearch={handleUserSearch}
             placeholder={"Search other user"}
-            className="min-w-[250px]"
+            className="min-w-[250px] max-md:my-4"
           />
         </div>
 
@@ -180,19 +180,30 @@ export default function RepositoriesMetrics({
 
         <Separator />
 
-        <div className="md:flex md:space-x-4 md:items-center">
-          {metrics && (
-            <InputSelect
-              options={Object.keys(metrics)}
-              onSelectionChange={handleMetricChange}
-              selectedOption={selectedRepository}
-              placeholder="Select a repository"
-            />
-          )}
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Repository Details</CardTitle>
+            <CardDescription>
+              Overview and detailed metrics of selected repositories.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="md:flex md:space-x-4 md:items-center">
+              {metrics && (
+                <InputSelect
+                  options={Object.keys(metrics)}
+                  onSelectionChange={handleMetricChange}
+                  selectedOption={selectedRepository}
+                  placeholder="Select a repository"
+                  label="Repository"
+                />
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {selectedMetric ? (
-          <Tabs defaultValue="languages" className="w-full">
+          <Tabs defaultValue="languages" className="w-full mt-4">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="languages">Language Breakdown</TabsTrigger>
               <TabsTrigger value="commits">Commit Activity</TabsTrigger>

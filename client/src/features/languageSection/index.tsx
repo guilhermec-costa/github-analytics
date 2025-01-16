@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 
 export default function LanguageSection({ metric }: { metric: MetricUnit }) {
   return (
-    <Card>
+    <Card className="mt-10">
       <CardHeader>
         <CardTitle>Language Analysis</CardTitle>
         <CardDescription>

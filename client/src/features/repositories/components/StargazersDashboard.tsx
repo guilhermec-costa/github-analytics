@@ -10,6 +10,7 @@ import { getFillColor } from "@/utils/chartColors";
 import {
   Bar,
   BarChart,
+  CartesianGrid,
   Cell,
   ResponsiveContainer,
   Tooltip,
@@ -59,13 +60,15 @@ export default function StargazersDashboard({
               layout="vertical"
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
-              <XAxis type="number" />
+              <XAxis type="number" tickLine={false} hide />
               <YAxis
                 type="category"
                 dataKey="repo"
                 width={200}
                 tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }}
+                tickLine={false}
               />
+              <CartesianGrid opacity={"0.1"} horizontal={false} />
               <Tooltip
                 cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
                 content={({ active, payload }) => {

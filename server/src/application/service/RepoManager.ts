@@ -66,7 +66,10 @@ export class RepoManager {
     );
 
     const resolvedRequests = await Promise.all(
-      repos.map((repo) => this.loadRepoLanguages(repoOwner, repo.name, token)),
+      repos.map((repo) => {
+        if (!repo.size) return { [repo.name]: [] };
+        return this.loadRepoLanguages(repoOwner, repo.name, token);
+      }),
     );
 
     return repos.reduce<RepoLanguages>((acc, repo, idx) => {

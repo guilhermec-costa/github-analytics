@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Label } from "./ui/label";
 
 interface InputSelectProps {
   options: string[];
@@ -22,13 +23,16 @@ interface InputSelectProps {
   selectedOption?: string;
   placeholder: string;
   highlightSelected?: boolean;
+  label?: string;
 }
+
 export default function InputSelect({
   options,
   onSelectionChange,
   selectedOption,
   placeholder,
   highlightSelected = true,
+  label,
 }: InputSelectProps) {
   const [openState, setOpenState] = React.useState<boolean>(false);
 
@@ -40,16 +44,19 @@ export default function InputSelect({
   return (
     <Popover open={openState} onOpenChange={setOpenState}>
       <PopoverTrigger>
-        <Button
-          variant="outline"
-          role="combobox"
-          className="w-[250px] justify-between"
-        >
-          {selectedOption
-            ? options.find((option) => option === selectedOption)
-            : placeholder}
-          <ChevronsUpDown className="opacity-50" />
-        </Button>
+        <div className="flex flex-col items-start space-y-3">
+          <Label className="ml-2 text-foreground/70">{label}</Label>
+          <Button
+            variant="outline"
+            role="combobox"
+            className="w-[250px] justify-between"
+          >
+            {selectedOption
+              ? options.find((option) => option === selectedOption)
+              : placeholder}
+            <ChevronsUpDown className="opacity-50" />
+          </Button>
+        </div>
       </PopoverTrigger>
       <PopoverContent>
         <Command>

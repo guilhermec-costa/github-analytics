@@ -14,6 +14,7 @@ import {
   YAxis,
   Tooltip,
   Cell,
+  CartesianGrid,
 } from "recharts";
 import { getFillColor } from "@/utils/chartColors";
 
@@ -75,8 +76,10 @@ export default function ContributorsCommitDashboard({
               type="category"
               axisLine={false}
               tickLine={false}
+              tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }}
               width={120}
             />
+            <CartesianGrid vertical={true} opacity={"0.1"} />
             <Tooltip
               cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
               content={({ active, payload }) => {

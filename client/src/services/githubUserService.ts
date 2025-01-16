@@ -4,11 +4,6 @@ import { CommitDetail } from "../../../server/src/utils/types/commit";
 
 export class GithubUserService {
   static async getRepositoryMetrics(username: string) {
-    const cachedData = localStorage.getItem("metricsData");
-
-    // if (cachedData) {
-    //   return JSON.parse(cachedData) as RepoMetrics;
-    // }
     const data = await BackendHttpClient.get<RepoMetrics>(
       `repo/metrics/${username}`,
       {
@@ -17,10 +12,6 @@ export class GithubUserService {
         },
       },
     );
-
-    if (!cachedData) {
-      localStorage.setItem("metricsData", JSON.stringify(data.data));
-    }
 
     return data.data;
   }

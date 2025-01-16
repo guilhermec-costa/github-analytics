@@ -11,9 +11,7 @@ export default function WelcomeMessage() {
           <div className="md:flex md:space-x-4 md:items-center">
             <h2>
               Welcome to the Dashboard,{" "}
-              <span className="bg-gradient-to-r from-red-600 to-orange-400 bg-clip-text text-transparent">
-                {data && data.name}
-              </span>
+              <span className="text-foreground">{data && data.name}</span>
             </h2>
           </div>
         </CardTitle>

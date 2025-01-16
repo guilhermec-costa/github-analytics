@@ -42,9 +42,13 @@ export default function LanguageAcrossRepoDashboard({
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="pt-6">
-        <div className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+        <div className="h-[400px] w-auto">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            className="aspect-auto h-[250px] w-full"
+          >
             <BarChart
               data={data}
               layout="vertical"

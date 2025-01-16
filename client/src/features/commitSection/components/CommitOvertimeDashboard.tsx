@@ -12,6 +12,7 @@ import {
   Tooltip,
   AreaChart,
   Area,
+  CartesianGrid,
 } from "recharts";
 import { DetailedRepoCommit } from "shared/types";
 import { differenceInDays, format, parseISO, subDays } from "date-fns";
@@ -142,6 +143,7 @@ export default function CommitOvertimeDashboard({
               tickFormatter={(value) => value.toFixed(0)}
               domain={[0, maxCommits]}
             />
+            <CartesianGrid vertical={false} opacity={"0.1"} />
             <Tooltip
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {

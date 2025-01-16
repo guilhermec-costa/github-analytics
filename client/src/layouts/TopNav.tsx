@@ -9,27 +9,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "@/contexts/ThemeProvider";
-import { Moon, Settings, Sun, Menu } from "lucide-react";
+import { Moon, Settings, Sun, Menu, LogOut } from "lucide-react";
 import useClickOutside from "@/hooks/useClickOutside";
-
-const NavItem = ({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) => (
-  <a
-    href={href}
-    className="relative text-sm font-medium text-muted-foreground transition-colors hover:text-foreground group"
-  >
-    {children}
-    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-200 ease-out" />
-  </a>
-);
+import { AuthService } from "@/services/AuthService";
+import { useNavigate } from "react-router-dom";
+import NavItem from "@/components/NavItem";
 
 export default function TopNav() {
+  const navigate = useNavigate();
   const { setTheme } = useTheme();
+
+  function handleLogout() {
+    AuthService.logout();
+    navigate("/login");
+  }
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const mobileMenuToggleRef = useClickOutside<HTMLButtonElement>(() =>
     setIsMobileMenuOpen(false),
@@ -40,8 +34,6 @@ export default function TopNav() {
       <div className="flex h-14 items-center w-full justify-between">
         <div className="mr-4 hidden md:flex md:space-x-4">
           <NavItem href="#repository-metrics">Repository Metrics</NavItem>
-          <NavItem href="#">Projects</NavItem>
-          <NavItem href="#">Teams</NavItem>
         </div>
         <div className="flex items-center space-x-2">
           <DropdownMenu modal={false}>
@@ -77,21 +69,12 @@ export default function TopNav() {
             <DropdownMenuContent className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Team
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Subscription
+              <DropdownMenuItem
+                className="hover:cursor-pointer"
+                onClick={handleLogout}
+              >
+                Logout
+                <LogOut />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

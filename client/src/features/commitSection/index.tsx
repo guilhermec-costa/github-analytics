@@ -30,7 +30,7 @@ export default function CommitSection({
   }, [metric]);
 
   return (
-    <Card>
+    <Card className="mt-10">
       <CardHeader>
         <CardTitle>Commit Activity Overview</CardTitle>
         <CardDescription>
