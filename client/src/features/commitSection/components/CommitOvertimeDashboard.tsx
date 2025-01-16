@@ -29,8 +29,10 @@ interface CommitOvertimeDashboardProps {
   commitsDetails: DetailedRepoCommit[];
   setDetailedCommitPeriod: (period: DetailedRepoCommit) => void;
   selectedRepository: string;
+  searchUser: string;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const periodInitialValue = {
   since: subDays(new Date(), 30),
   until: new Date(),
@@ -40,8 +42,8 @@ export default function CommitOvertimeDashboard({
   commitsDetails,
   setDetailedCommitPeriod,
   selectedRepository,
+  searchUser,
 }: CommitOvertimeDashboardProps) {
-  const userInfo = useUserInformation();
   const [commitPeriod, setCommitPeriod] =
     React.useState<CommitPeriodProps>(periodInitialValue);
 
@@ -82,9 +84,9 @@ export default function CommitOvertimeDashboard({
 
   React.useEffect(() => {
     const fetchCommitPeriod = async () => {
-      if (userInfo.data?.login && commitPeriod) {
+      if (searchUser && commitPeriod) {
         const commitData = await GithubUserService.getCommitSinceUntil(
-          userInfo.data?.login,
+          searchUser,
           selectedRepository,
           commitPeriod.since,
           commitPeriod.until,
@@ -94,7 +96,7 @@ export default function CommitOvertimeDashboard({
     };
 
     fetchCommitPeriod();
-  }, [commitPeriod, selectedRepository]);
+  }, [commitPeriod, selectedRepository, searchUser]);
 
   return (
     <Card className="w-full">

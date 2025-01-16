@@ -67,7 +67,6 @@ export class RepoManager {
 
     const resolvedRequests = await Promise.all(
       repos.map((repo) => {
-        if (!repo.size) return { [repo.name]: [] };
         return this.loadRepoLanguages(repoOwner, repo.name, token);
       }),
     );
@@ -123,17 +122,19 @@ export class RepoManager {
    */
   async loadUserRepositoriesMetrics(owner: string, token: string) {
     const repos = await this.loadUserRepos(token, owner);
+    const notEmptyRepos = repos.filter((repo) => repo.size > 0);
+
     const repositoriesLanguages = await this.loadUserReposLanguages(
       token,
       owner,
-      repos,
+      notEmptyRepos,
     );
 
     const today = new Date();
     const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 30));
 
     const commitRequests = await Promise.all(
-      repos.map((repo) =>
+      notEmptyRepos.map((repo) =>
         this.getUserRepoCommits(
           owner,
           repo.name,
@@ -143,8 +144,9 @@ export class RepoManager {
       ),
     );
 
-    return repos.reduce<RepoMetrics>((acc, repo, idx) => {
-      if (repositoriesLanguages[repo.name].length) {
+    return notEmptyRepos.reduce<RepoMetrics>((acc, repo, idx) => {
+      const languageDetails = repositoriesLanguages[repo.name];
+      if (languageDetails && languageDetails.length > 0) {
         acc[repo.name] = {
           LanguageDetails: repositoriesLanguages[repo.name!],
           CommitDetails: commitRequests[idx],

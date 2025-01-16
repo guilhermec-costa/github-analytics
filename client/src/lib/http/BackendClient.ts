@@ -4,6 +4,7 @@ import { AuthService } from "@/services/AuthService";
 
 enum StatusCode {
   UNAUTHORIZED = 401,
+  INTERNAL_SERVER_ERROR = 500,
 }
 
 export const BackendHttpClient = axios.create({
@@ -11,11 +12,26 @@ export const BackendHttpClient = axios.create({
   headers: { Accept: "application/json" },
 });
 
+export const rateLimitStorageKey = "rate-limite-exceed";
+
 BackendHttpClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (localStorage.getItem(rateLimitStorageKey)) {
+      localStorage.removeItem(rateLimitStorageKey);
+    }
+
+    return response;
+  },
   async (error) => {
     if (axios.isAxiosError(error)) {
       const status = error.response?.status;
+      if (status === StatusCode.INTERNAL_SERVER_ERROR) {
+        const message = error.response?.data.message as string;
+        if (message.toLowerCase().includes("api rate limit")) {
+          localStorage.setItem(rateLimitStorageKey, "true");
+        }
+      }
+
       if (status === StatusCode.UNAUTHORIZED) {
         try {
           const headers = error.config?.headers;

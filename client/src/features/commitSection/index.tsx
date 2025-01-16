@@ -44,6 +44,7 @@ export default function CommitSection({
           commitsDetails={metric.CommitDetails}
           setDetailedCommitPeriod={setDetailedCommitPeriod}
           selectedRepository={selectedRepository}
+          searchUser={searchUser}
         />
       </CardContent>
       {selectedDetailedCommitPeriod && selectedRepository && (
