@@ -98,7 +98,7 @@ export class GithubApiGateway
 
   async fetchUserRepos(token: string, username: string): Promise<GithubRepo[]> {
     let page = 1;
-    let url = `/users/${username}/repos?per_page=100&page=${page}`;
+    let url = `/users/${username}/repos`;
     let pagesRemaining: boolean = true;
     let data: GithubRepo[] = [];
 
@@ -106,6 +106,10 @@ export class GithubApiGateway
       const response = await this.httpClient().get<GithubRepo[]>(url, {
         headers: {
           Authorization: token,
+        },
+        params: {
+          per_page: 100,
+          page,
         },
       });
 
@@ -116,7 +120,6 @@ export class GithubApiGateway
 
       if (pagesRemaining) {
         page += 1;
-        url = `/users/${username}/repos?per_page=100&page=${page}`;
       }
     }
 

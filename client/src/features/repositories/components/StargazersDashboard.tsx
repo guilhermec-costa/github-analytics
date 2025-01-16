@@ -27,6 +27,8 @@ interface StargazersDashboardProps {
 export default function StargazersDashboard({
   metrics,
 }: StargazersDashboardProps) {
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
+
   const data = React.useMemo(() => {
     if (metrics) {
       return Object.entries(metrics)
@@ -35,10 +37,14 @@ export default function StargazersDashboard({
           stars: metric.StargazersCount || 0,
         }))
         .sort((a, b) => b.stars - a.stars)
+        .filter(({ stars }) => stars > 0)
         .slice(0, 10);
     }
     return [];
   }, [metrics]);
+
+  const handleMouseEnter = (_: any, index: number) => setActiveIndex(index);
+  const handleMouseLeave = () => setActiveIndex(null);
 
   return (
     <Card className="w-full mt-8 overflow-hidden transition-all duration-300 hover:shadow-lg">
@@ -88,11 +94,19 @@ export default function StargazersDashboard({
                   return null;
                 }}
               />
-              <Bar dataKey="stars" radius={[0, 4, 4, 0]}>
+              <Bar
+                dataKey="stars"
+                radius={[0, 4, 4, 0]}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
                 {data.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={getFillColor(index)}
+                    fillOpacity={
+                      activeIndex === null || activeIndex === index ? 1 : 0.6
+                    }
                     className="transition-all duration-300 hover:opacity-80"
                   />
                 ))}
