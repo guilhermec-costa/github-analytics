@@ -177,10 +177,7 @@ export default function RepositoriesMetrics({
           />
         </div>
 
-        <HighlightsPanel
-          metrics={metrics}
-          targetUser={targetUserRef.current?.value}
-        />
+        {metrics && <HighlightsPanel metrics={metrics} />}
 
         <SummaryDatatable metrics={metrics} />
 

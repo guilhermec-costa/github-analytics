@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import {
   CommitPeriodProps,
   periodInitialValue,
@@ -112,12 +112,6 @@ export default function CommitPeriodPicker({
         <div className="flex space-x-3 mt-3 mx-auto w-full">
           <Button type="submit" className="bg-primary w-1/2 !px-3 !py-2">
             Search
-          </Button>
-          <Button
-            onClick={() => setCommitPeriod(periodInitialValue)}
-            className="w-1/2 !px-3 !py-2"
-          >
-            Reset period
           </Button>
         </div>
       </form>
