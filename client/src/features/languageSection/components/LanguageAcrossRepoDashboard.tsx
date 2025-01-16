@@ -17,14 +17,7 @@ import {
 } from "recharts";
 import { MetricUnit } from "@/utils/types";
 import { formatBytes } from "@/utils/bytes";
-
-const COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-];
+import { getFillColor } from "@/utils/chartColors";
 
 export default function LanguageAcrossRepoDashboard({
   metric,
@@ -90,11 +83,8 @@ export default function LanguageAcrossRepoDashboard({
                 }}
               />
               <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
+                {data.map((_, idx) => (
+                  <Cell key={`cell-${idx}`} fill={getFillColor(idx)} />
                 ))}
               </Bar>
             </BarChart>
@@ -105,7 +95,7 @@ export default function LanguageAcrossRepoDashboard({
             <div key={item.language} className="flex items-center space-x-2">
               <div
                 className="h-3 w-3 rounded-full"
-                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                style={{ backgroundColor: getFillColor(index) }}
               />
               <span className="text-sm">{item.language}</span>
             </div>

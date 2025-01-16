@@ -5,7 +5,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   ResponsiveContainer,
@@ -16,6 +15,7 @@ import {
   Tooltip,
   Cell,
 } from "recharts";
+import { getFillColor } from "@/utils/chartColors";
 
 export default function ContributorsCommitDashboard({
   selectedRepo,
@@ -48,13 +48,6 @@ export default function ContributorsCommitDashboard({
   const maxContributions = Math.max(
     ...contributionsData.map((d) => d.contributions),
   );
-
-  const colors = [
-    "hsl(var(--chart-1))",
-    "hsl(var(--chart-2))",
-    "hsl(var(--chart-3))",
-    "hsl(var(--chart-4))",
-  ];
 
   const handleMouseEnter = (_: any, index: number) => setActiveIndex(index);
   const handleMouseLeave = () => setActiveIndex(null);
@@ -107,12 +100,12 @@ export default function ContributorsCommitDashboard({
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              {contributionsData.map((_, index) => (
+              {contributionsData.map((_, idx) => (
                 <Cell
-                  key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
+                  key={`cell-${idx}`}
+                  fill={getFillColor(idx)}
                   fillOpacity={
-                    activeIndex === null || activeIndex === index ? 1 : 0.6
+                    activeIndex === null || activeIndex === idx ? 1 : 0.6
                   }
                 />
               ))}

@@ -12,8 +12,13 @@ export default function MetricCardRoot({
   className,
 }: MetricCardRootProps) {
   return (
-    <div className="border border-solid border-secondary rounded-sm min-w-[180px]">
-      <Card className={cn(className)}>{children}</Card>
-    </div>
+    <Card
+      className={cn(
+        "bg-secondary/20 rounded-sm min-w-[180px] border border-solid border-secondary p-1 shadow-md shadow-secondary/20",
+        className,
+      )}
+    >
+      {children}
+    </Card>
   );
 }

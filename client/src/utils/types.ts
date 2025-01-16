@@ -17,4 +17,12 @@ export type DeepViewCommit = ParsedCommitDetails & DeepDetailedCommit;
 export type MetricUnit = {
   LanguageDetails: LanguageCount[];
   CommitDetails: DetailedRepoCommit[];
+  StargazersCount?: number;
+  repo?: string;
+  watchersCount: number;
+  size: number;
+  licenseName?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  topLanguage: string;
 };

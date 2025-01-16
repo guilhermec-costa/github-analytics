@@ -4,7 +4,6 @@ import { RepoAnalyser } from "../services/RepoAnalyser";
 import { RepoMetrics } from "shared/types";
 import { formatBytes } from "@/utils/bytes";
 import { MetricCard } from "@/components/MetricCard/index";
-import { LanguageIconMap } from "@/utils/LanguageIconMap";
 import ProgrammingLanguageIcon from "@/components/ProgrammingLanguageIcon";
 
 interface HighlightsPanelProps {

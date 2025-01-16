@@ -27,6 +27,7 @@ import SummaryDatatable from "../../summaryTable/components/SummaryDatatable";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GithubUser } from "shared/types";
+import StargazersDashboard from "./StargazersDashboard";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -46,7 +47,6 @@ export default function RepositoriesMetrics({
     dataUpdatedAt,
   } = useRepositoriesMetrics(searchUser?.login || undefined);
 
-  const targetUserRef = React.useRef<HTMLInputElement>(null);
   const [selectedMetric, setSelectedMetric] = React.useState<MetricUnit>();
   const [selectedRepository, setSelectedRepository] = React.useState<string>();
 
@@ -56,12 +56,7 @@ export default function RepositoriesMetrics({
   }
 
   React.useEffect(() => {
-    console.log(searchUser);
-  }, [searchUser]);
-
-  React.useEffect(() => {
     if (userInfo.data?.login) {
-      console.log(userInfo.data);
       setSearchUser(userInfo.data);
     }
   }, [userInfo.data]);
@@ -180,6 +175,8 @@ export default function RepositoriesMetrics({
         {metrics && <HighlightsPanel metrics={metrics} />}
 
         <SummaryDatatable metrics={metrics} />
+        <Separator />
+        <StargazersDashboard metrics={metrics} />
 
         <Separator />
 

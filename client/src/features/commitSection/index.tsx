@@ -22,7 +22,6 @@ export default function CommitSection({
   selectedRepository: string;
   searchUser: string;
 }) {
-  console.log("rendering commit section");
   const [selectedDetailedCommitPeriod, setDetailedCommitPeriod] =
     React.useState<DetailedRepoCommit>();
 
