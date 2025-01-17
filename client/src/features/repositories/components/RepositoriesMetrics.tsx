@@ -1,7 +1,7 @@
 import React from "react";
 import { MetricUnit } from "@/utils/types";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
-import { RefreshCcw, User } from "lucide-react";
+import { FilterX, RefreshCcw, User } from "lucide-react";
 
 import {
   Card,
@@ -29,6 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GithubUser } from "shared/types";
 import StargazersDashboard from "./StargazersDashboard";
 import InputMultiSelect from "@/components/InputMultiSelect";
+import { cn } from "@/lib/utils";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -48,18 +49,11 @@ export default function RepositoriesMetrics({
     dataUpdatedAt,
   } = useRepositoriesMetrics(searchUser?.login || undefined);
 
-  const [selectedMetric, setSelectedMetric] = React.useState<MetricUnit>();
   const [selectedMetrics, setSelectedMetrics] = React.useState<MetricUnit[]>();
-  const [selectedRepository, setSelectedRepository] = React.useState<string>();
-  const [selectedReposMap, setSelectedReposMetric] = React.useState<
+  const [selectedReposMap, setSelectedReposMap] = React.useState<
     Record<string, boolean>
   >({});
   const [selectedRepos, setSelectedRepos] = React.useState<string[]>([]);
-
-  function resetMetric() {
-    setSelectedRepository(undefined);
-    setSelectedMetric(undefined);
-  }
 
   React.useEffect(() => {
     if (userInfo.data?.login) {
@@ -67,18 +61,18 @@ export default function RepositoriesMetrics({
     }
   }, [userInfo.data]);
 
-  function handleMetricChange(repo: string) {
-    if (repo !== selectedRepository) {
-      setSelectedMetric(metrics![repo]);
-      setSelectedRepository(repo);
-      return;
-    }
-    setSelectedMetric(undefined);
-    setSelectedRepository("");
+  function resetMetrics() {
+    setSelectedRepos([]);
+    setSelectedMetrics([]);
+    const resetedMap = Array.from(Object.entries(selectedReposMap)).map(
+      ([repo, _]) => [repo, false],
+    );
+
+    setSelectedReposMap(Object.fromEntries(resetedMap));
   }
 
   function handleReposSelection(checked: boolean, repo: string) {
-    setSelectedReposMetric((prev) => ({
+    setSelectedReposMap((prev) => ({
       ...prev,
       [repo]: checked,
     }));
@@ -105,7 +99,7 @@ export default function RepositoriesMetrics({
   function viewAuthUserData() {
     if (userInfo.data?.login) {
       setSearchUser(userInfo.data);
-      resetMetric();
+      resetMetrics();
     }
   }
 
@@ -126,7 +120,7 @@ export default function RepositoriesMetrics({
       );
       if (newUser) {
         setSearchUser(newUser);
-        resetMetric();
+        resetMetrics();
       }
     } catch (error) {
       toast({
@@ -219,16 +213,9 @@ export default function RepositoriesMetrics({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="md:flex md:space-x-4 md:items-center">
+            <div className="md:flex md:space-x-4 md:items-baseline">
               {metrics && (
-                <div>
-                  <InputSelect
-                    options={Object.keys(metrics)}
-                    onSelectionChange={handleMetricChange}
-                    selectedOption={selectedRepository}
-                    placeholder="Select repository"
-                    label="Repository"
-                  />
+                <section className="flex space-x-4 items-end">
                   <InputMultiSelect
                     options={Object.keys(metrics)}
                     onCheckChange={handleReposSelection}
@@ -236,13 +223,27 @@ export default function RepositoriesMetrics({
                     placeholder="Select repositories"
                     label="Repositories"
                   />
-                </div>
+                  <Button
+                    onClick={resetMetrics}
+                    disabled={!selectedRepos.length}
+                    className={cn({
+                      "hover:cursor-pointer relative": !!selectedRepos.length,
+                    })}
+                  >
+                    {selectedRepos.length > 0 && (
+                      <div className="rounded-full bg-red-500 w-5 h-5 absolute -top-2 -right-2">
+                        <small>{selectedRepos.length}</small>
+                      </div>
+                    )}
+                    <FilterX />
+                  </Button>
+                </section>
               )}
             </div>
           </CardContent>
         </Card>
 
-        {selectedMetric ? (
+        {selectedMetrics?.length ? (
           <Tabs defaultValue="languages" className="w-full mt-4">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="languages">Language Breakdown</TabsTrigger>
@@ -252,12 +253,10 @@ export default function RepositoriesMetrics({
               {selectedMetrics && <LanguageSection metrics={selectedMetrics} />}
             </TabsContent>
             <TabsContent value="commits">
-              {selectedRepository && selectedMetrics?.length && (
+              {selectedMetrics?.length && (
                 <>
                   <CommitSection
-                    metric={selectedMetric}
                     metrics={selectedMetrics}
-                    selectedRepository={selectedRepository}
                     searchUser={searchUser?.login || ""}
                   />
                 </>

@@ -14,15 +14,11 @@ import CommitSliderPresentation from "./components/CommitsSliderPresentation";
 import ContributorsCommitDashboard from "./components/ContributorsCommitsDashboard";
 
 interface CommitSectionProps {
-  metric: MetricUnit;
   metrics: MetricUnit[];
-  selectedRepository: string;
   searchUser: string;
 }
 
 export default function CommitSection({
-  metric,
-  selectedRepository,
   searchUser,
   metrics,
 }: CommitSectionProps) {
@@ -31,7 +27,7 @@ export default function CommitSection({
 
   React.useEffect(() => {
     setDetailedCommitPeriod(undefined);
-  }, [metric]);
+  }, [metrics]);
 
   return (
     <Card className="mt-10">
@@ -45,13 +41,12 @@ export default function CommitSection({
       </CardHeader>
       <CardContent>
         <CommitOvertimeDashboard
-          commitsDetails={metric.CommitDetails}
           setDetailedCommitPeriod={setDetailedCommitPeriod}
           searchUser={searchUser}
           metrics={metrics}
         />
       </CardContent>
-      {selectedDetailedCommitPeriod && selectedRepository && (
+      {selectedDetailedCommitPeriod && (
         <Card>
           <CardHeader>
             <CardTitle>
@@ -60,15 +55,14 @@ export default function CommitSection({
             <CardDescription>
               View detailed information about the commits made on{" "}
               {selectedDetailedCommitPeriod.date} in the repository{" "}
-              <strong>{selectedRepository}</strong>.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <CommitSliderPresentation
+            {/* <CommitSliderPresentation
               commitDetails={selectedDetailedCommitPeriod}
               selectedRepository={selectedRepository}
               username={searchUser}
-            />
+            /> */}
           </CardContent>
         </Card>
       )}
@@ -81,10 +75,10 @@ export default function CommitSection({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ContributorsCommitDashboard
+          {/* <ContributorsCommitDashboard
             selectedRepo={selectedRepository}
             user={searchUser}
-          />
+          /> */}
         </CardContent>
       </Card>
     </Card>

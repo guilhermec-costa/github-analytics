@@ -10,8 +10,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  AreaChart,
-  Area,
   CartesianGrid,
   Legend,
   LineChart,
@@ -21,33 +19,8 @@ import { DetailedRepoCommit } from "shared/types";
 import { differenceInDays, format, parseISO, subDays } from "date-fns";
 import CommitPeriodPicker from "./CommitPeriodPicker";
 import { GithubUserService } from "@/services/GithubUserService";
-import useUserInformation from "@/api/queries/useUserInformation";
 import { MetricUnit } from "@/utils/types";
 import { getFillColor } from "@/utils/chartColors";
-
-export function transformData(data: DetailedRepoCommit[]) {
-  const repoMap = new Map<string, Map<string, number>>();
-  const dateSet = new Set<string>();
-
-  data.forEach((item) => {
-    dateSet.add(item.date);
-    if (!repoMap.has(item.repo)) {
-      repoMap.set(item.repo, new Map());
-    }
-    repoMap.get(item.repo)!.set(item.date, item.commits);
-  });
-
-  const sortedDates = Array.from(dateSet).sort();
-  const repos = Array.from(repoMap.keys());
-
-  return sortedDates.map((date) => {
-    const dataPoint: { [key: string]: string | number } = { date };
-    repos.forEach((repo) => {
-      dataPoint[repo] = repoMap.get(repo)!.get(date) || 0;
-    });
-    return dataPoint;
-  });
-}
 
 export interface CommitPeriodProps {
   since: Date;
@@ -55,7 +28,6 @@ export interface CommitPeriodProps {
 }
 
 interface CommitOvertimeDashboardProps {
-  commitsDetails: DetailedRepoCommit[];
   metrics: MetricUnit[];
   setDetailedCommitPeriod: (period: DetailedRepoCommit) => void;
   searchUser: string;
@@ -67,22 +39,13 @@ export const periodInitialValue = {
   until: new Date(),
 };
 
-type DynamicCommitCount = {
-  date: string;
-  [key: string]: string | number;
-};
-
 export default function CommitOvertimeDashboard({
-  commitsDetails,
   setDetailedCommitPeriod,
   searchUser,
   metrics,
 }: CommitOvertimeDashboardProps) {
   const [commitPeriod, setCommitPeriod] =
     React.useState<CommitPeriodProps>(periodInitialValue);
-
-  const [presentCommits, setPresentCommits] =
-    React.useState<DetailedRepoCommit[]>(commitsDetails);
 
   const [data, setData] = React.useState<DetailedRepoCommit[]>([]);
 
@@ -105,6 +68,30 @@ export default function CommitOvertimeDashboard({
   // }, [presentCommits, commitPeriod]);
 
   // const maxCommits = Math.max(...data.map((d) => d.commits));
+
+  const transformData = React.useCallback((data: DetailedRepoCommit[]) => {
+    const repoMap = new Map<string, Map<string, number>>();
+    const dateSet = new Set<string>();
+
+    data.forEach((item) => {
+      dateSet.add(item.date);
+      if (!repoMap.has(item.repo)) {
+        repoMap.set(item.repo, new Map());
+      }
+      repoMap.get(item.repo)!.set(item.date, item.commits);
+    });
+
+    const sortedDates = Array.from(dateSet).sort();
+    const repos = Array.from(repoMap.keys());
+
+    return sortedDates.map((date) => {
+      const dataPoint: { [key: string]: string | number } = { date };
+      repos.forEach((repo) => {
+        dataPoint[repo] = repoMap.get(repo)!.get(date) || 0;
+      });
+      return dataPoint;
+    });
+  }, []);
 
   const handleChartClick = React.useCallback(
     (e: any) => {
@@ -145,7 +132,6 @@ export default function CommitOvertimeDashboard({
   }, [commitPeriod, metrics, searchUser]);
 
   const repos = React.useMemo(() => {
-    console.log("repos inside memo: ", data);
     return Array.from(new Set(data.map((item) => item.repo))) || [];
   }, [data]);
 
@@ -168,7 +154,11 @@ export default function CommitOvertimeDashboard({
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid stroke="hsl(var(--secondary))" />
-            <XAxis dataKey="date" stroke="#24292e" tick={{ fill: "#24292e" }} />
+            <XAxis
+              dataKey="date"
+              stroke="#24292e"
+              tick={{ fill: "#24292e", fontSize: 12 }}
+            />
             <YAxis
               stroke="#24292e"
               tick={{ fill: "#24292e" }}
@@ -180,15 +170,26 @@ export default function CommitOvertimeDashboard({
               }}
             />
             <Tooltip
-              contentStyle={{
-                backgroundColor: "#f6f8fa",
-                border: "1px solid #e1e4e8",
-                borderRadius: "6px",
+              cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="rounded-lg border bg-background p-2 shadow-md">
+                      <p className="font-medium">{payload[0].name}</p>
+                      <small className="text-foreground/70 block">
+                        Commits: {payload[0].value?.toString()}
+                      </small>
+                      <small className="text-foreground/70">
+                        Date: {payload[0].payload.date}
+                      </small>
+                    </div>
+                  );
+                }
+                return null;
               }}
             />
             <Legend />
             {repos.map((repo, index) => {
-              console.log(repo);
               return (
                 <Line
                   key={repo}
