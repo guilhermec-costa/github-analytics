@@ -47,4 +47,5 @@ export type DetailedRepoCommit = {
   commits: number;
   pctTotal?: string;
   details: Array<ParsedCommitDetails>;
+  repo: string;
 };

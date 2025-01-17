@@ -13,15 +13,19 @@ import CommitOvertimeDashboard from "./components/CommitOvertimeDashboard";
 import CommitSliderPresentation from "./components/CommitsSliderPresentation";
 import ContributorsCommitDashboard from "./components/ContributorsCommitsDashboard";
 
+interface CommitSectionProps {
+  metric: MetricUnit;
+  metrics: MetricUnit[];
+  selectedRepository: string;
+  searchUser: string;
+}
+
 export default function CommitSection({
   metric,
   selectedRepository,
   searchUser,
-}: {
-  metric: MetricUnit;
-  selectedRepository: string;
-  searchUser: string;
-}) {
+  metrics,
+}: CommitSectionProps) {
   const [selectedDetailedCommitPeriod, setDetailedCommitPeriod] =
     React.useState<DetailedRepoCommit>();
 
@@ -43,8 +47,8 @@ export default function CommitSection({
         <CommitOvertimeDashboard
           commitsDetails={metric.CommitDetails}
           setDetailedCommitPeriod={setDetailedCommitPeriod}
-          selectedRepository={selectedRepository}
           searchUser={searchUser}
+          metrics={metrics}
         />
       </CardContent>
       {selectedDetailedCommitPeriod && selectedRepository && (

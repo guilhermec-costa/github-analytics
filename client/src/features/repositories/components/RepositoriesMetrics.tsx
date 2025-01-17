@@ -28,6 +28,7 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GithubUser } from "shared/types";
 import StargazersDashboard from "./StargazersDashboard";
+import InputMultiSelect from "@/components/InputMultiSelect";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -48,7 +49,12 @@ export default function RepositoriesMetrics({
   } = useRepositoriesMetrics(searchUser?.login || undefined);
 
   const [selectedMetric, setSelectedMetric] = React.useState<MetricUnit>();
+  const [selectedMetrics, setSelectedMetrics] = React.useState<MetricUnit[]>();
   const [selectedRepository, setSelectedRepository] = React.useState<string>();
+  const [selectedReposMap, setSelectedReposMetric] = React.useState<
+    Record<string, boolean>
+  >({});
+  const [selectedRepos, setSelectedRepos] = React.useState<string[]>([]);
 
   function resetMetric() {
     setSelectedRepository(undefined);
@@ -70,6 +76,31 @@ export default function RepositoriesMetrics({
     setSelectedMetric(undefined);
     setSelectedRepository("");
   }
+
+  function handleReposSelection(checked: boolean, repo: string) {
+    setSelectedReposMetric((prev) => ({
+      ...prev,
+      [repo]: checked,
+    }));
+  }
+
+  React.useEffect(() => {
+    setSelectedRepos(
+      Object.entries(selectedReposMap)
+        .filter(([_, checked]) => checked)
+        .map(([repo, _]) => repo),
+    );
+  }, [selectedReposMap]);
+
+  React.useEffect(() => {
+    if (metrics) {
+      const _selectedMetrics = Object.entries(metrics)
+        .filter(([repo, _]) => selectedRepos.includes(repo))
+        .map((entry) => entry[1]);
+
+      setSelectedMetrics(_selectedMetrics);
+    }
+  }, [selectedRepos, metrics]);
 
   function viewAuthUserData() {
     if (userInfo.data?.login) {
@@ -190,13 +221,22 @@ export default function RepositoriesMetrics({
           <CardContent>
             <div className="md:flex md:space-x-4 md:items-center">
               {metrics && (
-                <InputSelect
-                  options={Object.keys(metrics)}
-                  onSelectionChange={handleMetricChange}
-                  selectedOption={selectedRepository}
-                  placeholder="Select a repository"
-                  label="Repository"
-                />
+                <div>
+                  <InputSelect
+                    options={Object.keys(metrics)}
+                    onSelectionChange={handleMetricChange}
+                    selectedOption={selectedRepository}
+                    placeholder="Select repository"
+                    label="Repository"
+                  />
+                  <InputMultiSelect
+                    options={Object.keys(metrics)}
+                    onCheckChange={handleReposSelection}
+                    selectionMap={selectedReposMap}
+                    placeholder="Select repositories"
+                    label="Repositories"
+                  />
+                </div>
               )}
             </div>
           </CardContent>
@@ -209,13 +249,14 @@ export default function RepositoriesMetrics({
               <TabsTrigger value="commits">Commit Activity</TabsTrigger>
             </TabsList>
             <TabsContent value="languages">
-              <LanguageSection metric={selectedMetric} />
+              {selectedMetrics && <LanguageSection metrics={selectedMetrics} />}
             </TabsContent>
             <TabsContent value="commits">
-              {selectedRepository && (
+              {selectedRepository && selectedMetrics?.length && (
                 <>
                   <CommitSection
                     metric={selectedMetric}
+                    metrics={selectedMetrics}
                     selectedRepository={selectedRepository}
                     searchUser={searchUser?.login || ""}
                   />

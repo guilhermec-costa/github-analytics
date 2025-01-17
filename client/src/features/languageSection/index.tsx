@@ -9,7 +9,11 @@ import LanguageAcrossRepoDashboard from "./components/LanguageAcrossRepoDashboar
 import { MetricUnit } from "@/utils/types";
 import { Separator } from "@/components/ui/separator";
 
-export default function LanguageSection({ metric }: { metric: MetricUnit }) {
+interface LanguageSectionProps {
+  metrics: MetricUnit[];
+}
+
+export default function LanguageSection({ metrics }: LanguageSectionProps) {
   return (
     <Card className="mt-10">
       <CardHeader>
@@ -21,7 +25,7 @@ export default function LanguageSection({ metric }: { metric: MetricUnit }) {
       </CardHeader>
       <CardContent>
         <Separator />
-        <LanguageAcrossRepoDashboard metric={metric} />
+        <LanguageAcrossRepoDashboard metrics={metrics} />
       </CardContent>
     </Card>
   );

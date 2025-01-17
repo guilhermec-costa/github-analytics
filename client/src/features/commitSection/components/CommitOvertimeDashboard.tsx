@@ -13,12 +13,41 @@ import {
   AreaChart,
   Area,
   CartesianGrid,
+  Legend,
+  LineChart,
+  Line,
 } from "recharts";
 import { DetailedRepoCommit } from "shared/types";
 import { differenceInDays, format, parseISO, subDays } from "date-fns";
 import CommitPeriodPicker from "./CommitPeriodPicker";
 import { GithubUserService } from "@/services/GithubUserService";
 import useUserInformation from "@/api/queries/useUserInformation";
+import { MetricUnit } from "@/utils/types";
+import { getFillColor } from "@/utils/chartColors";
+
+export function transformData(data: DetailedRepoCommit[]) {
+  const repoMap = new Map<string, Map<string, number>>();
+  const dateSet = new Set<string>();
+
+  data.forEach((item) => {
+    dateSet.add(item.date);
+    if (!repoMap.has(item.repo)) {
+      repoMap.set(item.repo, new Map());
+    }
+    repoMap.get(item.repo)!.set(item.date, item.commits);
+  });
+
+  const sortedDates = Array.from(dateSet).sort();
+  const repos = Array.from(repoMap.keys());
+
+  return sortedDates.map((date) => {
+    const dataPoint: { [key: string]: string | number } = { date };
+    repos.forEach((repo) => {
+      dataPoint[repo] = repoMap.get(repo)!.get(date) || 0;
+    });
+    return dataPoint;
+  });
+}
 
 export interface CommitPeriodProps {
   since: Date;
@@ -27,8 +56,8 @@ export interface CommitPeriodProps {
 
 interface CommitOvertimeDashboardProps {
   commitsDetails: DetailedRepoCommit[];
+  metrics: MetricUnit[];
   setDetailedCommitPeriod: (period: DetailedRepoCommit) => void;
-  selectedRepository: string;
   searchUser: string;
 }
 
@@ -38,11 +67,16 @@ export const periodInitialValue = {
   until: new Date(),
 };
 
+type DynamicCommitCount = {
+  date: string;
+  [key: string]: string | number;
+};
+
 export default function CommitOvertimeDashboard({
   commitsDetails,
   setDetailedCommitPeriod,
-  selectedRepository,
   searchUser,
+  metrics,
 }: CommitOvertimeDashboardProps) {
   const [commitPeriod, setCommitPeriod] =
     React.useState<CommitPeriodProps>(periodInitialValue);
@@ -50,26 +84,27 @@ export default function CommitOvertimeDashboard({
   const [presentCommits, setPresentCommits] =
     React.useState<DetailedRepoCommit[]>(commitsDetails);
 
-  const data = React.useMemo(() => {
-    const sortedCommits = presentCommits.sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    );
+  const [data, setData] = React.useState<DetailedRepoCommit[]>([]);
 
-    const datesLength =
-      differenceInDays(commitPeriod.until, commitPeriod.since) + 10;
-    return Array.from({ length: datesLength }, (_, i) => {
-      const date = format(
-        subDays(commitPeriod.until, datesLength - 1 - i),
-        "yyyy-MM-dd",
-      );
-      const existingCommit = sortedCommits.find(
-        (commit) => format(parseISO(commit.date), "yyyy-MM-dd") === date,
-      );
-      return existingCommit || { date, commits: 0 };
-    });
-  }, [presentCommits, commitPeriod]);
+  // const data = React.useMemo(() => {
+  // const sortedCommits = presentCommits.sort(
+  //   (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  // );
+  // const datesLength =
+  //   differenceInDays(commitPeriod.until, commitPeriod.since) + 10;
+  // return Array.from({ length: datesLength }, (_, i) => {
+  //   const date = format(
+  //     subDays(commitPeriod.until, datesLength - 1 - i),
+  //     "yyyy-MM-dd",
+  //   );
+  //   const existingCommit = sortedCommits.find(
+  //     (commit) => format(parseISO(commit.date), "yyyy-MM-dd") === date,
+  //   );
+  //   return existingCommit || { date, commits: 0 };
+  // });
+  // }, [presentCommits, commitPeriod]);
 
-  const maxCommits = Math.max(...data.map((d) => d.commits));
+  // const maxCommits = Math.max(...data.map((d) => d.commits));
 
   const handleChartClick = React.useCallback(
     (e: any) => {
@@ -84,19 +119,35 @@ export default function CommitOvertimeDashboard({
 
   React.useEffect(() => {
     const fetchCommitPeriod = async () => {
-      if (searchUser && commitPeriod) {
-        const commitData = await GithubUserService.getCommitSinceUntil(
-          searchUser,
-          selectedRepository,
-          commitPeriod.since,
-          commitPeriod.until,
-        );
-        setPresentCommits(commitData);
+      if (searchUser && commitPeriod && metrics) {
+        let commitsData: DetailedRepoCommit[];
+        if (localStorage.getItem("commitsData")) {
+          commitsData = JSON.parse(localStorage.getItem("commitsData")!);
+        } else {
+          commitsData = await Promise.all(
+            metrics.map((repo) =>
+              GithubUserService.getCommitSinceUntil(
+                searchUser,
+                repo.repo!,
+                commitPeriod.since,
+                commitPeriod.until,
+              ),
+            ),
+          ).then((arr) => arr.flat());
+          localStorage.setItem("commitData", JSON.stringify(commitsData));
+        }
+
+        setData(commitsData);
       }
     };
 
     fetchCommitPeriod();
-  }, [commitPeriod, selectedRepository, searchUser]);
+  }, [commitPeriod, metrics, searchUser]);
+
+  const repos = React.useMemo(() => {
+    console.log("repos inside memo: ", data);
+    return Array.from(new Set(data.map((item) => item.repo))) || [];
+  }, [data]);
 
   return (
     <Card className="w-full">
@@ -112,69 +163,43 @@ export default function CommitOvertimeDashboard({
 
       <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={data}
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-            onClick={handleChartClick}
+          <LineChart
+            data={transformData(data)}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
-            <defs>
-              <linearGradient id="colorCommits" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="hsl(var(--primary))"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="hsl(var(--primary))"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-            </defs>
-            <XAxis
-              dataKey="date"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              tickFormatter={(value) => format(parseISO(value), "MMM dd")}
-            />
+            <CartesianGrid stroke="hsl(var(--secondary))" />
+            <XAxis dataKey="date" stroke="#24292e" tick={{ fill: "#24292e" }} />
             <YAxis
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              tickFormatter={(value) => value.toFixed(0)}
-              domain={[0, maxCommits]}
-            />
-            <CartesianGrid vertical={false} opacity={"0.1"} />
-            <Tooltip
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div className="rounded-lg border bg-background p-2 shadow-md">
-                      <p className="font-medium">
-                        {format(
-                          parseISO(payload[0].payload.date),
-                          "MMMM d, yyyy",
-                        )}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Commits:{" "}
-                        <span className="font-medium">{payload[0].value}</span>
-                      </p>
-                    </div>
-                  );
-                }
-                return null;
+              stroke="#24292e"
+              tick={{ fill: "#24292e" }}
+              label={{
+                value: "Commits",
+                angle: -90,
+                position: "insideLeft",
+                fill: "#24292e",
               }}
             />
-            <Area
-              type="monotone"
-              dataKey="commits"
-              stroke="hsl(var(--primary))"
-              fillOpacity={1}
-              fill="url(#colorCommits)"
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#f6f8fa",
+                border: "1px solid #e1e4e8",
+                borderRadius: "6px",
+              }}
             />
-          </AreaChart>
+            <Legend />
+            {repos.map((repo, index) => {
+              console.log(repo);
+              return (
+                <Line
+                  key={repo}
+                  type="monotone"
+                  dataKey={repo}
+                  stroke={getFillColor(index)}
+                  activeDot={{ r: 8 }}
+                />
+              );
+            })}
+          </LineChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>

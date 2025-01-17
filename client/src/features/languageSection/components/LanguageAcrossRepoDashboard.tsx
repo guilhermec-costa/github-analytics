@@ -19,17 +19,29 @@ import { MetricUnit } from "@/utils/types";
 import { formatBytes } from "@/utils/bytes";
 import { getFillColor } from "@/utils/chartColors";
 
+interface LanguageAcrossRepoDashboardProps {
+  metrics: MetricUnit[];
+}
+
 export default function LanguageAcrossRepoDashboard({
-  metric,
-}: {
-  metric: MetricUnit;
-}) {
+  metrics,
+}: LanguageAcrossRepoDashboardProps) {
   const data = React.useMemo(() => {
-    return metric.LanguageDetails.sort((a, b) => b.count - a.count).slice(
-      0,
-      10,
+    const metricDetails = metrics.reduce<Record<string, number>>(
+      (acc, metric) => {
+        metric.LanguageDetails.forEach(({ language, count }) => {
+          acc[language] = (acc[language] || 0) + count;
+        });
+
+        return acc;
+      },
+      {},
     );
-  }, [metric.LanguageDetails]);
+
+    return Object.entries(metricDetails)
+      .map(([language, count]) => ({ language, count }))
+      .sort((lA, lB) => lB.count - lA.count);
+  }, [metrics]);
 
   const maxCount = Math.max(...data.map((item) => item.count));
 

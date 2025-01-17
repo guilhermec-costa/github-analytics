@@ -110,6 +110,7 @@ export class RepoManager {
       date,
       commits: details.count,
       details: details.details,
+      repo: repoName,
     }));
   }
 
