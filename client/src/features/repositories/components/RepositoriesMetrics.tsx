@@ -22,13 +22,13 @@ import RepositoriesMetricsError from "../layout/RepositoriesMetricsError";
 import SearchInput from "@/components/SearchInput";
 import LanguageSection from "@/features/languageSection";
 import { CommitSection } from "@/features/commitSection";
-import SummaryDatatable from "../../summaryTable/components/SummaryDatatable";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GithubUser } from "shared/types";
 import StargazersDashboard from "./StargazersDashboard";
 import InputMultiSelect from "@/components/InputMultiSelect";
 import { cn } from "@/lib/utils";
+import SummaryDatatable from "@/features/summaryTable";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -46,7 +46,7 @@ export default function RepositoriesMetrics({
     isError,
     refetch,
     dataUpdatedAt,
-  } = useRepositoriesMetrics(searchUser?.login || undefined);
+  } = useRepositoriesMetrics(searchUser?.login);
 
   const [selectedMetrics, setSelectedMetrics] = React.useState<MetricUnit[]>();
   const [selectedReposMap, setSelectedReposMap] = React.useState<
@@ -253,13 +253,11 @@ export default function RepositoriesMetrics({
             </TabsContent>
             <TabsContent value="commits">
               {selectedMetrics?.length && (
-                <>
-                  <CommitSection
-                    metrics={selectedMetrics}
-                    selectedRepos={selectedRepos}
-                    searchUser={searchUser?.login || ""}
-                  />
-                </>
+                <CommitSection
+                  metrics={selectedMetrics}
+                  selectedRepos={selectedRepos}
+                  searchUser={searchUser?.login || ""}
+                />
               )}
             </TabsContent>
           </Tabs>

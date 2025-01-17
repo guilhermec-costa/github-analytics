@@ -1,9 +1,9 @@
 import { GithubUserService } from "@/services/GithubUserService";
 import { useQuery } from "@tanstack/react-query";
 
-export default function useRepositoriesMetrics(username: string | undefined) {
+export default function useRepositoriesMetrics(username?: string) {
   return useQuery({
-    queryKey: ["repoMetrics", username!],
+    queryKey: ["repoMetrics", username],
     queryFn: () => GithubUserService.getRepositoryMetrics(username!),
     enabled: !!username,
     refetchOnWindowFocus: false,

@@ -1,14 +1,8 @@
-import {
-  Card,
-  CardHeader,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+import useCommitDataQuery from "@/api/queries/userCommitDataQuery";
 import {
   CommitPeriodProps,
   periodInitialValue,
 } from "@/features/commitSection/components/CommitOvertimeDashboard";
-import { GithubUserService } from "@/services/GithubUserService";
 import { MetricUnit } from "@/utils/types";
 import { differenceInDays, format, parseISO, subDays } from "date-fns";
 import React from "react";
@@ -20,7 +14,52 @@ export default function useCommitDashboardLogic(
 ) {
   const [commitPeriod, setCommitPeriod] =
     React.useState<CommitPeriodProps>(periodInitialValue);
+
   const [data, setData] = React.useState<DetailedRepoCommit[]>([]);
+  const maxCommits = Math.max(...data.map((d) => d.commits));
+
+  const applyDateCompensationOnData = React.useCallback(
+    (_data: DetailedRepoCommit[]) => {
+      const sortedCommits = _data.sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      );
+
+      const datesLength =
+        differenceInDays(commitPeriod.until, commitPeriod.since) + 10;
+
+      const compensatedData = Array.from({ length: datesLength }, (_, i) => {
+        const date = format(
+          subDays(commitPeriod.until, datesLength - 1 - i),
+          "yyyy-MM-dd",
+        );
+
+        const _repos = _data.map((detail) => detail.repo);
+
+        const existingCommit = sortedCommits.find(
+          (commit) => format(parseISO(commit.date), "yyyy-MM-dd") === date,
+        );
+        return (
+          existingCommit ||
+          ({
+            commits: 0,
+            date,
+            details: [],
+            repo: "",
+          } as DetailedRepoCommit)
+        );
+      });
+
+      return compensatedData;
+    },
+    [commitPeriod],
+  );
+
+  const { data: commitData, status } = useCommitDataQuery({
+    searchUser,
+    commitPeriod,
+    metrics,
+  });
+
   const transformData = React.useCallback((data: DetailedRepoCommit[]) => {
     const repoMap = new Map<string, Map<string, number>>();
     const dateSet = new Set<string>();
@@ -45,53 +84,11 @@ export default function useCommitDashboardLogic(
     });
   }, []);
 
-  const applyDateCompensationOnData = React.useCallback(
-    (_data: DetailedRepoCommit[]) => {
-      const datesLength =
-        differenceInDays(commitPeriod.until, commitPeriod.since) + 10;
-
-      const compensatedData = Array.from({ length: datesLength }, (_, i) => {
-        const date = format(
-          subDays(commitPeriod.until, datesLength - 1 - i),
-          "yyyy-MM-dd",
-        );
-        const existingCommit = _data.find(
-          (commit) => format(parseISO(commit.date), "yyyy-MM-dd") === date,
-        );
-        return (
-          existingCommit ||
-          ({
-            commits: 0,
-            date,
-            details: [],
-            repo: "",
-          } as DetailedRepoCommit)
-        );
-      });
-
-      return compensatedData;
-    },
-    [commitPeriod],
-  );
   React.useEffect(() => {
-    async function fetchData() {
-      if (searchUser && commitPeriod && metrics) {
-        const commitsData = await Promise.all(
-          metrics.map((repo: any) =>
-            GithubUserService.getCommitSinceUntil(
-              searchUser,
-              repo.repo!,
-              commitPeriod.since,
-              commitPeriod.until,
-            ),
-          ),
-        ).then((arr) => arr.flat());
-        setData(applyDateCompensationOnData(commitsData));
-      }
+    if (status === "success") {
+      setData(commitData);
     }
-
-    fetchData();
-  }, [applyDateCompensationOnData, commitPeriod, metrics, searchUser]);
+  }, [applyDateCompensationOnData, commitData, status]);
 
   const transformedData = React.useMemo(
     () => transformData(data),
@@ -109,5 +106,6 @@ export default function useCommitDashboardLogic(
     transformedData,
     repos,
     data,
+    maxCommits,
   };
 }

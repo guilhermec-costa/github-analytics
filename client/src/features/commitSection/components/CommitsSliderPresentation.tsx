@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -38,7 +38,7 @@ export default function CommitSliderPresentation({
   const [loadingCommit, setLoadingCommit] = React.useState<string | null>(null);
   const [commitRepo, setCommitRepo] = React.useState<string>("");
 
-  const { data, isLoading, status } = useCommitDetails(
+  const { data, isLoading } = useCommitDetails(
     commitRepo,
     username,
     selectedCommit?.sha,

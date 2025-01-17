@@ -16,9 +16,8 @@ import {
   Line,
 } from "recharts";
 import { DetailedRepoCommit } from "shared/types";
-import { differenceInDays, format, parseISO, subDays } from "date-fns";
+import { subDays } from "date-fns";
 import CommitPeriodPicker from "./CommitPeriodPicker";
-import { GithubUserService } from "@/services/GithubUserService";
 import { MetricUnit } from "@/utils/types";
 import { getFillColor } from "@/utils/chartColors";
 import { CategoricalChartState } from "recharts/types/chart/types";
@@ -46,10 +45,14 @@ export default function CommitOvertimeDashboard({
   searchUser,
   metrics,
 }: CommitOvertimeDashboardProps) {
-  const { commitPeriod, setCommitPeriod, transformedData, repos, data } =
-    useCommitDashboardLogic(metrics, searchUser);
-
-  const maxCommits = Math.max(...data.map((d) => d.commits));
+  const {
+    commitPeriod,
+    setCommitPeriod,
+    transformedData,
+    repos,
+    data,
+    maxCommits,
+  } = useCommitDashboardLogic(metrics, searchUser);
 
   const handleChartClick = React.useCallback(
     (e: CategoricalChartState) => {

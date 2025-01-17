@@ -17,11 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
-import { format, subDays } from "date-fns";
-import {
-  CommitPeriodProps,
-  periodInitialValue,
-} from "./CommitOvertimeDashboard";
+import { format } from "date-fns";
+import { CommitPeriodProps } from "./CommitOvertimeDashboard";
 
 const DatePickerFormSchema = z.object({
   dateRange: z
