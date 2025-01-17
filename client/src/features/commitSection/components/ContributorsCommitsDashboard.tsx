@@ -66,7 +66,7 @@ export default function ContributorsCommitDashboard({
         <CardDescription></CardDescription>
       </CardHeader>
       <CardContent className="h-[450px]">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="95%" height={400}>
           <BarChart
             data={contributionsData}
             layout="vertical"
@@ -86,7 +86,10 @@ export default function ContributorsCommitDashboard({
               tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }}
               width={120}
             />
-            <CartesianGrid vertical={true} opacity={"0.1"} />
+            <CartesianGrid
+              stroke="hsl(var(--secondary))"
+              strokeDasharray="3 3"
+            />
             <Tooltip
               cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
               content={({ active, payload }) => {

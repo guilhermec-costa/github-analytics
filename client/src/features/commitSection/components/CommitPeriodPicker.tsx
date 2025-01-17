@@ -59,7 +59,7 @@ export default function CommitPeriodPicker({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("flex flex-col items-end space-x-3", className)}
+        className={cn("flex items-end space-x-3 mb-6", className)}
       >
         <FormField
           name="dateRange"
@@ -106,11 +106,9 @@ export default function CommitPeriodPicker({
             );
           }}
         />
-        <div className="flex space-x-3 mt-3 mx-auto w-full">
-          <Button type="submit" className="bg-primary w-1/2 !px-3 !py-2">
-            Search
-          </Button>
-        </div>
+        <Button type="submit" className="bg-primary w-1/2 !px-3 !py-2">
+          Search
+        </Button>
       </form>
     </Form>
   );

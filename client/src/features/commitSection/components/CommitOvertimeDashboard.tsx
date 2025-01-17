@@ -82,19 +82,18 @@ export default function CommitOvertimeDashboard({
         <CommitPeriodPicker setCommitPeriod={setCommitPeriod} />
       </section>
 
-      <CardContent className="h-[400px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+        <ResponsiveContainer className="aspect-auto h-[250px] w-full">
           <LineChart
             data={transformedData}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             onClick={handleChartClick}
           >
-            <CartesianGrid stroke="hsl(var(--secondary))" />
-            <XAxis
-              dataKey="date"
-              stroke="#24292e"
-              tick={{ fill: "#24292e", fontSize: 12 }}
+            <CartesianGrid
+              stroke="hsl(var(--secondary))"
+              strokeDasharray="3 3"
             />
+            <XAxis dataKey="date" tick={{ fill: "#24292e", fontSize: 12 }} />
             <YAxis
               stroke="#24292e"
               domain={[0, maxCommits]}
@@ -103,7 +102,8 @@ export default function CommitOvertimeDashboard({
                 value: "Commits",
                 angle: -90,
                 position: "insideLeft",
-                fill: "#24292e",
+                fill: "hsl(var(--primary))",
+                opacity: "0.8",
               }}
             />
             <Tooltip
@@ -130,10 +130,11 @@ export default function CommitOvertimeDashboard({
               return (
                 !!repo && (
                   <Line
-                    key={repo}
                     type="monotone"
+                    key={repo}
                     dataKey={repo}
                     stroke={getFillColor(index)}
+                    activeDot={{ r: 6 }}
                   />
                 )
               );

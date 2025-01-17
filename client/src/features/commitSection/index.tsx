@@ -52,12 +52,9 @@ export default function CommitSection({
         <Card>
           <CardHeader>
             <CardTitle>
-              {/* Detailed Commit Insights for {selectedDetailedCommitPeriod.date} */}
+              Detailed Commit Insights for{" "}
+              {selectedDetailedCommitsPeriods[0].date}
             </CardTitle>
-            <CardDescription>
-              View detailed information about the commits made on{" "}
-              {/* {selectedDetailedCommitPeriod.date} in the repository{" "} */}
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <CommitSliderPresentation

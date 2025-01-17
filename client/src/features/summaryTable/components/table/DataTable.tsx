@@ -157,11 +157,14 @@ export default function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, idx) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="border-solid border-b-secondary border-opacity-20"
+                  className={cn({
+                    "bg-secondary/40": idx % 2 != 0,
+                    "border-solid border-b-secondary border-opacity-20": true,
+                  })}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
