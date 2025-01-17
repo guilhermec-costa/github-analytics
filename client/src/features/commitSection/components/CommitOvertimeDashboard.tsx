@@ -21,6 +21,7 @@ import CommitPeriodPicker from "./CommitPeriodPicker";
 import { GithubUserService } from "@/services/GithubUserService";
 import { MetricUnit } from "@/utils/types";
 import { getFillColor } from "@/utils/chartColors";
+import { CategoricalChartState } from "recharts/types/chart/types";
 
 export interface CommitPeriodProps {
   since: Date;
@@ -29,7 +30,7 @@ export interface CommitPeriodProps {
 
 interface CommitOvertimeDashboardProps {
   metrics: MetricUnit[];
-  setDetailedCommitPeriod: (period: DetailedRepoCommit) => void;
+  setDetailedCommitsPeriods: (period: DetailedRepoCommit[]) => void;
   searchUser: string;
 }
 
@@ -40,7 +41,7 @@ export const periodInitialValue = {
 };
 
 export default function CommitOvertimeDashboard({
-  setDetailedCommitPeriod,
+  setDetailedCommitsPeriods,
   searchUser,
   metrics,
 }: CommitOvertimeDashboardProps) {
@@ -49,25 +50,7 @@ export default function CommitOvertimeDashboard({
 
   const [data, setData] = React.useState<DetailedRepoCommit[]>([]);
 
-  // const data = React.useMemo(() => {
-  // const sortedCommits = presentCommits.sort(
-  //   (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-  // );
-  // const datesLength =
-  //   differenceInDays(commitPeriod.until, commitPeriod.since) + 10;
-  // return Array.from({ length: datesLength }, (_, i) => {
-  //   const date = format(
-  //     subDays(commitPeriod.until, datesLength - 1 - i),
-  //     "yyyy-MM-dd",
-  //   );
-  //   const existingCommit = sortedCommits.find(
-  //     (commit) => format(parseISO(commit.date), "yyyy-MM-dd") === date,
-  //   );
-  //   return existingCommit || { date, commits: 0 };
-  // });
-  // }, [presentCommits, commitPeriod]);
-
-  // const maxCommits = Math.max(...data.map((d) => d.commits));
+  const maxCommits = Math.max(...data.map((d) => d.commits));
 
   const transformData = React.useCallback((data: DetailedRepoCommit[]) => {
     const repoMap = new Map<string, Map<string, number>>();
@@ -94,14 +77,19 @@ export default function CommitOvertimeDashboard({
   }, []);
 
   const handleChartClick = React.useCallback(
-    (e: any) => {
+    (e: CategoricalChartState) => {
       if (e && e.activePayload && e.activePayload.length) {
-        setDetailedCommitPeriod(
-          e.activePayload[0].payload as DetailedRepoCommit,
-        );
+        const clickedDate = Array.from(
+          new Set(e.activePayload.map((i) => i.payload.date)),
+        )[0];
+        const detailedCommits = data
+          .filter((detail) => detail.date === clickedDate)
+          .flat();
+
+        setDetailedCommitsPeriods(detailedCommits);
       }
     },
-    [setDetailedCommitPeriod],
+    [setDetailedCommitsPeriods, data],
   );
 
   React.useEffect(() => {
@@ -152,6 +140,7 @@ export default function CommitOvertimeDashboard({
           <LineChart
             data={transformData(data)}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            onClick={handleChartClick}
           >
             <CartesianGrid stroke="hsl(var(--secondary))" />
             <XAxis
@@ -161,6 +150,7 @@ export default function CommitOvertimeDashboard({
             />
             <YAxis
               stroke="#24292e"
+              domain={[0, maxCommits]}
               tick={{ fill: "#24292e" }}
               label={{
                 value: "Commits",

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -21,24 +21,25 @@ import { DetailedRepoCommit } from "shared/types";
 import useCommitDetails from "@/api/queries/useCommitDetails";
 import { ParsedCommitDetails } from "../../../../../server/src/utils/types/commit";
 
+interface CommitSliderPresentationProps {
+  commitDetails: DetailedRepoCommit[];
+  selectedRepositories: string[];
+  username: string;
+}
 export default function CommitSliderPresentation({
   commitDetails,
-  selectedRepository,
   username,
-}: {
-  commitDetails: DetailedRepoCommit;
-  selectedRepository: string;
-  username: string;
-}) {
+}: CommitSliderPresentationProps) {
   const [deepViewCommit, setDeepViewCommit] =
     React.useState<DeepViewCommit | null>(null);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [selectedCommit, setSelectedCommit] =
     React.useState<ParsedCommitDetails | null>(null);
   const [loadingCommit, setLoadingCommit] = React.useState<string | null>(null);
+  const [commitRepo, setCommitRepo] = React.useState<string>("");
 
-  const { data, isLoading } = useCommitDetails(
-    selectedRepository,
+  const { data, isLoading, status } = useCommitDetails(
+    commitRepo,
     username,
     selectedCommit?.sha,
   );
@@ -63,8 +64,12 @@ export default function CommitSliderPresentation({
     }
   }, [selectedCommit, data]);
 
-  const handleCommitClick = (commit: ParsedCommitDetails) => {
+  const handleCommitClick = (
+    commit: ParsedCommitDetails & { repo: string },
+  ) => {
+    console.log("selected repo: ", commit.repo);
     setSelectedCommit(commit);
+    setCommitRepo(commit.repo);
     setLoadingCommit(commit.sha);
     setModalOpen(true);
   };
@@ -171,34 +176,46 @@ export default function CommitSliderPresentation({
 
       <Carousel className="w-full">
         <CarouselContent>
-          {commitDetails.details.map((commit) => (
-            <CarouselItem
-              key={commit.sha}
-              className="md:basis-1/2 lg:basis-1/3"
-            >
-              <div className="p-1">
-                <Card
-                  className={`cursor-pointer transition-all hover:shadow-md ${
-                    loadingCommit === commit.sha ? "animate-pulse" : ""
-                  }`}
-                  onClick={() => handleCommitClick(commit)}
-                >
-                  <CardContent className="p-4">
-                    <h3
-                      className="text-sm font-semibold mb-2 truncate"
-                      title={commit.message}
-                    >
-                      {commit.message}
-                    </h3>
-                    <div className="flex justify-between items-center text-xs text-muted-foreground">
-                      <span>{commit.author}</span>
-                      <span>{new Date(commit.date).toLocaleDateString()}</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
+          {commitDetails
+            .flatMap((detail) =>
+              detail.details.map((commit) => ({
+                ...commit,
+                repo: detail.repo,
+              })),
+            )
+            .map((commit) => (
+              <CarouselItem
+                key={commit.sha}
+                className="md:basis-1/2 lg:basis-1/3"
+              >
+                <div className="p-1">
+                  <Card
+                    className={`cursor-pointer transition-all hover:shadow-md ${
+                      loadingCommit === commit.sha ? "animate-pulse" : ""
+                    }`}
+                    onClick={() => handleCommitClick(commit)}
+                  >
+                    <CardContent className="p-4">
+                      <h3
+                        className="text-sm font-semibold mb-2 truncate"
+                        title={commit.message}
+                      >
+                        {commit.message}
+                      </h3>
+                      <div className="flex justify-between items-center text-xs text-muted-foreground">
+                        <span>{commit.author}</span>
+                        <span>
+                          {new Date(commit.date).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <span className="text-sm font-semibold mb-2 overflow-hidden text-muted-foreground">
+                        Repository: {commit.repo}
+                      </span>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
         </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />

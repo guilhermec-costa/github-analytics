@@ -16,18 +16,24 @@ import ContributorsCommitDashboard from "./components/ContributorsCommitsDashboa
 interface CommitSectionProps {
   metrics: MetricUnit[];
   searchUser: string;
+  selectedRepos: string[];
 }
 
 export default function CommitSection({
   searchUser,
   metrics,
+  selectedRepos,
 }: CommitSectionProps) {
-  const [selectedDetailedCommitPeriod, setDetailedCommitPeriod] =
-    React.useState<DetailedRepoCommit>();
+  const [selectedDetailedCommitsPeriods, setDetailedCommitsPeriods] =
+    React.useState<DetailedRepoCommit[]>();
 
   React.useEffect(() => {
-    setDetailedCommitPeriod(undefined);
+    setDetailedCommitsPeriods(undefined);
   }, [metrics]);
+
+  React.useEffect(() => {
+    console.log(selectedDetailedCommitsPeriods);
+  }, [selectedDetailedCommitsPeriods]);
 
   return (
     <Card className="mt-10">
@@ -41,28 +47,28 @@ export default function CommitSection({
       </CardHeader>
       <CardContent>
         <CommitOvertimeDashboard
-          setDetailedCommitPeriod={setDetailedCommitPeriod}
+          setDetailedCommitsPeriods={setDetailedCommitsPeriods}
           searchUser={searchUser}
           metrics={metrics}
         />
       </CardContent>
-      {selectedDetailedCommitPeriod && (
+      {!!selectedDetailedCommitsPeriods?.length && (
         <Card>
           <CardHeader>
             <CardTitle>
-              Detailed Commit Insights for {selectedDetailedCommitPeriod.date}
+              {/* Detailed Commit Insights for {selectedDetailedCommitPeriod.date} */}
             </CardTitle>
             <CardDescription>
               View detailed information about the commits made on{" "}
-              {selectedDetailedCommitPeriod.date} in the repository{" "}
+              {/* {selectedDetailedCommitPeriod.date} in the repository{" "} */}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* <CommitSliderPresentation
-              commitDetails={selectedDetailedCommitPeriod}
-              selectedRepository={selectedRepository}
+            <CommitSliderPresentation
+              commitDetails={selectedDetailedCommitsPeriods}
+              selectedRepositories={selectedRepos}
               username={searchUser}
-            /> */}
+            />
           </CardContent>
         </Card>
       )}
