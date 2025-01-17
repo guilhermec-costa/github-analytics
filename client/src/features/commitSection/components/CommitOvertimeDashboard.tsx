@@ -22,6 +22,7 @@ import { GithubUserService } from "@/services/GithubUserService";
 import { MetricUnit } from "@/utils/types";
 import { getFillColor } from "@/utils/chartColors";
 import { CategoricalChartState } from "recharts/types/chart/types";
+import useCommitDashboardLogic from "@/hooks/useCommitDashboardLogic";
 
 export interface CommitPeriodProps {
   since: Date;
@@ -45,36 +46,10 @@ export default function CommitOvertimeDashboard({
   searchUser,
   metrics,
 }: CommitOvertimeDashboardProps) {
-  const [commitPeriod, setCommitPeriod] =
-    React.useState<CommitPeriodProps>(periodInitialValue);
-
-  const [data, setData] = React.useState<DetailedRepoCommit[]>([]);
+  const { commitPeriod, setCommitPeriod, transformedData, repos, data } =
+    useCommitDashboardLogic(metrics, searchUser);
 
   const maxCommits = Math.max(...data.map((d) => d.commits));
-
-  const transformData = React.useCallback((data: DetailedRepoCommit[]) => {
-    const repoMap = new Map<string, Map<string, number>>();
-    const dateSet = new Set<string>();
-
-    data.forEach((item) => {
-      dateSet.add(item.date);
-      if (!repoMap.has(item.repo)) {
-        repoMap.set(item.repo, new Map());
-      }
-      repoMap.get(item.repo)!.set(item.date, item.commits);
-    });
-
-    const sortedDates = Array.from(dateSet).sort();
-    const repos = Array.from(repoMap.keys());
-
-    return sortedDates.map((date) => {
-      const dataPoint: { [key: string]: string | number } = { date };
-      repos.forEach((repo) => {
-        dataPoint[repo] = repoMap.get(repo)!.get(date) || 0;
-      });
-      return dataPoint;
-    });
-  }, []);
 
   const handleChartClick = React.useCallback(
     (e: CategoricalChartState) => {
@@ -92,37 +67,6 @@ export default function CommitOvertimeDashboard({
     [setDetailedCommitsPeriods, data],
   );
 
-  React.useEffect(() => {
-    const fetchCommitPeriod = async () => {
-      if (searchUser && commitPeriod && metrics) {
-        let commitsData: DetailedRepoCommit[];
-        if (localStorage.getItem("commitsData")) {
-          commitsData = JSON.parse(localStorage.getItem("commitsData")!);
-        } else {
-          commitsData = await Promise.all(
-            metrics.map((repo) =>
-              GithubUserService.getCommitSinceUntil(
-                searchUser,
-                repo.repo!,
-                commitPeriod.since,
-                commitPeriod.until,
-              ),
-            ),
-          ).then((arr) => arr.flat());
-          localStorage.setItem("commitData", JSON.stringify(commitsData));
-        }
-
-        setData(commitsData);
-      }
-    };
-
-    fetchCommitPeriod();
-  }, [commitPeriod, metrics, searchUser]);
-
-  const repos = React.useMemo(() => {
-    return Array.from(new Set(data.map((item) => item.repo))) || [];
-  }, [data]);
-
   return (
     <Card className="w-full">
       <section className="flex justify-between">
@@ -138,7 +82,7 @@ export default function CommitOvertimeDashboard({
       <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            data={transformData(data)}
+            data={transformedData}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             onClick={handleChartClick}
           >
@@ -181,13 +125,14 @@ export default function CommitOvertimeDashboard({
             <Legend />
             {repos.map((repo, index) => {
               return (
-                <Line
-                  key={repo}
-                  type="monotone"
-                  dataKey={repo}
-                  stroke={getFillColor(index)}
-                  activeDot={{ r: 8 }}
-                />
+                !!repo && (
+                  <Line
+                    key={repo}
+                    type="monotone"
+                    dataKey={repo}
+                    stroke={getFillColor(index)}
+                  />
+                )
               );
             })}
           </LineChart>
