@@ -14,17 +14,12 @@ GitHub Analytics Dashboard is a powerful tool that provides insightful statistic
 
 - **Frontend**:
   - React
-  - Next.js
   - Recharts for data visualization
   - Tailwind CSS for styling
 - **Backend**:
   - Node.js
-  - Express.js
+  - Fastify.js
 - **Authentication**:
   - GitHub OAuth
 - **API**:
   - GitHub API v3
-
-## Installation and Setup
-
-1. Clone the repository:
