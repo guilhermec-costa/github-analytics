@@ -18,33 +18,40 @@ import {
 } from "recharts";
 import { getFillColor } from "@/utils/chartColors";
 
-export default function ContributorsCommitDashboard({
-  selectedRepo,
-  user,
-}: {
-  selectedRepo: string;
+interface ContributorsCommitDashboardProps {
+  selectedRepos: string[];
   user: string | undefined;
-}) {
-  const { data } = useRepositoriesMetrics(user);
+}
+
+export default function ContributorsCommitDashboard({
+  selectedRepos,
+  user,
+}: ContributorsCommitDashboardProps) {
+  const { data: metrics } = useRepositoriesMetrics(user);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const contributionsData = useMemo(() => {
-    if (!data || !data[selectedRepo]) return [];
+    if (!metrics) return [];
 
-    const contributionsByAuthor: { [author: string]: number } = {};
+    const filteredContributions = Object.values(metrics)
+      .filter((metric) => selectedRepos.includes(metric.repo))
+      .flatMap((metric) => metric.CommitDetails)
+      .reduce<Record<string, number>>((acc, { details }) => {
+        details.forEach(({ author }) => {
+          acc[author] = (acc[author] || 0) + 1;
+        });
 
-    data[selectedRepo].CommitDetails.forEach((dateGroup) => {
-      dateGroup.details.forEach(({ author }) => {
-        contributionsByAuthor[author] =
-          (contributionsByAuthor[author] || 0) + 1;
-      });
-    });
+        return acc;
+      }, {});
 
-    return Object.entries(contributionsByAuthor)
-      .map(([author, contributions]) => ({ author, contributions }))
-      .sort((a, b) => b.contributions - a.contributions)
+    return Object.entries(filteredContributions)
+      .map(([author, contributions]) => ({
+        author,
+        contributions,
+      }))
+      .sort((iA, iB) => iB.contributions - iA.contributions)
       .slice(0, 10);
-  }, [data, selectedRepo]);
+  }, [metrics, selectedRepos]);
 
   const maxContributions = Math.max(
     ...contributionsData.map((d) => d.contributions),

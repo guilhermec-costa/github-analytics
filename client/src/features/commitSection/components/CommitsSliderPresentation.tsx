@@ -67,7 +67,6 @@ export default function CommitSliderPresentation({
   const handleCommitClick = (
     commit: ParsedCommitDetails & { repo: string },
   ) => {
-    console.log("selected repo: ", commit.repo);
     setSelectedCommit(commit);
     setCommitRepo(commit.repo);
     setLoadingCommit(commit.sha);

@@ -31,10 +31,6 @@ export default function CommitSection({
     setDetailedCommitsPeriods(undefined);
   }, [metrics]);
 
-  React.useEffect(() => {
-    console.log(selectedDetailedCommitsPeriods);
-  }, [selectedDetailedCommitsPeriods]);
-
   return (
     <Card className="mt-10">
       <CardHeader>
@@ -81,10 +77,10 @@ export default function CommitSection({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* <ContributorsCommitDashboard
-            selectedRepo={selectedRepository}
+          <ContributorsCommitDashboard
+            selectedRepos={selectedRepos}
             user={searchUser}
-          /> */}
+          />
         </CardContent>
       </Card>
     </Card>
