@@ -29,7 +29,6 @@ function useCommitDataQuery({
       ),
     ).then((arr) => arr.flat());
 
-    console.log("commits Data: ", commitsData);
     return commitsData;
   };
 
