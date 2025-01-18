@@ -49,7 +49,6 @@ export default function StargazersDashboard({
 
   const handleMouseEnter = (_: any, index: number) => setActiveIndex(index);
   const handleMouseLeave = () => setActiveIndex(null);
-  console.log("metrics", data);
 
   return (
     <Card className="w-full mt-8 overflow-hidden transition-all duration-300 hover:shadow-lg">
@@ -86,7 +85,7 @@ export default function StargazersDashboard({
               <YAxis
                 type="category"
                 dataKey="repo"
-                width={100}
+                width={140}
                 tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
                 tickLine={false}
               />
@@ -97,13 +96,13 @@ export default function StargazersDashboard({
                   if (active && payload && payload.length) {
                     return (
                       <div className="rounded-lg border p-3 bg-popover">
-                        <p className="font-medium text-popover-foreground">
+                        <h5 className="font-medium text-popover-foreground">
                           {payload[0].payload.repo}
-                        </p>
-                        <p className="text-sm text-popover-foreground">
+                        </h5>
+                        <small className="text-sm text-popover-foreground">
                           <Star className="inline h-4 w-4 mr-1 text-yellow-500" />
                           {payload[0].value?.toString()} stars
-                        </p>
+                        </small>
                       </div>
                     );
                   }

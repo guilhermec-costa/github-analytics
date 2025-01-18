@@ -56,15 +56,15 @@ export default function SummaryDatatable({
 
   return (
     <Card>
-      <CardHeader className="p-4 md:p-6">
+      <CardHeader className="p-0">
         <CardTitle className="text-2xl md:text-3xl font-bold">
           Summary
         </CardTitle>
-        <CardDescription className="mt-2 text-sm md:text-base text-muted-foreground">
+        <CardDescription className="mt-2 md:text-base text-muted-foreground">
           A summary about all repositories
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-4 pt-6 md:p-6">
+      <CardContent className="p-0 pt-6">
         <DataTable columns={columns} data={data} />
       </CardContent>
     </Card>

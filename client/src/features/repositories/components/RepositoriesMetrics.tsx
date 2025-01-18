@@ -27,8 +27,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GithubUser } from "shared/types";
 import StargazersDashboard from "./StargazersDashboard";
 import InputMultiSelect from "@/components/InputMultiSelect";
-import { cn } from "@/lib/utils";
 import SummaryDatatable from "@/features/summaryTable";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -141,7 +146,7 @@ export default function RepositoriesMetrics({
             Repository Metrics
           </CardTitle>
           <CardDescription className="mt-2 text-sm md:text-base">
-            Gain insights into your repositories with detailed metrics and data
+            Gain insights into repositories with detailed metrics and data
             visualizations.
           </CardDescription>
         </section>
@@ -155,7 +160,6 @@ export default function RepositoriesMetrics({
             <User />
           </Button>
           <Button
-            variant="secondary"
             className="flex items-center space-x-2"
             onClick={handleRefetch}
           >
@@ -221,9 +225,23 @@ export default function RepositoriesMetrics({
                     className="relative"
                   >
                     {selectedRepos.length > 0 && (
-                      <div className="absolute top-[-8px] right-[-8px] rounded-full bg-red-500 text-white w-5 h-5 flex items-center justify-center">
-                        <small>{selectedRepos.length}</small>
-                      </div>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="absolute top-[-8px] right-[-8px] rounded-full bg-chart-1 text-white w-5 h-5 flex items-center justify-center">
+                              <small>{selectedRepos.length}</small>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="text-left">Visualising:</p>
+                            {selectedRepos.map((repo) => (
+                              <small className="block my-1 text-left">
+                                {repo}
+                              </small>
+                            ))}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     )}
                     <FilterX />
                   </Button>

@@ -72,7 +72,7 @@ export default function InputMultiSelect({
                       }
                       checked={selectionMap[option]}
                     />
-                    <p>{option}</p>
+                    <h5>{option}</h5>
                   </div>
                 </CommandItem>
               ))}

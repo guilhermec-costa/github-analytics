@@ -73,7 +73,7 @@ export default function CommitOvertimeDashboard({
   return (
     <Card className="w-full">
       <section className="flex-col md:flex md:justify-between">
-        <CardHeader>
+        <CardHeader className="p-0 mb-3">
           <CardDescription>
             Daily commit activity between {commitPeriod.since.toDateString()} -{" "}
             {commitPeriod.until.toDateString()}
@@ -96,16 +96,9 @@ export default function CommitOvertimeDashboard({
               />
               <XAxis dataKey="date" tick={{ fill: "#24292e", fontSize: 12 }} />
               <YAxis
-                stroke="#24292e"
+                stroke="hsl(var(--secondary))"
                 domain={[0, maxCommits]}
-                tick={{ fill: "#24292e" }}
-                label={{
-                  value: "Commits",
-                  angle: -90,
-                  position: "insideLeft",
-                  fill: "hsl(var(--primary))",
-                  opacity: "0.8",
-                }}
+                tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }}
               />
               <Tooltip
                 cursor={{ fill: "hsl(var(--accent) / 0.1)" }}

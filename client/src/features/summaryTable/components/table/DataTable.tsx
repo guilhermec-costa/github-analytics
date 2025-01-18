@@ -34,6 +34,12 @@ import TablePagination from "@/components/TablePagination";
 import { cn } from "@/lib/utils";
 import TablePaginationSummary from "@/components/TablePaginationSummary";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -51,7 +57,7 @@ export default function DataTable<TData, TValue>({
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 8,
+    pageSize: 10,
   });
 
   const table = useReactTable({
@@ -88,16 +94,26 @@ export default function DataTable<TData, TValue>({
             onChange={(event) => setGlobalFilter(event.target.value)}
             className="max-w-sm"
           />
-          <Button
-            onClick={resetFilters}
-            disabled={!globalFilter && !sorting.length}
-            className={cn({
-              "hover:cursor-pointer": globalFilter || sorting.length,
-              "hover:cursor-not-allowed": !globalFilter && !sorting.length,
-            })}
-          >
-            <FilterX />
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  onClick={resetFilters}
+                  disabled={!globalFilter && !sorting.length}
+                  className={cn({
+                    "hover:cursor-pointer": globalFilter || sorting.length,
+                    "hover:cursor-not-allowed":
+                      !globalFilter && !sorting.length,
+                  })}
+                >
+                  <FilterX />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Clear all selections</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </section>
         <Select
           value={`${table.getState().pagination.pageSize}`}
@@ -109,11 +125,17 @@ export default function DataTable<TData, TValue>({
             <SelectValue placeholder="Select a page size" />
           </SelectTrigger>
           <SelectContent>
-            {[8, 20, 30, 40, 50].map((pageSize) => (
-              <SelectItem key={pageSize} value={`${pageSize}`}>
-                Show {pageSize}
-              </SelectItem>
-            ))}
+            {[10, 20, 30, 40, 50].map((pageSize, idx) => {
+              const defaultMessage = idx === 0 ? "(default)" : null;
+              return (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  Show {pageSize}{" "}
+                  <small className="text-muted-foreground ml-2">
+                    {defaultMessage}
+                  </small>
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
       </div>
@@ -167,7 +189,7 @@ export default function DataTable<TData, TValue>({
                   })}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="p-3">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

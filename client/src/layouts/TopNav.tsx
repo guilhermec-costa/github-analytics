@@ -14,6 +14,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 import { AuthService } from "@/services/AuthService";
 import { useNavigate } from "react-router-dom";
 import NavItem from "@/components/NavItem";
+import { GithubUserService } from "@/services/GithubUserService";
 
 export default function TopNav() {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ export default function TopNav() {
   const mobileMenuToggleRef = useClickOutside<HTMLButtonElement>(() =>
     setIsMobileMenuOpen(false),
   );
+
+  React.useEffect(() => {}, []);
 
   return (
     <header className="sticky top-0 right-0 left-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pr-10 pl-10">

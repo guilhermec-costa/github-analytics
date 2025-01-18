@@ -46,8 +46,8 @@ export default function LanguageAcrossRepoDashboard({
 
   const maxCount = Math.max(...data.map((item) => item.count));
   return (
-    <Card className="w-full mt-8">
-      <CardHeader>
+    <Card className="w-full mt-8 p-0">
+      <CardHeader className="p-0">
         <CardTitle>Language Distribution</CardTitle>
         <CardDescription>
           Top 10 languages used across the repository
@@ -60,7 +60,7 @@ export default function LanguageAcrossRepoDashboard({
             <BarChart
               data={data}
               layout="vertical"
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              margin={{ top: 5, right: 30, bottom: 5 }}
             >
               <XAxis type="number" hide domain={[0, maxCount]} />
               <YAxis
@@ -69,7 +69,7 @@ export default function LanguageAcrossRepoDashboard({
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
-                width={120}
+                width={100}
               />
               <CartesianGrid opacity={"0.2"} strokeDasharray="3 3" />
               <Tooltip
@@ -81,14 +81,14 @@ export default function LanguageAcrossRepoDashboard({
                         <p className="font-medium">
                           {payload[0].payload.language}
                         </p>
-                        <p className="text-sm text-muted-foreground">
+                        <h5 className="text-sm text-muted-foreground">
                           Count:{" "}
                           <span className="font-medium">
                             {formatBytes(
                               parseInt(payload[0].value?.toString() || ""),
                             )}
                           </span>
-                        </p>
+                        </h5>
                       </div>
                     );
                   }
@@ -104,7 +104,7 @@ export default function LanguageAcrossRepoDashboard({
           </ResponsiveContainer>
         </div>
 
-        <div className="mt-4 flex flex-wrap justify-start gap-4">
+        <div className="mt-4 flex flex-wrap justify-center gap-4">
           {data.map((item, index) => (
             <div key={item.language} className="flex items-center space-x-2">
               <div

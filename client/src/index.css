@@ -81,6 +81,30 @@
     margin-right: 0 !important;
   }
 
+  body h1 {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+  }
+
+  body h2 {
+    @apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0;
+  }
+
+  body h3 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+
+  body h4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+
+  body p {
+    @apply leading-7 [&:not(:first-child)]:mt-6;
+  }
+
+  body small {
+    @apply text-sm font-medium leading-none;
+  }
+
   ::selection {
     @apply bg-primary/60;
   }

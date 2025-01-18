@@ -72,19 +72,19 @@ export default function HighlightsPanel({ metrics }: HighlightsPanelProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 xl:grid-rows-1 xl:grid-cols-5 gap-4">
-      <MetricCard.Root>
+      <MetricCard.Root tooltipMsg="Total number of repositories owned by the user.">
         <MetricCard.Header
           title="Total Repositories"
-          icon={<FolderCode className="h-4 w-4" color="hsl(var(--primary)" />}
+          icon={<FolderCode className="h-4 w-4" color="hsl(var(--chart-4)" />}
         />
         <MetricCard.Content>
           <MetricCard.Value value={highlightState.repoCount.toString()} />
         </MetricCard.Content>
       </MetricCard.Root>
-      <MetricCard.Root>
+      <MetricCard.Root tooltipMsg="Total commits made in the last 30 days across all repositories.">
         <MetricCard.Header
           title="Commits Last 30 Days"
-          icon={<ChartArea className="h-4 w-4" color="hsl(var(--primary)" />}
+          icon={<ChartArea className="h-4 w-4" color="hsl(var(--chart-4)" />}
         />
         <MetricCard.Content>
           <MetricCard.Value
@@ -92,10 +92,10 @@ export default function HighlightsPanel({ metrics }: HighlightsPanelProps) {
           />
         </MetricCard.Content>
       </MetricCard.Root>
-      <MetricCard.Root>
+      <MetricCard.Root tooltipMsg="Most frequently used programming language across repositories.">
         <MetricCard.Header
           title="Top Language"
-          icon={<Code className="h-4 w-4" color="hsl(var(--primary)" />}
+          icon={<Code className="h-4 w-4" color="hsl(var(--chart-4)" />}
         />
         <MetricCard.Content>
           <div className="flex items-baseline space-x-4">
@@ -104,10 +104,10 @@ export default function HighlightsPanel({ metrics }: HighlightsPanelProps) {
           </div>
         </MetricCard.Content>
       </MetricCard.Root>
-      <MetricCard.Root>
+      <MetricCard.Root tooltipMsg="Average repository size, calculated based on all repositories owned by the user.">
         <MetricCard.Header
           title="Average Repo Size"
-          icon={<Database className="h-4 w-4" color="hsl(var(--primary)" />}
+          icon={<Database className="h-4 w-4" color="hsl(var(--chart-4)" />}
         />
         <MetricCard.Content>
           <MetricCard.Value
@@ -118,10 +118,10 @@ export default function HighlightsPanel({ metrics }: HighlightsPanelProps) {
           />
         </MetricCard.Content>
       </MetricCard.Root>
-      <MetricCard.Root>
+      <MetricCard.Root tooltipMsg="Repository with the highest number of stars and its star count.">
         <MetricCard.Header
           title="Top stargazers"
-          icon={<Star className="h-4 w-4" color="hsl(var(--primary)" />}
+          icon={<Star className="h-4 w-4" color="hsl(var(--chart-4)" />}
         />
         <MetricCard.Content>
           <MetricCard.Value

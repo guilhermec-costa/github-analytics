@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { formatBytes } from "@/utils/bytes";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Star } from "lucide-react";
 
 export type SummaryUnit = {
   createdAt: string;
@@ -60,6 +60,21 @@ export const columns: ColumnDef<SummaryUnit>[] = [
   {
     accessorKey: "stargazers",
     header: "Stargazers",
+    cell: ({ getValue }) => {
+      return (
+        <div
+          className={
+            (cn({
+              "font-semibold": getValue() !== "-",
+            }),
+            "flex items-center")
+          }
+        >
+          {getValue() as React.ReactNode}
+          <Star className="h-4 w-4 ml-1" color="hsl(var(--chart-3))" />
+        </div>
+      );
+    },
   },
   {
     accessorKey: "watchers",

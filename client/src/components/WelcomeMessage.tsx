@@ -11,12 +11,12 @@ export default function WelcomeMessage() {
           <div className="md:flex md:space-x-4 md:items-center">
             <h2>
               Welcome to the Dashboard,{" "}
-              <span className="text-foreground">{data && data.name}</span>
+              <span className="text-chart-3">{data && data.name}</span>
             </h2>
           </div>
         </CardTitle>
         <CardDescription>
-          View and manage your GitHub repositories and metrics
+          View and manage GitHub repositories and metrics of any developer
         </CardDescription>
       </CardHeader>
     </Card>

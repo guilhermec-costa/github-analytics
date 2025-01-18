@@ -1,24 +1,36 @@
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import { Card } from "../ui/card";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
-interface MetricCardRootProps {
-  children: React.ReactNode;
-  className?: string;
+interface MetricCardRootProps extends HTMLAttributes<HTMLDivElement> {
+  tooltipMsg?: string;
 }
 
 export default function MetricCardRoot({
-  children,
-  className,
+  tooltipMsg,
+  ...rest
 }: MetricCardRootProps) {
   return (
-    <Card
-      className={cn(
-        "bg-secondary/20 rounded-sm min-w-[180px] border border-solid border-secondary p-1 shadow-md shadow-secondary/20",
-        className,
-      )}
-    >
-      {children}
-    </Card>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Card
+            className={cn(
+              "bg-secondary/20 rounded-sm min-w-[180px] border border-solid border-secondary p-1 shadow-xl shadow-secondary/30",
+              rest.className,
+            )}
+          >
+            {rest.children}
+          </Card>
+        </TooltipTrigger>
+        <TooltipContent>{tooltipMsg}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
