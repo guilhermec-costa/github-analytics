@@ -22,6 +22,7 @@ import { MetricUnit } from "@/utils/types";
 import { getFillColor } from "@/utils/chartColors";
 import { CategoricalChartState } from "recharts/types/chart/types";
 import useCommitDashboardLogic from "@/hooks/useCommitDashboardLogic";
+import { Separator } from "@/components/ui/separator";
 
 export interface CommitPeriodProps {
   since: Date;
@@ -94,7 +95,11 @@ export default function CommitOvertimeDashboard({
                 stroke="hsl(var(--secondary))"
                 strokeDasharray="3 3"
               />
-              <XAxis dataKey="date" tick={{ fill: "#24292e", fontSize: 12 }} />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }}
+                tickMargin={10}
+              />
               <YAxis
                 stroke="hsl(var(--secondary))"
                 domain={[0, maxCommits]}
@@ -106,10 +111,19 @@ export default function CommitOvertimeDashboard({
                   if (active && payload && payload.length) {
                     return (
                       <div className="rounded-lg border bg-background p-2 shadow-md">
-                        <p className="font-medium">{payload[0].name}</p>
-                        <small className="text-foreground/70 block">
-                          Commits: {payload[0].value?.toString()}
-                        </small>
+                        {payload.map((point) => {
+                          return (
+                            <>
+                              <small className="font-medium">
+                                {point.name}
+                              </small>
+                              <small className="text-foreground/70 block">
+                                Commits: {point.value?.toString()}
+                              </small>
+                            </>
+                          );
+                        })}
+                        <Separator className="my-2" />
                         <small className="text-foreground/70">
                           Date: {payload[0].payload.date}
                         </small>
@@ -128,6 +142,7 @@ export default function CommitOvertimeDashboard({
                       key={repo}
                       dataKey={repo}
                       stroke={getFillColor(index)}
+                      strokeWidth={2}
                       activeDot={{ r: 6 }}
                     />
                   )

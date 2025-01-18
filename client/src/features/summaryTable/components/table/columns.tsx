@@ -97,7 +97,8 @@ export const columns: ColumnDef<SummaryUnit>[] = [
       return (
         <div
           className={cn({
-            "text-chart-2 font-semibold": getValue() !== "-",
+            "text-chart-3 font-semibold text-ellipsis overflow-hidden":
+              getValue() !== "-",
           })}
         >
           {getValue() as React.ReactNode}

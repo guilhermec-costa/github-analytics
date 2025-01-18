@@ -33,8 +33,6 @@ export default function useCommitDashboardLogic(
           "yyyy-MM-dd",
         );
 
-        const _repos = _data.map((detail) => detail.repo);
-
         const existingCommit = sortedCommits.find(
           (commit) => format(parseISO(commit.date), "yyyy-MM-dd") === date,
         );
@@ -88,7 +86,7 @@ export default function useCommitDashboardLogic(
     if (status === "success") {
       setData(commitData);
     }
-  }, [applyDateCompensationOnData, commitData, status]);
+  }, [commitData, status]);
 
   const transformedData = React.useMemo(
     () => transformData(data),

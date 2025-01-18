@@ -1,8 +1,8 @@
-import useUserInformation from "@/api/queries/useUserInformation";
+import useLoggerUserInformation from "@/api/queries/useLoggedUserInformation";
 import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
 export default function WelcomeMessage() {
-  const { data } = useUserInformation();
+  const { data } = useLoggerUserInformation();
 
   return (
     <Card className="rounded-md">

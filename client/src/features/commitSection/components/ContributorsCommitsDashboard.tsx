@@ -75,6 +75,7 @@ export default function ContributorsCommitDashboard({
                 domain={[0, maxContributions]}
                 axisLine={false}
                 tickLine={false}
+                tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }}
               />
               <YAxis
                 dataKey="author"
@@ -91,15 +92,15 @@ export default function ContributorsCommitDashboard({
                   if (active && payload && payload.length) {
                     return (
                       <div className="rounded-lg border bg-background p-2 shadow-md">
-                        <p className="font-medium">
+                        <h5 className="font-medium">
                           {payload[0].payload.author}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
+                        </h5>
+                        <small className="text-sm text-muted-foreground">
                           Contributions:{" "}
                           <span className="font-medium">
                             {payload[0].value}
                           </span>
-                        </p>
+                        </small>
                       </div>
                     );
                   }

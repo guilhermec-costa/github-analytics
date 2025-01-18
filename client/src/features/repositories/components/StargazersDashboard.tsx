@@ -81,7 +81,12 @@ export default function StargazersDashboard({
               layout="vertical"
               margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
             >
-              <XAxis type="number" tickLine={false} hide />
+              <XAxis
+                type="number"
+                tickLine={false}
+                hide
+                tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }}
+              />
               <YAxis
                 type="category"
                 dataKey="repo"

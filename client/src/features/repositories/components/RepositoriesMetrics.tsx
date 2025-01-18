@@ -13,7 +13,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { GithubUserService } from "@/services/GithubUserService";
-import useUserInformation from "@/api/queries/useUserInformation";
 import HighlightsPanel from "./HighlightsPanel";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
@@ -34,6 +33,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import UserDetailSection from "./UserDetailSection";
+import useLoggerUserInformation from "@/api/queries/useLoggedUserInformation";
 
 export default function RepositoriesMetrics({
   sectionId,
@@ -44,7 +45,9 @@ export default function RepositoriesMetrics({
   const [searchUser, setSearchUser] = React.useState<GithubUser | undefined>(
     undefined,
   );
-  const userInfo = useUserInformation();
+
+  const userInfo = useLoggerUserInformation();
+
   const {
     data: metrics,
     isLoading,
@@ -140,6 +143,12 @@ export default function RepositoriesMetrics({
   if (isError) return <RepositoriesMetricsError />;
   return (
     <Card id={sectionId} className="w-full rounded-none p-3">
+      <CardHeader>
+        <CardContent>
+          <UserDetailSection targetUser={searchUser} />
+        </CardContent>
+      </CardHeader>
+      <Separator />
       <CardHeader className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-center">
         <section>
           <CardTitle className="text-2xl md:text-3xl font-bold">
@@ -171,18 +180,6 @@ export default function RepositoriesMetrics({
       <CardContent className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <section className="space-y-2">
-            <p className="text-sm text-muted-foreground flex items-center">
-              Visualising metrics for:{" "}
-              <span className="font-medium text-foreground ml-1">
-                {searchUser?.name}
-              </span>
-              <figure className="ml-3">
-                <Avatar>
-                  <AvatarImage src={searchUser?.avatar_url} alt="User Avatar" />
-                  <AvatarFallback>User</AvatarFallback>
-                </Avatar>
-              </figure>
-            </p>
             <p className="text-sm text-muted-foreground">
               Last fetch time:{" "}
               <span className="font-medium text-foreground">
