@@ -53,18 +53,18 @@ export default function StargazersDashboard({
 
   return (
     <Card className="w-full mt-8 overflow-hidden transition-all duration-300 hover:shadow-lg">
-      <CardHeader className="flex flex-row justify-between">
+      <CardHeader className="flex flex-col space-y-4 md:flex-row md:justify-between md:space-y-0">
         <section>
           <div className="flex items-center space-x-2">
             <Star className="h-6 w-6" />
             <CardTitle>Top Stargazers</CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="mt-2 text-sm sm:text-base">
             Repositories with the most stars (Top 10)
           </CardDescription>
         </section>
         <div className="flex items-center space-x-2">
-          <p className="text-muted-foreground">Total: </p>
+          <p className="text-muted-foreground text-sm sm:text-base">Total: </p>
           <div className="flex items-center space-x-2">
             <Star className="h-5 w-5 text-yellow-500" />
             <h3 className="text-lg font-semibold">
@@ -74,60 +74,62 @@ export default function StargazersDashboard({
         </div>
       </CardHeader>
 
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6 h-[400px]">
-        <ResponsiveContainer className="w-full h-full">
-          <BarChart
-            data={data}
-            layout="vertical"
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <XAxis type="number" tickLine={false} hide />
-            <YAxis
-              type="category"
-              dataKey="repo"
-              width={200}
-              tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }}
-              tickLine={false}
-            />
-            <CartesianGrid opacity={"0.1"} horizontal={false} />
-            <Tooltip
-              cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div className="rounded-lg border p-3 bg-popover">
-                      <p className="font-medium text-popover-foreground">
-                        {payload[0].payload.repo}
-                      </p>
-                      <p className="text-sm text-popover-foreground">
-                        <Star className="inline h-4 w-4 mr-1 text-yellow-500" />
-                        {payload[0].value?.toString()} stars
-                      </p>
-                    </div>
-                  );
-                }
-                return null;
-              }}
-            />
-            <Bar
-              dataKey="stars"
-              radius={[0, 4, 4, 0]}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+      <CardContent className="p-2 sm:p-4">
+        <div className="h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={data}
+              layout="vertical"
+              margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
             >
-              {data.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={getFillColor(index)}
-                  fillOpacity={
-                    activeIndex === null || activeIndex === index ? 1 : 0.6
+              <XAxis type="number" tickLine={false} hide />
+              <YAxis
+                type="category"
+                dataKey="repo"
+                width={100}
+                tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
+                tickLine={false}
+              />
+              <CartesianGrid opacity={"0.2"} strokeDasharray="3 3" />
+              <Tooltip
+                cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg border p-3 bg-popover">
+                        <p className="font-medium text-popover-foreground">
+                          {payload[0].payload.repo}
+                        </p>
+                        <p className="text-sm text-popover-foreground">
+                          <Star className="inline h-4 w-4 mr-1 text-yellow-500" />
+                          {payload[0].value?.toString()} stars
+                        </p>
+                      </div>
+                    );
                   }
-                  className="transition-all duration-300 hover:opacity-80"
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+                  return null;
+                }}
+              />
+              <Bar
+                dataKey="stars"
+                radius={[0, 4, 4, 0]}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={getFillColor(index)}
+                    fillOpacity={
+                      activeIndex === null || activeIndex === index ? 1 : 0.6
+                    }
+                    className="transition-all duration-300 hover:opacity-80"
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

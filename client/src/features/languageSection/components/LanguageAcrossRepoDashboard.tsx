@@ -45,7 +45,6 @@ export default function LanguageAcrossRepoDashboard({
   }, [metrics]);
 
   const maxCount = Math.max(...data.map((item) => item.count));
-
   return (
     <Card className="w-full mt-8">
       <CardHeader>
@@ -55,8 +54,8 @@ export default function LanguageAcrossRepoDashboard({
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <div className="h-[400px] w-auto">
+      <CardContent className="px-4 pt-4 sm:px-6 sm:pt-6">
+        <div className="h-[400px] w-full">
           <ResponsiveContainer className="aspect-auto h-[250px] w-full">
             <BarChart
               data={data}
@@ -72,6 +71,7 @@ export default function LanguageAcrossRepoDashboard({
                 tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
                 width={120}
               />
+              <CartesianGrid opacity={"0.2"} strokeDasharray="3 3" />
               <Tooltip
                 cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
                 content={({ active, payload }) => {
@@ -103,7 +103,8 @@ export default function LanguageAcrossRepoDashboard({
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="mt-4 flex flex-wrap justify-center gap-2">
+
+        <div className="mt-4 flex flex-wrap justify-start gap-4">
           {data.map((item, index) => (
             <div key={item.language} className="flex items-center space-x-2">
               <div

@@ -79,8 +79,8 @@ export default function DataTable<TData, TValue>({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between">
         <section className="flex space-x-4">
           <Input
             placeholder="Search all columns..."
@@ -117,44 +117,44 @@ export default function DataTable<TData, TValue>({
           </SelectContent>
         </Select>
       </div>
-      <div className="w-full rounded-md border mt-1 border-secondary border-solid border-opacity-[0.5]">
+
+      <div className="w-full overflow-auto rounded-md border mt-1 border-secondary border-solid border-opacity-[0.5]">
         <Table>
           <TableHeader className="bg-secondary">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-secondary">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="font-bold text-foreground py-3 px-4"
-                    >
-                      {header.isPlaceholder ? null : (
-                        <div
-                          className={cn({
-                            "cursor-pointer select-none flex items-center":
-                              header.column.getCanSort(),
-                          })}
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                          {{
-                            asc: <ChevronUp className="ml-2 h-4 w-4" />,
-                            desc: <ChevronDown className="ml-2 h-4 w-4" />,
-                          }[header.column.getIsSorted() as string] ??
-                            (header.column.getCanSort() && (
-                              <ChevronsUpDown className="ml-2 h-4 w-4" />
-                            ))}
-                        </div>
-                      )}
-                    </TableHead>
-                  );
-                })}
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="font-bold text-foreground py-3 px-4"
+                  >
+                    {header.isPlaceholder ? null : (
+                      <div
+                        className={cn({
+                          "cursor-pointer select-none flex items-center":
+                            header.column.getCanSort(),
+                        })}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                        {{
+                          asc: <ChevronUp className="ml-2 h-4 w-4" />,
+                          desc: <ChevronDown className="ml-2 h-4 w-4" />,
+                        }[header.column.getIsSorted() as string] ??
+                          (header.column.getCanSort() && (
+                            <ChevronsUpDown className="ml-2 h-4 w-4" />
+                          ))}
+                      </div>
+                    )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, idx) => (
@@ -162,8 +162,8 @@ export default function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className={cn({
-                    "bg-secondary/40": idx % 2 != 0,
-                    "border-solid border-b-secondary border-opacity-20": true,
+                    "bg-secondary/40": idx % 2 !== 0,
+                    "border-b border-secondary/20": true,
                   })}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -189,8 +189,9 @@ export default function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between space-x-2">
-        <div className="flex-1 text-sm text-muted-foreground">
+
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between">
+        <div className="text-sm text-muted-foreground">
           <TablePaginationSummary table={table} />
         </div>
         <TablePagination table={table} />

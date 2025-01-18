@@ -74,7 +74,7 @@ export default function CommitSliderPresentation({
   };
 
   return (
-    <div className="p-6 bg-gradient-to-r from-background to-secondary rounded-lg shadow-xl">
+    <div className="bg-gradient-to-r from-background to-secondary rounded-lg shadow-xl">
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>

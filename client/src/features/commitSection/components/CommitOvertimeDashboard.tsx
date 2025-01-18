@@ -72,7 +72,7 @@ export default function CommitOvertimeDashboard({
 
   return (
     <Card className="w-full">
-      <section className="flex justify-between">
+      <section className="flex-col md:flex md:justify-between">
         <CardHeader>
           <CardDescription>
             Daily commit activity between {commitPeriod.since.toDateString()} -{" "}
@@ -82,65 +82,67 @@ export default function CommitOvertimeDashboard({
         <CommitPeriodPicker setCommitPeriod={setCommitPeriod} />
       </section>
 
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6 h-[400px]">
-        <ResponsiveContainer className="aspect-auto h-[250px] w-full">
-          <LineChart
-            data={transformedData}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            onClick={handleChartClick}
-          >
-            <CartesianGrid
-              stroke="hsl(var(--secondary))"
-              strokeDasharray="3 3"
-            />
-            <XAxis dataKey="date" tick={{ fill: "#24292e", fontSize: 12 }} />
-            <YAxis
-              stroke="#24292e"
-              domain={[0, maxCommits]}
-              tick={{ fill: "#24292e" }}
-              label={{
-                value: "Commits",
-                angle: -90,
-                position: "insideLeft",
-                fill: "hsl(var(--primary))",
-                opacity: "0.8",
-              }}
-            />
-            <Tooltip
-              cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div className="rounded-lg border bg-background p-2 shadow-md">
-                      <p className="font-medium">{payload[0].name}</p>
-                      <small className="text-foreground/70 block">
-                        Commits: {payload[0].value?.toString()}
-                      </small>
-                      <small className="text-foreground/70">
-                        Date: {payload[0].payload.date}
-                      </small>
-                    </div>
-                  );
-                }
-                return null;
-              }}
-            />
-            <Legend />
-            {repos.map((repo, index) => {
-              return (
-                !!repo && (
-                  <Line
-                    type="monotone"
-                    key={repo}
-                    dataKey={repo}
-                    stroke={getFillColor(index)}
-                    activeDot={{ r: 6 }}
-                  />
-                )
-              );
-            })}
-          </LineChart>
-        </ResponsiveContainer>
+      <CardContent className="p-2 sm:p-4 h-[300px] sm:h-[400px] md:h-[500px]">
+        <div className="h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={transformedData}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              onClick={handleChartClick}
+            >
+              <CartesianGrid
+                stroke="hsl(var(--secondary))"
+                strokeDasharray="3 3"
+              />
+              <XAxis dataKey="date" tick={{ fill: "#24292e", fontSize: 12 }} />
+              <YAxis
+                stroke="#24292e"
+                domain={[0, maxCommits]}
+                tick={{ fill: "#24292e" }}
+                label={{
+                  value: "Commits",
+                  angle: -90,
+                  position: "insideLeft",
+                  fill: "hsl(var(--primary))",
+                  opacity: "0.8",
+                }}
+              />
+              <Tooltip
+                cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg border bg-background p-2 shadow-md">
+                        <p className="font-medium">{payload[0].name}</p>
+                        <small className="text-foreground/70 block">
+                          Commits: {payload[0].value?.toString()}
+                        </small>
+                        <small className="text-foreground/70">
+                          Date: {payload[0].payload.date}
+                        </small>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend />
+              {repos.map((repo, index) => {
+                return (
+                  !!repo && (
+                    <Line
+                      type="monotone"
+                      key={repo}
+                      dataKey={repo}
+                      stroke={getFillColor(index)}
+                      activeDot={{ r: 6 }}
+                    />
+                  )
+                );
+              })}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

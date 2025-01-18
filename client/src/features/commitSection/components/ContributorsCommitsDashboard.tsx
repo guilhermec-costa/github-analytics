@@ -61,70 +61,70 @@ export default function ContributorsCommitDashboard({
   const handleMouseLeave = () => setActiveIndex(null);
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardDescription></CardDescription>
-      </CardHeader>
-      <CardContent className="h-[450px]">
-        <ResponsiveContainer width="95%" height={400}>
-          <BarChart
-            data={contributionsData}
-            layout="vertical"
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <XAxis
-              type="number"
-              domain={[0, maxContributions]}
-              axisLine={false}
-              tickLine={false}
-            />
-            <YAxis
-              dataKey="author"
-              type="category"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }}
-              width={120}
-            />
-            <CartesianGrid
-              stroke="hsl(var(--secondary))"
-              strokeDasharray="3 3"
-            />
-            <Tooltip
-              cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div className="rounded-lg border bg-background p-2 shadow-md">
-                      <p className="font-medium">{payload[0].payload.author}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Contributions:{" "}
-                        <span className="font-medium">{payload[0].value}</span>
-                      </p>
-                    </div>
-                  );
-                }
-                return null;
-              }}
-            />
-            <Bar
-              dataKey="contributions"
-              radius={[0, 4, 4, 0]}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+    <Card className="w-full mb-10">
+      <CardContent className="p-2 sm:p-4 h-[300px] sm:h-[400px] md:h-[500px]">
+        <div className="h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={contributionsData}
+              layout="vertical"
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
-              {contributionsData.map((_, idx) => (
-                <Cell
-                  key={`cell-${idx}`}
-                  fill={getFillColor(idx)}
-                  fillOpacity={
-                    activeIndex === null || activeIndex === idx ? 1 : 0.6
+              <XAxis
+                type="number"
+                domain={[0, maxContributions]}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                dataKey="author"
+                type="category"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }}
+                width={120}
+              />
+              <CartesianGrid opacity={"0.2"} strokeDasharray="3 3" />
+              <Tooltip
+                cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg border bg-background p-2 shadow-md">
+                        <p className="font-medium">
+                          {payload[0].payload.author}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Contributions:{" "}
+                          <span className="font-medium">
+                            {payload[0].value}
+                          </span>
+                        </p>
+                      </div>
+                    );
                   }
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+                  return null;
+                }}
+              />
+              <Bar
+                dataKey="contributions"
+                radius={[0, 4, 4, 0]}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                {contributionsData.map((_, idx) => (
+                  <Cell
+                    key={`cell-${idx}`}
+                    fill={getFillColor(idx)}
+                    fillOpacity={
+                      activeIndex === null || activeIndex === idx ? 1 : 0.6
+                    }
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

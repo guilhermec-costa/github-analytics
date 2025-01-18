@@ -42,7 +42,11 @@ export const columns: ColumnDef<SummaryUnit>[] = [
     accessorKey: "repo",
     header: "Repository",
     cell: ({ getValue }) => {
-      return <Badge variant="secondary">{getValue() as React.ReactNode}</Badge>;
+      return (
+        <Badge variant="secondary" className="text-nowrap">
+          {getValue() as React.ReactNode}
+        </Badge>
+      );
     },
   },
   {

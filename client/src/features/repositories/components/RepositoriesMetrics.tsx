@@ -133,55 +133,52 @@ export default function RepositoriesMetrics({
 
   if (isLoading) return <RepositoriesMetricsSkeleton />;
   if (isError) return <RepositoriesMetricsError />;
-
   return (
-    <Card id={sectionId} className="w-full rounded-none">
-      <CardHeader className="grid grid-cols-1 md:grid-cols-2">
+    <Card id={sectionId} className="w-full rounded-none p-3">
+      <CardHeader className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-center">
         <section>
-          <CardTitle className="text-3xl font-bold">
+          <CardTitle className="text-2xl md:text-3xl font-bold">
             Repository Metrics
           </CardTitle>
-          <CardDescription className="mt-2">
+          <CardDescription className="mt-2 text-sm md:text-base">
             Gain insights into your repositories with detailed metrics and data
-            visualizations
+            visualizations.
           </CardDescription>
         </section>
-        <div className="flex space-x-4 justify-self-end max-md:justify-self-center max-md:pt-4">
+        <div className="flex flex-wrap justify-center md:justify-end gap-2">
           <Button
-            variant={"secondary"}
-            className="flex w-fit"
+            variant="secondary"
+            className="flex items-center space-x-2"
             onClick={viewAuthUserData}
           >
-            <p>View my data</p>
+            <span>View my data</span>
             <User />
           </Button>
           <Button
-            variant={"secondary"}
-            className="flex w-fit"
+            variant="secondary"
+            className="flex items-center space-x-2"
             onClick={handleRefetch}
           >
-            <p>Refresh data</p>
+            <span>Refresh data</span>
             <RefreshCcw />
           </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex flex-col md:flex md:flex-row md:justify-between md:items-center">
-          <section id="resume" className="space-y-2 flex flex-col">
-            <section className="relative">
-              <p className="text-sm text-muted-foreground flex items-center">
-                Visualising metrics for:{" "}
-                <span className="font-medium text-foreground">
-                  {searchUser?.name}
-                </span>
-                <figure className="ml-3">
-                  <Avatar>
-                    <AvatarImage src={searchUser?.avatar_url} alt="@shadcn" />
-                    <AvatarFallback>User Avatar</AvatarFallback>
-                  </Avatar>
-                </figure>
-              </p>
-            </section>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+          <section className="space-y-2">
+            <p className="text-sm text-muted-foreground flex items-center">
+              Visualising metrics for:{" "}
+              <span className="font-medium text-foreground ml-1">
+                {searchUser?.name}
+              </span>
+              <figure className="ml-3">
+                <Avatar>
+                  <AvatarImage src={searchUser?.avatar_url} alt="User Avatar" />
+                  <AvatarFallback>User</AvatarFallback>
+                </Avatar>
+              </figure>
+            </p>
             <p className="text-sm text-muted-foreground">
               Last fetch time:{" "}
               <span className="font-medium text-foreground">
@@ -191,8 +188,8 @@ export default function RepositoriesMetrics({
           </section>
           <SearchInput
             onSearch={handleUserSearch}
-            placeholder={"Search other user"}
-            className="min-w-[250px] max-md:my-4"
+            placeholder="Search other user"
+            className="mt-4 md:mt-0 md:min-w-[250px]"
           />
         </div>
         {metrics && <HighlightsPanel metrics={metrics} />}
@@ -201,16 +198,16 @@ export default function RepositoriesMetrics({
         <StargazersDashboard metrics={metrics} />
         <Separator />
         <Card>
-          <CardHeader>
+          <CardHeader className="p-2">
             <CardTitle>Repository Details</CardTitle>
             <CardDescription>
               Overview and detailed metrics of selected repositories.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="md:flex md:space-x-4 md:items-baseline">
+          <CardContent className="p-0">
+            <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
               {metrics && (
-                <section className="flex space-x-4 items-end">
+                <section className="flex items-end space-x-2">
                   <InputMultiSelect
                     options={Object.keys(metrics)}
                     onCheckChange={handleReposSelection}
@@ -221,12 +218,10 @@ export default function RepositoriesMetrics({
                   <Button
                     onClick={resetMetrics}
                     disabled={!selectedRepos.length}
-                    className={cn({
-                      "hover:cursor-pointer relative": !!selectedRepos.length,
-                    })}
+                    className="relative"
                   >
                     {selectedRepos.length > 0 && (
-                      <div className="rounded-full bg-red-500 w-5 h-5 absolute -top-2 -right-2">
+                      <div className="absolute top-[-8px] right-[-8px] rounded-full bg-red-500 text-white w-5 h-5 flex items-center justify-center">
                         <small>{selectedRepos.length}</small>
                       </div>
                     )}
@@ -239,21 +234,19 @@ export default function RepositoriesMetrics({
         </Card>
         {selectedMetrics?.length ? (
           <Tabs defaultValue="languages" className="w-full mt-4">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid grid-cols-2">
               <TabsTrigger value="languages">Language Breakdown</TabsTrigger>
               <TabsTrigger value="commits">Commit Activity</TabsTrigger>
             </TabsList>
             <TabsContent value="languages">
-              {selectedMetrics && <LanguageSection metrics={selectedMetrics} />}
+              <LanguageSection metrics={selectedMetrics} />
             </TabsContent>
             <TabsContent value="commits">
-              {selectedMetrics?.length && (
-                <CommitSection
-                  metrics={selectedMetrics}
-                  selectedRepos={selectedRepos}
-                  searchUser={searchUser?.login || ""}
-                />
-              )}
+              <CommitSection
+                metrics={selectedMetrics}
+                selectedRepos={selectedRepos}
+                searchUser={searchUser?.login || ""}
+              />
             </TabsContent>
           </Tabs>
         ) : (

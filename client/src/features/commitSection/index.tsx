@@ -66,7 +66,7 @@ export default function CommitSection({
         </Card>
       )}
       <Card>
-        <CardHeader>
+        <CardHeader className="max-md:mt-[80px]">
           <CardTitle>Contributors' Commit Contributions</CardTitle>
           <CardDescription>
             Analyze the commit contributions of all contributors for the
