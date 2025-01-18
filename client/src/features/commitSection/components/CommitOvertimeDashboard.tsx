@@ -82,7 +82,7 @@ export default function CommitOvertimeDashboard({
         <CommitPeriodPicker setCommitPeriod={setCommitPeriod} />
       </section>
 
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6 h-[400px]">
         <ResponsiveContainer className="aspect-auto h-[250px] w-full">
           <LineChart
             data={transformedData}

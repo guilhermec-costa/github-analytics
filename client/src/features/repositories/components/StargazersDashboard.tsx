@@ -19,7 +19,6 @@ import {
 } from "recharts";
 import { RepoMetrics } from "shared/types";
 import { Star } from "lucide-react";
-import { MetricCard } from "@/components/MetricCard";
 
 interface StargazersDashboardProps {
   metrics?: RepoMetrics;
@@ -50,6 +49,7 @@ export default function StargazersDashboard({
 
   const handleMouseEnter = (_: any, index: number) => setActiveIndex(index);
   const handleMouseLeave = () => setActiveIndex(null);
+  console.log("metrics", data);
 
   return (
     <Card className="w-full mt-8 overflow-hidden transition-all duration-300 hover:shadow-lg">
@@ -74,8 +74,8 @@ export default function StargazersDashboard({
         </div>
       </CardHeader>
 
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ResponsiveContainer className="aspect-auto h-[250px] w-full">
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6 h-[400px]">
+        <ResponsiveContainer className="w-full h-full">
           <BarChart
             data={data}
             layout="vertical"

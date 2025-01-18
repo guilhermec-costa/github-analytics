@@ -1,4 +1,5 @@
 import cors from "@fastify/cors";
+import fastifySwagger from "@fastify/swagger";
 import fastify, {
   FastifyInstance,
   FastifyReply,
@@ -26,6 +27,29 @@ export class FastifyAdapter implements IHttpServer {
     this.app.register(cors, {
       origin: true,
     });
+
+    // this.app.register(fastifySwagger, {
+    //   prefix: "/documentation",
+    //   openapi: {
+    //     openapi: "3.0.0",
+    //     info: {
+    //       title: "Test swagger",
+    //       description: "Testing the Fastify swagger API",
+    //       version: "0.1.0",
+    //     },
+    //     servers: [
+    //       {
+    //         url: "http://localhost:3000",
+    //         description: "Development server",
+    //       },
+    //     ],
+    //     externalDocs: {
+    //       url: "https://swagger.io",
+    //       description: "Find more info here",
+    //     },
+    //   },
+    // });
+
     this.routePrefix = "";
     this.setErrorMiddleware();
     this.logger = new WinstonLogger();
@@ -39,6 +63,7 @@ export class FastifyAdapter implements IHttpServer {
   post(
     url: string,
     callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
+    schema?: object,
   ): void {
     this.bindRouteHandler(HttpMethod.POST, url, callback);
   }
@@ -46,6 +71,7 @@ export class FastifyAdapter implements IHttpServer {
   put(
     url: string,
     callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
+    schema?: object,
   ): void {
     this.bindRouteHandler(HttpMethod.PUT, url, callback);
   }
@@ -53,15 +79,17 @@ export class FastifyAdapter implements IHttpServer {
   delete(
     url: string,
     callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
+    schema?: object,
   ): void {
-    this.bindRouteHandler(HttpMethod.DELETE, url, callback);
+    this.bindRouteHandler(HttpMethod.DELETE, url, callback, schema);
   }
 
   get(
     url: string,
     callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
+    schema?: object,
   ): void {
-    this.bindRouteHandler(HttpMethod.GET, url, callback);
+    this.bindRouteHandler(HttpMethod.GET, url, callback, schema);
   }
 
   listen(port: number): void {
@@ -78,6 +106,7 @@ export class FastifyAdapter implements IHttpServer {
     method: string,
     url: string,
     callback: (input: ControllerCallbackInput) => Promise<ControllerResponse>,
+    schema?: object,
   ) {
     const fullUrl = `/${this.routePrefix}/${url}`;
     if (this.routes.includes(fullUrl)) {
@@ -99,6 +128,7 @@ export class FastifyAdapter implements IHttpServer {
         });
         reply.status(output.status).send(output.data && output.data);
       },
+      schema,
     });
 
     this.routes.push(fullUrl);

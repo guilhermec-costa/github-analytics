@@ -195,15 +195,11 @@ export default function RepositoriesMetrics({
             className="min-w-[250px] max-md:my-4"
           />
         </div>
-
         {metrics && <HighlightsPanel metrics={metrics} />}
-
         <SummaryDatatable metrics={metrics} />
         <Separator />
         <StargazersDashboard metrics={metrics} />
-
         <Separator />
-
         <Card>
           <CardHeader>
             <CardTitle>Repository Details</CardTitle>
@@ -241,7 +237,6 @@ export default function RepositoriesMetrics({
             </div>
           </CardContent>
         </Card>
-
         {selectedMetrics?.length ? (
           <Tabs defaultValue="languages" className="w-full mt-4">
             <TabsList className="grid w-full grid-cols-2">
