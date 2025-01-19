@@ -23,5 +23,6 @@ export interface IGithubApiGateway {
     token: string,
     id: string,
   ): Promise<CommitDetail>;
-  fetchSpecificUser(token: string, username: string): Promise<any>;
+  fetchSpecificUser(token: string, username: string): Promise<GithubUser>;
+  fetchUserOrgs(token: string, username: string): Promise<any>;
 }

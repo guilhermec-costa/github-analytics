@@ -62,4 +62,12 @@ export class UserService {
       throw new Error("Failed to get specific user");
     }
   }
+
+  async loadUserOrgs(token: string, username: string) {
+    try {
+      return await this.githubApi.fetchUserOrgs(token, username);
+    } catch (error) {
+      throw new Error("Failed to get user orgs");
+    }
+  }
 }

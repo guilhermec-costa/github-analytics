@@ -52,5 +52,22 @@ export class UserController extends BaseController {
         };
       },
     );
+
+    this.httpServer.get(`${this.prefix}/orgs`, async ({ queries, headers }) => {
+      const { authorization, username } = ZodParserInterceptor.parseWithSchema(
+        AuthorizationHeaderSchema.merge(SpecificUsernameQuery),
+        { ...(headers as object), ...(queries as object) },
+      );
+
+      const userData = await this.userService.loadUserOrgs(
+        authorization,
+        username,
+      );
+
+      return {
+        status: HttpStatus.OK,
+        data: userData,
+      };
+    });
   }
 }
