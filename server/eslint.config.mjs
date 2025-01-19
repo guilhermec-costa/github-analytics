@@ -1,9 +1,7 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
-import eslintPluginPrettier, {
-  ignores,
-} from "eslint-plugin-prettier/recommended";
+import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
