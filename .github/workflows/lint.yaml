@@ -1,6 +1,14 @@
-name: Run Lintter
+name: Run Linter and Formatter
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
 
 jobs:
   lint:
@@ -13,17 +21,22 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up NodeJS
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: "20"
 
       - name: Install dependencies
         run: |
           cd ${{ matrix.project }}
-          npm i
+          npm install
+
+      - name: Run Prettier
+        run: |
+          cd ${{ matrix.project }}
+          npm run format
 
       - name: Run lint script
         run: |
