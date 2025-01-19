@@ -63,7 +63,7 @@ export class GithubApiGateway
       since = new Date(today.setDate(today.getDate() - 60)).toISOString();
     }
 
-    let url = `/repos/${repoOwner}/${repoName}/commits`;
+    const url = `/repos/${repoOwner}/${repoName}/commits`;
     let pagesRemaining: boolean = true;
     let data: RepoCommit[] = [];
 
@@ -83,7 +83,7 @@ export class GithubApiGateway
       data = [...data, ...response.data];
 
       const linkHeader: string = response.headers.link;
-      pagesRemaining = !!linkHeader && linkHeader.includes(`rel=\"next\"`);
+      pagesRemaining = !!linkHeader && linkHeader.includes('rel="next"');
 
       if (pagesRemaining) {
         page += 1;
@@ -109,7 +109,7 @@ export class GithubApiGateway
 
   async fetchUserRepos(token: string, username: string): Promise<GithubRepo[]> {
     let page = 1;
-    let url = `/users/${username}/repos`;
+    const url = `/users/${username}/repos`;
     let pagesRemaining: boolean = true;
     let data: GithubRepo[] = [];
 
@@ -127,7 +127,7 @@ export class GithubApiGateway
       data = [...data, ...response.data];
 
       const linkHeader: string = response.headers.link;
-      pagesRemaining = !!linkHeader && linkHeader.includes(`rel=\"next\"`);
+      pagesRemaining = !!linkHeader && linkHeader.includes('rel="next"');
 
       if (pagesRemaining) {
         page += 1;
