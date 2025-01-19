@@ -22,7 +22,6 @@ import SearchInput from "@/components/SearchInput";
 import LanguageSection from "@/features/languageSection";
 import { CommitSection } from "@/features/commitSection";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GithubUser } from "shared/types";
 import StargazersDashboard from "./StargazersDashboard";
 import InputMultiSelect from "@/components/InputMultiSelect";
@@ -143,9 +142,9 @@ export default function RepositoriesMetrics({
   if (isError) return <RepositoriesMetricsError />;
   return (
     <Card id={sectionId} className="w-full rounded-none p-3">
-      <CardHeader>
-        <CardContent>
-          <UserDetailSection targetUser={searchUser} />
+      <CardHeader className="w-full">
+        <CardContent className="w-full">
+          <UserDetailSection info={searchUser} />
         </CardContent>
       </CardHeader>
       <Separator />
@@ -267,7 +266,7 @@ export default function RepositoriesMetrics({
         ) : (
           <Card>
             <CardContent className="text-center py-6">
-              Please select a repository to view its data.
+              <h5>Please select a repository to view its data.</h5>
             </CardContent>
           </Card>
         )}

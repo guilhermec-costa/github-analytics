@@ -91,8 +91,8 @@ export default function StargazersDashboard({
                 type="category"
                 dataKey="repo"
                 width={140}
-                tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
                 tickLine={false}
+                tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
               />
               <CartesianGrid opacity={"0.2"} strokeDasharray="3 3" />
               <Tooltip
