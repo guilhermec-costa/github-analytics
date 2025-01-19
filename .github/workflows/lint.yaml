@@ -23,6 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd ${{ matrix.project }}
+          npm i
 
       - name: Run lint script
         run: |
