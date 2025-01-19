@@ -37,21 +37,32 @@ export class AuthController extends BaseController {
       };
     });
 
-    this.httpServer.post(`${this.prefix}/refresh`, async ({ body }) => {
-      const { refreshToken: reqToken } = ZodParserInterceptor.parseWithSchema(
-        RefreshTokenRequestSchema,
-        body,
-      );
-      const { accessToken, refreshToken } =
-        await this.userService.refresh(reqToken);
+    this.httpServer.post(
+      `${this.prefix}/refresh`,
+      async ({ body }) => {
+        const { refreshToken: reqToken } = ZodParserInterceptor.parseWithSchema(
+          RefreshTokenRequestSchema,
+          body,
+        );
+        const { accessToken, refreshToken } =
+          await this.userService.refresh(reqToken);
 
-      return {
-        status: HttpStatus.CREATED,
-        data: {
-          accessToken,
-          refreshToken,
+        return {
+          status: HttpStatus.CREATED,
+          data: {
+            accessToken,
+            refreshToken,
+          },
+        };
+      },
+      {
+        body: {
+          type: "object",
+          properties: {
+            refreshToken: { type: "string" },
+          },
         },
-      };
-    });
+      },
+    );
   }
 }

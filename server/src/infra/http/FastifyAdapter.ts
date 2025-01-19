@@ -1,6 +1,6 @@
 import cors from "@fastify/cors";
-import fastifySwaggerUi from "@fastify/swagger-ui";
-import fastifySwagger from "@fastify/swagger";
+import { fastifySwaggerUi } from "@fastify/swagger-ui";
+import { fastifySwagger } from "@fastify/swagger";
 import fastify, {
   FastifyInstance,
   FastifyReply,
@@ -31,31 +31,24 @@ export class FastifyAdapter implements IHttpServer {
     });
 
     this.app.register(fastifySwagger, {
-      swagger: {
+      openapi: {
+        openapi: "3.0.0",
         info: {
-          title: "Fastify API",
-          description: "API documentation with Swagger",
-          version: "1.0.0",
+          title: "Test swagger",
+          description: "Testing the Fastify swagger API",
+          version: "0.1.0",
         },
-        externalDocs: {
-          url: "https://swagger.io",
-          description: "Find more info here",
-        },
-        host: "localhost:3333",
-        schemes: ["http"],
-        consumes: ["application/json"],
-        produces: ["application/json"],
+        servers: [
+          {
+            url: "http://localhost:3333",
+            description: "Development server",
+          },
+        ],
       },
     });
 
     this.app.register(fastifySwaggerUi, {
       routePrefix: "/docs",
-      uiConfig: {
-        docExpansion: "list",
-        deepLinking: true,
-      },
-      staticCSP: true,
-      transformStaticCSP: (header) => header,
     });
 
     this.routePrefix = "";
