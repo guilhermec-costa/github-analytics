@@ -13,7 +13,6 @@ export default [
   ...tseslint.configs.recommended,
   {
     rules: {
-      "capitalized-comments": ["error", "always"],
       "@typescript-eslint/no-explicit-any": "off",
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "off",
