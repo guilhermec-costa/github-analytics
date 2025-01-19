@@ -5,6 +5,12 @@ on: [push, pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project:
+          - server
+          - client
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -15,7 +21,10 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: npm i
+        run: |
+          cd ${{ matrix.project }}
 
-      - name: Run ESLint
-        run: npm run lint:fix
+      - name: Run lint script
+        run: |
+          cd ${{ matrix.project }}
+          npm run lint:fix
