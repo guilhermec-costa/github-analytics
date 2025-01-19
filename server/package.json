@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch ./src/main.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "build": "tsup src",
