@@ -130,4 +130,6 @@ dist
 .pnp.*
 
 */pnpm-lock.*
+*/package-lock.*
+*/yarn-lock.*
 .vscode

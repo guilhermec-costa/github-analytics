@@ -43,6 +43,11 @@ jobs:
           cd ${{ matrix.project }}
           npm run lint:fix
 
+      - name: Pull latest changes from remote
+        run: |
+          cd ${{ matrix.project }}
+          git pull origin ${{ github.ref }}
+
       - name: Commit and Push changes
         run: |
           git config --global user.name "github-actions"
