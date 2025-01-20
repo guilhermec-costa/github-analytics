@@ -23,3 +23,15 @@ GitHub Analytics Dashboard is a powerful tool that provides insightful statistic
   - GitHub OAuth
 - **API**:
   - GitHub API v3
+
+---
+
+![Ex.Prime](./pics/itsprimetimebaby.png)
+
+---
+
+![Ex.Stars](./pics/stars.png)
+
+---
+
+![Ex.Commits](./pics/commits.png)
