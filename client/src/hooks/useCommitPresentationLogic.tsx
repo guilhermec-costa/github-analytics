@@ -59,9 +59,5 @@ export default function useCommitPresentationLogic(username: string) {
     deepViewCommit,
     loadingCommit,
     modalOpen,
-    selectedCommit,
-    setLoadingCommit,
-    commitRepo,
-    data,
   };
 }
