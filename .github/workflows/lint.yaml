@@ -42,3 +42,14 @@ jobs:
         run: |
           cd ${{ matrix.project }}
           npm run lint:fix
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git commit -m "fix: apply lint and format changes" || echo "No changes to commit"
+          git push
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
