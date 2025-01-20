@@ -14,13 +14,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { DeepViewCommit } from "@/utils/types";
 import { DetailedRepoCommit } from "shared/types";
-import useCommitDetails from "@/api/queries/useCommitDetails";
-import { ParsedCommitDetails } from "../../../../../server/src/utils/types/commit";
 import CommitDetailsDialog from "./CommitDetailsDialog";
+import useCommitPresentationLogic from "@/hooks/useCommitPresentationLogic";
 
 interface CommitSliderPresentationProps {
   commitDetails: DetailedRepoCommit[];
@@ -31,54 +27,14 @@ export default function CommitSliderPresentation({
   commitDetails,
   username,
 }: CommitSliderPresentationProps) {
-  const [deepViewCommit, setDeepViewCommit] =
-    React.useState<DeepViewCommit | null>(null);
-  const [modalOpen, setModalOpen] = React.useState(false);
-  const [selectedCommit, setSelectedCommit] =
-    React.useState<ParsedCommitDetails | null>(null);
-  const [loadingCommit, setLoadingCommit] = React.useState<string | null>(null);
-  const [commitRepo, setCommitRepo] = React.useState<string>("");
+  const {
+    deepViewCommit,
+    handleCommitClick,
+    loadingCommit,
+    modalOpen,
+    toggleDialog,
+  } = useCommitPresentationLogic(username);
 
-  const { data, isLoading } = useCommitDetails(
-    commitRepo,
-    username,
-    selectedCommit?.sha,
-  );
-
-  React.useEffect(() => {
-    if (!isLoading) {
-      setLoadingCommit(null);
-    }
-  }, [isLoading]);
-
-  React.useEffect(() => {
-    if (selectedCommit && data) {
-      setDeepViewCommit({
-        author: selectedCommit.author,
-        date: selectedCommit.date,
-        email: selectedCommit.email,
-        files: data.files || [],
-        message: selectedCommit.message,
-        sha: selectedCommit.sha,
-        stats: data.stats,
-      });
-    }
-  }, [selectedCommit, data]);
-
-  const handleCommitClick = (
-    commit: ParsedCommitDetails & { repo: string },
-  ) => {
-    setSelectedCommit(commit);
-    setCommitRepo(commit.repo);
-    setLoadingCommit(commit.sha);
-    setModalOpen(true);
-  };
-
-  function toggleDialog() {
-    setModalOpen((prev) => !prev);
-    setLoadingCommit(null);
-    setDeepViewCommit(null);
-  }
   return (
     <div className="bg-gradient-to-r from-background to-secondary rounded-lg shadow-xl">
       <Dialog open={modalOpen} onOpenChange={toggleDialog}>

@@ -1,11 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React from "react";
 import useRepositoriesMetrics from "@/api/queries/useRepositoriesMetrics";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   ResponsiveContainer,
   BarChart,
@@ -28,9 +23,9 @@ export default function ContributorsCommitDashboard({
   user,
 }: ContributorsCommitDashboardProps) {
   const { data: metrics } = useRepositoriesMetrics(user);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
-  const contributionsData = useMemo(() => {
+  const contributionsData = React.useMemo(() => {
     if (!metrics) return [];
 
     const filteredContributions = Object.values(metrics)
