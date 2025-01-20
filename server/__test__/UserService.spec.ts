@@ -8,6 +8,7 @@ import { AuthCredentials, GithubUser } from "../src/utils/types/githubUser";
 describe("UserService", () => {
   let userService: UserService;
   const mockLogger = mock<ILogger>();
+  const mockUser = mock<GithubUser>();
   const mockGithubApi = mock<GithubApiGateway>();
   const mockGithubWeb = mock<GithubWebGateway>();
 
@@ -82,13 +83,12 @@ describe("UserService", () => {
   it("should load specific user", async () => {
     const token = "authCode";
     const username = "username";
-    const mockedUser = mock<GithubUser>();
 
-    mockGithubApi.fetchSpecificUser.mockResolvedValue(mockedUser);
+    mockGithubApi.fetchSpecificUser.mockResolvedValue(mockUser);
 
     const result = await userService.loadSpecificUser(token, username);
 
-    expect(result).toEqual(mockedUser);
+    expect(result).toEqual(mockUser);
     expect(mockLogger.error).not.toHaveBeenCalledTimes(1);
   });
 });

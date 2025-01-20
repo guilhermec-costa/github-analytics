@@ -1,15 +1,9 @@
+import ActionsEllipses, { CellAction } from "@/components/TableActionEllipses";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { formatBytes } from "@/utils/bytes";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Star } from "lucide-react";
+import { Eye, Star } from "lucide-react";
 
 export type SummaryUnit = {
   createdAt: string;
@@ -113,20 +107,21 @@ export const columns: ColumnDef<SummaryUnit>[] = [
     meta: {
       sortable: false,
     },
-    cell: ({ row }) => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+    cell: ({ row, table }) => {
+      const meta = table.options.meta as {
+        setTargetRow: (row: any) => void;
+      };
+
+      const actions: CellAction[] = [
+        {
+          callback: () => meta.setTargetRow(row.original),
+          title: "See details",
+          disabled: false,
+          icon: <Eye />,
+        },
+      ];
+
+      return <ActionsEllipses actions={actions} />;
     },
   },
 ];

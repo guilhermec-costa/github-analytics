@@ -10,6 +10,7 @@ import { RepoMetrics } from "shared/types";
 import { RepoAnalyser } from "@/features/repositories/services/RepoAnalyser";
 import { SummaryUnit, columns } from "./components/table/columns";
 import DataTable from "./components/table/DataTable";
+import RepoDetailDialog from "../repositories/components/RepoDetailDialog";
 
 interface SummaryDatatableProps {
   metrics?: RepoMetrics;

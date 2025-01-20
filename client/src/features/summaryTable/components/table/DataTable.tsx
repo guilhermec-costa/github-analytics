@@ -40,6 +40,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import RepoDetailDialog from "@/features/repositories/components/RepoDetailDialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -50,6 +51,9 @@ export default function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [interactedRow, setInteractedRow] = React.useState<any | undefined>(
+    undefined,
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -76,6 +80,11 @@ export default function DataTable<TData, TValue>({
       columnFilters,
       globalFilter,
       pagination,
+    },
+    meta: {
+      setTargetRow: (rowData: any) => {
+        setInteractedRow(rowData);
+      },
     },
   });
 
@@ -218,6 +227,12 @@ export default function DataTable<TData, TValue>({
         </div>
         <TablePagination table={table} />
       </div>
+      {interactedRow && (
+        <RepoDetailDialog
+          repoDetails={interactedRow}
+          onClose={() => setInteractedRow(undefined)}
+        />
+      )}
     </div>
   );
 }
