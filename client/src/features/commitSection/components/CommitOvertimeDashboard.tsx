@@ -71,6 +71,10 @@ export default function CommitOvertimeDashboard({
     [setDetailedCommitsPeriods, data],
   );
 
+  React.useEffect(() => {
+    setDetailedCommitsPeriods([]);
+  }, [commitPeriod, setDetailedCommitsPeriods]);
+
   return (
     <Card className="w-full">
       <section className="flex-col md:flex md:justify-between">
