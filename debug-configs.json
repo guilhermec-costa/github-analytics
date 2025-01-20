@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "name": "Run Script: dev",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}\\server"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Jest Tests",
+      "program": "${workspaceFolder}\\server\\node_modules\\jest\\bin\\jest",
+      "args": ["--runInBand"],
+      "internalConsoleOptions": "neverOpen",
+      "envFile": "${workspaceRoot}/.env",
+      "cwd": "${workspaceFolder}\\server",
+      "console": "integratedTerminal"
+    }
+  ]
+}
