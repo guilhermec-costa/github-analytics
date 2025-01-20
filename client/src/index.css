@@ -120,4 +120,26 @@
   .resizer.isResizing {
     @apply bg-chart-2;
   }
+
+  /* width */
+  .commit-vertical::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  .commit-vertical::-webkit-scrollbar-track {
+    background: #888;
+    border-radius: 5px;
+  }
+
+  /* Handle */
+  .commit-vertical::-webkit-scrollbar-thumb {
+    background: #000;
+    border-radius: 5px;
+  }
+
+  /* Handle on hover */
+  .commit-vertical::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 }
