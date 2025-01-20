@@ -108,4 +108,16 @@
   ::selection {
     @apply bg-primary/60;
   }
+
+  .resizer {
+    @apply absolute opacity-0 top-1/2 -translate-y-1/2 right-0 bg-background cursor-col-resize h-4/5 w-[5px] rounded-md;
+  }
+
+  *:hover > .resizer {
+    opacity: 1;
+  }
+
+  .resizer.isResizing {
+    @apply bg-chart-2;
+  }
 }

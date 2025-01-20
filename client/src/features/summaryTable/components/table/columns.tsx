@@ -70,10 +70,10 @@ export const columns: ColumnDef<SummaryUnit>[] = [
       );
     },
   },
-  {
-    accessorKey: "watchers",
-    header: "Watchers",
-  },
+  // {
+  //   accessorKey: "watchers",
+  //   header: "Watchers",
+  // },
   {
     accessorKey: "size",
     header: "Size",

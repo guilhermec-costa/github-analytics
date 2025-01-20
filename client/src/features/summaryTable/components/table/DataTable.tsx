@@ -75,6 +75,7 @@ export default function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
+    columnResizeMode: "onChange",
     state: {
       sorting,
       columnFilters,
@@ -157,16 +158,27 @@ export default function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="font-bold text-foreground py-3 px-4"
+                    className="font-bold text-foreground py-3 px-4 relative"
+                    style={{ width: `${header.getSize()}px` }}
                   >
                     {header.isPlaceholder ? null : (
                       <div
-                        className={cn({
-                          "cursor-pointer select-none flex items-center":
-                            header.column.getCanSort(),
-                        })}
-                        onClick={header.column.getToggleSortingHandler()}
+                        className={cn(
+                          {
+                            "cursor-pointer select-none flex items-center":
+                              header.column.getCanSort(),
+                          },
+                          "relative",
+                        )}
+                        onMouseDown={header.column.getToggleSortingHandler()}
                       >
+                        <div
+                          onMouseDown={header.getResizeHandler()}
+                          onTouchStart={header.getResizeHandler()}
+                          className={`resizer ${
+                            header.column.getIsResizing() ? "isResizing" : ""
+                          }`}
+                        ></div>
                         {flexRender(
                           header.column.columnDef.header,
                           header.getContext(),

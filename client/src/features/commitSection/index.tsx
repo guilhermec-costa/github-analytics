@@ -12,6 +12,8 @@ import React from "react";
 import CommitOvertimeDashboard from "./components/CommitOvertimeDashboard";
 import CommitSliderPresentation from "./components/CommitsSliderPresentation";
 import ContributorsCommitDashboard from "./components/ContributorsCommitsDashboard";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface CommitSectionProps {
   metrics: MetricUnit[];
@@ -57,6 +59,13 @@ export default function CommitSection({
             </CardTitle>
           </CardHeader>
           <CardContent>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="change-commit-view"
+                onCheckedChange={() => console.log("changin commit view")}
+              />
+              <Label htmlFor="change-commit-view">Switch Commit View</Label>
+            </div>
             <CommitSliderPresentation
               commitDetails={selectedDetailedCommitsPeriods}
               selectedRepositories={selectedRepos}

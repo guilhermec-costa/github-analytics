@@ -20,6 +20,7 @@ import { DeepViewCommit } from "@/utils/types";
 import { DetailedRepoCommit } from "shared/types";
 import useCommitDetails from "@/api/queries/useCommitDetails";
 import { ParsedCommitDetails } from "../../../../../server/src/utils/types/commit";
+import CommitDetailsDialog from "./CommitDetailsDialog";
 
 interface CommitSliderPresentationProps {
   commitDetails: DetailedRepoCommit[];
@@ -46,7 +47,7 @@ export default function CommitSliderPresentation({
 
   React.useEffect(() => {
     if (!isLoading) {
-      setLoadingCommit("");
+      setLoadingCommit(null);
     }
   }, [isLoading]);
 
@@ -73,9 +74,14 @@ export default function CommitSliderPresentation({
     setModalOpen(true);
   };
 
+  function toggleDialog() {
+    setModalOpen((prev) => !prev);
+    setLoadingCommit(null);
+    setDeepViewCommit(null);
+  }
   return (
     <div className="bg-gradient-to-r from-background to-secondary rounded-lg shadow-xl">
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+      <Dialog open={modalOpen} onOpenChange={toggleDialog}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle>Commit Details</DialogTitle>
@@ -83,93 +89,7 @@ export default function CommitSliderPresentation({
               Detailed information about the selected commit.
             </DialogDescription>
           </DialogHeader>
-
-          {deepViewCommit && (
-            <ScrollArea className="h-[60vh] pr-4">
-              <div className="space-y-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">
-                          Author
-                        </dt>
-                        <dd className="text-sm font-semibold">
-                          {deepViewCommit.author}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">
-                          Date
-                        </dt>
-                        <dd className="text-sm font-semibold">
-                          {new Date(deepViewCommit.date).toLocaleString()}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">
-                          Email
-                        </dt>
-                        <dd className="text-sm font-semibold">
-                          {deepViewCommit.email}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">
-                          SHA
-                        </dt>
-                        <dd className="text-sm font-mono">
-                          {deepViewCommit.sha}
-                        </dd>
-                      </div>
-                    </dl>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <h3 className="text-lg font-semibold mb-2">
-                      Commit Message
-                    </h3>
-                    <p className="text-sm">{deepViewCommit.message}</p>
-                  </CardContent>
-                </Card>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Files Modified</h3>
-                  <Carousel>
-                    <CarouselContent>
-                      {deepViewCommit.files.map((file) => (
-                        <CarouselItem
-                          key={file.filename}
-                          className="md:basis-1/2 lg:basis-1/3"
-                        >
-                          <Card>
-                            <CardContent className="p-4">
-                              <h4
-                                className="text-sm font-medium mb-2 truncate"
-                                title={file.filename}
-                              >
-                                {file.filename}
-                              </h4>
-                              <div className="flex flex-wrap gap-2">
-                                <Badge variant="outline">{file.status}</Badge>
-                                <Badge variant="secondary">
-                                  +{file.additions} -{file.deletions}
-                                </Badge>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                  </Carousel>
-                </div>
-              </div>
-            </ScrollArea>
-          )}
+          {deepViewCommit && <CommitDetailsDialog commit={deepViewCommit} />}
         </DialogContent>
       </Dialog>
 
@@ -190,7 +110,9 @@ export default function CommitSliderPresentation({
                 <div className="p-1">
                   <Card
                     className={`cursor-pointer transition-all hover:shadow-md ${
-                      loadingCommit === commit.sha ? "animate-pulse" : ""
+                      loadingCommit != null && loadingCommit === commit.sha
+                        ? "animate-pulse"
+                        : ""
                     }`}
                     onClick={() => handleCommitClick(commit)}
                   >
